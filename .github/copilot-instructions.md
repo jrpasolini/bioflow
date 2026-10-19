@@ -11,3 +11,5 @@ BioFlow is a new medical-document organization demo for Hacktoberfest 2026.
 - Gemma proposes field extraction; humans review and confirm. No diagnosis and no silent rewriting of source evidence.
 - Add tests for authorization, upload validation and provenance. Record meaningful changes in docs/DEVLOG.md.
 - Document Copilot's actual involvement for the DEV challenge. Never invent participation.
+
+- All new interface elements must respect both themes, reusing CSS tokens in `apps/web/src/styles.css`; avoid hardcoded UI colours.

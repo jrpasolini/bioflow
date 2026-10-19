@@ -1,6 +1,7 @@
 import {useMemo,useState} from 'react';
-import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,Upload,ShieldCheck,FlaskConical} from 'lucide-react';
+import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,Upload,ShieldCheck,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoPatient,demoReports,indicatorCodes,type Indicator} from '../../../packages/fixtures/src/synthetic';
+import {useThemePreference} from './theme';
 
 type Section='overview'|'trends'|'reports';
 const date=(s:string)=>new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeZone:'UTC'}).format(new Date(s+'T12:00:00Z'));
@@ -15,18 +16,19 @@ function Trend({code}:{code:string}){
  const y=(v:number)=>140-(v-lo)*95/span;
  const points=series.map((s,i)=>x(i)+','+y(s.value)).join(' ');
  return <div className="trend-chart" role="img" aria-label={'Evolução de '+series[0].name+': '+series.map(s=>date(s.date)+' '+fmt(s.value)+' '+s.unit).join('; ')}>
-   <svg viewBox="0 0 440 165" aria-hidden="true"><line x1="16" y1="142" x2="424" y2="142" stroke="#d8e3e3"/><polyline points={points} fill="none" stroke="#0c847c" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>{series.map((s,i)=><g key={s.date}><circle cx={x(i)} cy={y(s.value)} r="5" fill="#0c847c"/><text x={x(i)} y={y(s.value)-14} textAnchor="middle" fontSize="12" fill="#2a4948">{fmt(s.value)}</text></g>)}</svg>
+   <svg viewBox="0 0 440 165" aria-hidden="true"><line x1="16" y1="142" x2="424" y2="142" stroke="var(--plot-axis)"/><polyline points={points} fill="none" stroke="var(--plot-stroke)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>{series.map((s,i)=><g key={s.date}><circle cx={x(i)} cy={y(s.value)} r="5" fill="var(--plot-stroke)"/><text x={x(i)} y={y(s.value)-14} textAnchor="middle" fontSize="12" fill="var(--plot-label)">{fmt(s.value)}</text></g>)}</svg>
    <div className="chart-labels">{series.map(s=><span key={s.date}>{date(s.date)}</span>)}</div>
  </div>;
 }
 export default function App(){
+ const {theme,toggleTheme}=useThemePreference();
  const [section,setSection]=useState<Section>('overview');
  const [selected,setSelected]=useState<string>(indicatorCodes[0]);
  const [reportId,setReportId]=useState(latest.id);
  const report=demoReports.find(r=>r.id===reportId)??latest;
  const latestIndicator=useMemo(()=>latest.results.find(a=>a.code===selected),[selected]);
  return <div className="app">
- <header className="topbar"><div className="brand"><span className="brand-icon"><HeartPulse size={23}/></span><span>BioFlow<small>Seu histórico, sob seu controle</small></span></div><span className="privacy"><ShieldCheck size={16}/> Ambiente demonstrativo</span></header>
+ <header className="topbar"><div className="brand"><span className="brand-icon"><HeartPulse size={23}/></span><span>BioFlow<small>Seu histórico, sob seu controle</small></span></div><div className="header-actions"><span className="privacy"><ShieldCheck size={16}/> Ambiente demonstrativo</span><button type="button" className="theme-toggle" onClick={toggleTheme} aria-label={theme === "light" ? "Ativar modo escuro" : "Ativar modo claro"} aria-pressed={theme === "dark"} title={theme === "light" ? "Ativar modo escuro" : "Ativar modo claro"}>{theme === "light" ? <Moon size={18}/> : <Sun size={18}/>}<span>{theme === "light" ? "Escuro" : "Claro"}</span></button></div></header>
  <main className="container">
   <div className="demo-banner"><FlaskConical size={20}/><span><strong>DEMONSTRAÇÃO — DADOS 100% FICTÍCIOS.</strong> Walter White, exames, datas, laboratórios e resultados são fictícios. Esta plataforma não emite diagnósticos.</span></div>
   <div className="page-title"><div><span className="eyebrow">Histórico laboratorial</span><h1>{demoPatient.displayName}</h1><p>Seus indicadores, suas coletas e seus laudos em um só lugar.</p></div><span className="pill">{demoReports.length} coletas simuladas</span></div>

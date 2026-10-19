@@ -8,3 +8,7 @@
 - MongoDB Atlas, Auth0 frontend login and Gemma: next integrations, not completed yet.
 - GitHub Copilot instructions added. Log actual use and reviewed code changes before reporting its participation in the challenge.
 - DEV submission: English final article after a deployable, reviewed and privacy-safe build.
+
+- Added light/dark themes with global CSS tokens, including trends, controls and alert surfaces.
+- First visit follows operating-system preference; manual selection persists locally and loads before React to prevent flashing.
+- Theme switch includes accessible labels and keyboard focus; new components must use theme tokens.
