@@ -79,10 +79,13 @@ async function listOriginals(req:Request,env:Env,patientId:string):Promise<Respo
  const results:Array<{id:string;filename:string;size:number;sha256:string|null;uploadedAt:string}>=[];
  let cursor:string|undefined;
  do{
-  const batch=await env.REPORTS_BUCKET.list({prefix:prefix(patientId),limit:100,cursor,include:['customMetadata']});
+  const batch=await env.REPORTS_BUCKET.list({prefix:prefix(patientId),limit:100,cursor});
   for(const o of batch.objects){
    const id=o.key.slice(prefix(patientId).length).replace(/\.pdf$/,'');
-   if(pdfId.test(id))results.push({id,filename:o.customMetadata?.filename||'original.pdf',size:o.size,sha256:o.customMetadata?.sha256||null,uploadedAt:o.uploaded.toISOString()});
+   if(pdfId.test(id)){
+    const meta=await env.REPORTS_BUCKET.head(o.key);
+    results.push({id,filename:meta?.customMetadata?.filename||'original.pdf',size:o.size,sha256:meta?.customMetadata?.sha256||null,uploadedAt:o.uploaded.toISOString()});
+   }
   }
   cursor=batch.truncated?batch.cursor:undefined;
  }while(cursor&&results.length<1000);
