@@ -65,3 +65,12 @@
 button:focus-visible,select:focus-visible {outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:540px){.header-actions{gap:8px}.theme-toggle{padding:10px;min-width:42px}.theme-toggle span{display:none}}
 @media(prefers-reduced-motion:no-preference){.theme-toggle{transition:background-color .15s ease,color .15s ease,border-color .15s ease}}
+
+/* Accessible two-flag language switch; theme-colour tokens apply to both modes. */
+.locale-switch {display:inline-flex;align-items:center;gap:3px;padding:3px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface)}
+.locale-switch button {display:flex;align-items:center;gap:5px;background:transparent;color:var(--text);border:1px solid transparent;border-radius:7px;padding:6px 8px;font-size:16px;line-height:1.3}
+.locale-switch button.selected {background:var(--pill-bg);border-color:var(--hover-border);color:var(--pill-text);font-weight:750}
+.locale-switch button:hover {background:var(--hover-bg)}
+.locale-code {font-size:11px;letter-spacing:.03em}
+@media(max-width:720px){.topbar{flex-wrap:wrap;gap:12px}.header-actions{margin-left:auto}.privacy{display:none}}
+@media(max-width:390px){.locale-switch button{padding:5px}.locale-code{display:none}}

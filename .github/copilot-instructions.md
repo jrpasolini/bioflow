@@ -13,3 +13,6 @@ BioFlow is a new medical-document organization demo for Hacktoberfest 2026.
 - Document Copilot's actual involvement for the DEV challenge. Never invent participation.
 
 - All new interface elements must respect both themes, reusing CSS tokens in `apps/web/src/styles.css`; avoid hardcoded UI colours.
+
+- The interface must be bilingual: `en-US` default and `pt-BR` optional. Use `apps/web/src/i18n.ts` for all user-facing text and locale-aware dates/numbers; do not hardcode copy in components.
+- Preserve both theme modes and language selection when adding features. Any new text must be translated in both locales.
