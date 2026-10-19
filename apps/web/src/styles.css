@@ -74,3 +74,9 @@ button:focus-visible,select:focus-visible {outline:3px solid var(--accent);outli
 .locale-code {font-size:11px;letter-spacing:.03em}
 @media(max-width:720px){.topbar{flex-wrap:wrap;gap:12px}.header-actions{margin-left:auto}.privacy{display:none}}
 @media(max-width:390px){.locale-switch button{padding:5px}.locale-code{display:none}}
+
+/* Patient identity strip: readable on mobile and in both colour modes. */
+.patient-identity {display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;color:var(--muted);font-size:13px;margin:5px 0 10px}
+.patient-identity span {display:inline-flex;flex-wrap:wrap;gap:5px;align-items:center}
+.patient-identity strong {color:var(--text);font-weight:650}
+@media(max-width:540px){.patient-identity{gap:7px 12px;font-size:12px}}

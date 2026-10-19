@@ -16,6 +16,11 @@ const en = {
   demoHeadline: 'DEMO — 100% SYNTHETIC DATA.',
   demoText: 'Walter White, medical tests, dates, laboratories and results are entirely fictional. This platform does not provide diagnoses.',
   labHistory: 'Laboratory history',
+  patientIdentity: 'Patient identification',
+  dateOfBirth: 'Date of birth',
+  age: 'Age',
+  years: 'years',
+  demoPatientId: 'Demo record ID',
   description: 'Your markers, test results and reports, all in one place.',
   simulatedCollections: 'simulated collections',
   navLabel: 'Sections',
@@ -73,6 +78,11 @@ const pt: Record<TranslationKey,string> = {
   demoHeadline: 'DEMONSTRAÇÃO — DADOS 100% FICTÍCIOS.',
   demoText: 'Walter White, exames, datas, laboratórios e resultados são inteiramente fictícios. Esta plataforma não emite diagnósticos.',
   labHistory: 'Histórico laboratorial',
+  patientIdentity: 'Identificação do paciente',
+  dateOfBirth: 'Data de nascimento',
+  age: 'Idade',
+  years: 'anos',
+  demoPatientId: 'ID fictício',
   description: 'Seus indicadores, suas coletas e seus laudos em um só lugar.',
   simulatedCollections: 'coletas simuladas',
   navLabel: 'Seções',
@@ -132,6 +142,15 @@ export function labelForLab(name: string, locale: Locale): string {
 export function formatDate(dateISO: string, locale: Locale): string {
   return new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeZone:'UTC'})
     .format(new Date(dateISO+'T12:00:00Z'));
+}
+/** Calculate completed years using UTC calendar dates to avoid timezone-related birthday drift. */
+export function calculateAge(dateOfBirth: string, asOf: Date = new Date()): number {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateOfBirth);
+  if (!match) throw new Error('Invalid birth date');
+  const birthYear = Number(match[1]),birthMonth = Number(match[2]),birthDay = Number(match[3]);
+  let age = asOf.getUTCFullYear() - birthYear;
+  if (asOf.getUTCMonth()+1 < birthMonth || (asOf.getUTCMonth()+1 === birthMonth && asOf.getUTCDate() < birthDay)) age--;
+  return age;
 }
 export function formatValue(value: number, locale: Locale): string {
   return new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(value);

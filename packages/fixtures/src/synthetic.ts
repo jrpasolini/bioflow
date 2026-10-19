@@ -10,7 +10,7 @@ export type LabReport = {
 };
 export const demoPatient = {
   id: 'demo-walter-white', displayName: 'Walter White', isSynthetic: true,
-  dateOfBirth: null,
+  dateOfBirth: '1958-09-07', demoRecordId: 'BF-DEMO-001',
   description: 'Pessoa fictícia criada para demonstração; não representa um paciente real.'
 } as const;
 export const demoReports: LabReport[] = [
