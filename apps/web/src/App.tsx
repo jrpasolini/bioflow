@@ -2,7 +2,7 @@ import {useMemo,useState} from 'react';
 import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,Upload,ShieldCheck,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoPatient,demoReports,indicatorCodes,type Indicator} from '../../../packages/fixtures/src/synthetic';
 import {useThemePreference} from './theme';
-import {useLocale,labelForIndicator,labelForLab,formatDate,formatValue,calculateAge,type Locale} from './i18n';
+import {useLocale,labelForIndicator,labelForLab,formatDate,formatBirthDate,formatValue,calculateAge,type Locale} from './i18n';
 
 type Section='overview'|'trends'|'reports';
 const latest=demoReports[demoReports.length-1];
@@ -58,7 +58,7 @@ export default function App(){
     </header>
     <main className="container">
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
-      <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {date(demoPatient.dateOfBirth)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
+      <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
       <nav className="tabs" aria-label={t.navLabel}>
         <button className={section==='overview'?'active':''} onClick={()=>setSection('overview')}><Activity size={18}/> {t.overview}</button>
         <button className={section==='trends'?'active':''} onClick={()=>setSection('trends')}><ChartNoAxesCombined size={18}/> {t.trends}</button>

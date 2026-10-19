@@ -152,6 +152,10 @@ export function calculateAge(dateOfBirth: string, asOf: Date = new Date()): numb
   if (asOf.getUTCMonth()+1 < birthMonth || (asOf.getUTCMonth()+1 === birthMonth && asOf.getUTCDate() < birthDay)) age--;
   return age;
 }
+export function formatBirthDate(dateISO: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale,{dateStyle:'long',timeZone:'UTC'})
+    .format(new Date(dateISO+'T12:00:00Z'));
+}
 export function formatValue(value: number, locale: Locale): string {
   return new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(value);
 }
