@@ -1,0 +1,9 @@
+{
+  "name": "bioflow-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-19",
+  "compatibility_flags": ["nodejs_compat"],
+  // R2 binding is deliberately disabled until bucket provisioning:
+  // "r2_buckets": [{"binding": "REPORTS_BUCKET", "bucket_name": "bioflow-private-reports"}],
+  "vars": {"APP_ORIGIN": "http://localhost:5173"}
+}
