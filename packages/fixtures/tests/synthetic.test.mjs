@@ -21,3 +21,11 @@ test('history demonstration includes multiple fully fabricated collection dates'
   assert.match(contents,/bf-demo-2026-03/);
   assert.match(contents,/status:'synthetic-demo'/);
 });
+
+test('latest synthetic report showcases high, low and within-range outcomes', () => {
+  const last = contents.slice(contents.indexOf("id:'bf-demo-2026-09'"));
+  assert.match(last,/code:'hba1c'.*value:6\.6.*referenceHigh:5\.7/);
+  assert.match(last,/code:'hdl'.*value:38.*referenceLow:40/);
+  assert.match(last,/code:'creatinine'.*value:0\.99.*referenceHigh:1\.3/);
+  assert.match(last,/code:'hemoglobin'/);
+});

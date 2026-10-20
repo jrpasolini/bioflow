@@ -22,3 +22,8 @@
 - Every distinct lab indicator now receives a mini chronological sparkline on its overview card.
 - Expanded the fabricated dataset to eight distinct collection dates. Each point on a detailed timeline is one real **synthetic fixture observation**, not interpolation, and links to its associated collection.
 - Added selectable SVG points (mouse/keyboard), mobile-accessible numbered point selectors, source collection metadata, and contextual open-collection action. Time spacing follows **collection order**, not elapsed days; the axis is labeled accordingly.
+
+- Latest collection now renders **every** result from its synthetic source report, not a truncated list. Each has a value, unit and translated badge (high / normal / low / no reference).
+- A single highlighted headline is selected from out-of-range values by **proportional reference deviation**, a display heuristic only (NOT diagnosis, clinical risk or medical severity).
+- Added nine independently fabricated measurements to the latest demo collection and consistent status badges in report details. Reference ranges must be the original lab's approved intervals when real data are eventually supported.
+- Pure reference classification and highlighted-result selection have regression tests.

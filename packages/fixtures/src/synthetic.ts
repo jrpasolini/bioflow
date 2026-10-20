@@ -65,11 +65,15 @@ export const demoReports: LabReport[] = [
     {code:'hdl',name:'Colesterol HDL',value:48,unit:'mg/dL',referenceLow:40}
   ]},
   {id:'bf-demo-2026-09',patientId:demoPatient.id,collectedAt:'2026-09-07',laboratory:'Laboratório Aurora (fictício)',status:'synthetic-demo',isSynthetic:true,originalPdfId:null,results:[
-    {code:'glucose',name:'Glicose',value:95,unit:'mg/dL',referenceLow:70,referenceHigh:99},
-    {code:'hba1c',name:'Hemoglobina glicada',value:5.5,unit:'%',referenceLow:4,referenceHigh:5.7},
+    {code:'glucose',name:'Glicose',value:104,unit:'mg/dL',referenceLow:70,referenceHigh:99},
+    {code:'hba1c',name:'Hemoglobina glicada',value:6.6,unit:'%',referenceLow:4,referenceHigh:5.7},
     {code:'creatinine',name:'Creatinina',value:0.99,unit:'mg/dL',referenceLow:0.7,referenceHigh:1.3},
-    {code:'triglycerides',name:'Triglicerídeos',value:128,unit:'mg/dL',referenceHigh:150},
-    {code:'hdl',name:'Colesterol HDL',value:51,unit:'mg/dL',referenceLow:40}
+    {code:'triglycerides',name:'Triglicerídeos',value:159,unit:'mg/dL',referenceHigh:150},
+    {code:'hdl',name:'Colesterol HDL',value:38,unit:'mg/dL',referenceLow:40},
+    {code:'urea',name:'Ureia',value:37,unit:'mg/dL',referenceLow:15,referenceHigh:50},
+    {code:'ldl',name:'Colesterol LDL',value:91,unit:'mg/dL',referenceHigh:130},
+    {code:'totalCholesterol',name:'Colesterol total',value:179,unit:'mg/dL',referenceHigh:200},
+    {code:'hemoglobin',name:'Hemoglobina',value:14.6,unit:'g/dL',referenceLow:12,referenceHigh:17.5}
   ]}
 ];
-export const indicatorCodes = ['glucose','hba1c','creatinine','triglycerides','hdl'] as const;
+export const indicatorCodes = ['glucose','hba1c','creatinine','triglycerides','hdl','urea','ldl','totalCholesterol','hemoglobin'] as const;

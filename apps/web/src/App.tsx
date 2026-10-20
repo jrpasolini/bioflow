@@ -1,5 +1,6 @@
 import {useMemo,useState} from 'react';
 import {markerHistory,plotHistory} from './timeline';
+import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
 import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,Upload,ShieldCheck,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoPatient,demoReports,indicatorCodes,type Indicator} from '../../../packages/fixtures/src/synthetic';
 import {useThemePreference} from './theme';
@@ -9,10 +10,10 @@ type Section='overview'|'trends'|'reports';
 const latest=demoReports[demoReports.length-1];
 
 function markerStatus(a: Indicator,t:ReturnType<typeof useLocale>['t']):string {
-  if(a.referenceHigh!==undefined&&a.value>a.referenceHigh)return t.above;
-  if(a.referenceLow!==undefined&&a.value<a.referenceLow)return t.below;
-  return t.within;
+  const status=referenceStatus(a);
+  return status==='high'?t.above:status==='low'?t.below:status==='normal'?t.within:t.noReference;
 }
+const statusClass=(status:ReferenceStatus)=>'status-'+status;
 function MiniSparkline({code}:{code:string}){
   const series=markerHistory(demoReports,code);
   const coords=plotHistory(series,116,48,5,7);
@@ -78,6 +79,8 @@ export default function App(){
   const [reportId,setReportId]=useState(latest.id);
   const report=demoReports.find(r=>r.id===reportId)??latest;
   const latestIndicator=useMemo(()=>latest.results.find(a=>a.code===selected),[selected]);
+  const featured=useMemo(()=>chooseFeaturedResult(latest.results),[]);
+  const outsideCount=latest.results.filter(a=>referenceStatus(a)==='high'||referenceStatus(a)==='low').length;
   const date=(s:string)=>formatDate(s,locale);
   const fmt=(n:number)=>formatValue(n,locale);
   const indicatorName=(a:Indicator)=>labelForIndicator(a.code,locale,a.name);
@@ -106,7 +109,29 @@ export default function App(){
         <button className={section==='reports'?'active':''} onClick={()=>setSection('reports')}><FileText size={18}/> {t.reports}</button>
       </nav>
       {section==='overview'&&<>
-        <section className="notice"><div><span className="eyebrow">{t.lastCollection}</span><h2>{date(latest.collectedAt)}</h2><p>{labName(latest.laboratory)} · {latest.results.length} {t.markersCount}</p></div><span className="pill">{t.demoOnly}</span></section>
+        <section className="notice latest-summary">
+          <div className="latest-intro">
+            <span className="eyebrow">{t.lastCollection}</span>
+            <h2>{featured
+              ? <>{indicatorName(featured)}: {fmt(featured.value)} {featured.unit}, {referenceStatus(featured)==='high'?t.featuredHigh:t.featuredLow}.</>
+              : t.noOutOfRangeHighlight}</h2>
+            <p>{date(latest.collectedAt)} · {labName(latest.laboratory)} · {latest.results.length} {t.markersCount}</p>
+            <p className="latest-count">{outsideCount} {t.outsideReferenceCount}</p>
+          </div>
+          <div className="latest-result-list" aria-label={t.allResultsLatest}>
+            {latest.results.map(a=>{
+              const status=referenceStatus(a);
+              return <button type="button" className="latest-result-row" key={a.code}
+                aria-label={t.viewHistory+' '+indicatorName(a)+', '+fmt(a.value)+' '+a.unit+', '+markerStatus(a,t)}
+                onClick={()=>{setSelected(a.code);setSection('trends')}}>
+                <span className="latest-result-name">{indicatorName(a)}</span>
+                <span className="latest-result-value">{fmt(a.value)} {a.unit}</span>
+                <span className={'reference-badge '+statusClass(status)}>{markerStatus(a,t)}</span>
+              </button>;
+            })}
+          </div>
+          <p className="latest-disclaimer">{t.referenceDisclaimer}</p>
+        </section>
         <h2 className="section-title">{t.labMarkers}</h2>
         <div className="indicator-grid">{latest.results.map(a=><button key={a.code} className="indicator" aria-label={t.viewHistory+' '+indicatorName(a)+', '+fmt(a.value)+' '+a.unit} onClick={()=>{setSelected(a.code);setSection('trends')}}><span className="indicator-copy"><span className="indicator-name">{indicatorName(a)}</span><strong>{fmt(a.value)} <small>{a.unit}</small></strong><span className="indicator-meta">{date(latest.collectedAt)} · {markerStatus(a,t)}</span></span><MiniSparkline code={a.code}/></button>)}</div>
         <h2 className="section-title">{t.recentCollections}</h2>
@@ -121,7 +146,7 @@ export default function App(){
       {section==='reports'&&<div className="reports-layout">
         <section className="panel reports-list"><h2>{t.collections}</h2>{[...demoReports].reverse().map(r=><button className={'report-row '+(r.id===reportId?'selected':'')} key={r.id} onClick={()=>setReportId(r.id)}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)}</small></span></button>)}</section>
         <section className="panel detail-panel"><span className="eyebrow">{t.collectionDetails}</span><h2>{date(report.collectedAt)}</h2><p>{labName(report.laboratory)}</p>
-          <div className="results-list">{report.results.map(a=><div key={a.code} className="result-line"><span>{indicatorName(a)}</span><strong>{fmt(a.value)} {a.unit}</strong></div>)}</div>
+          <div className="results-list">{report.results.map(a=><div key={a.code} className="result-line"><span>{indicatorName(a)}</span><strong>{fmt(a.value)} {a.unit}</strong><span className={"reference-badge "+statusClass(referenceStatus(a))}>{markerStatus(a,t)}</span></div>)}</div>
           <div className="source-placeholder"><LockKeyhole size={23}/><div><strong>{t.canonicalPdf}</strong><p>{t.pdfNotAvailable}</p><button className="secondary" disabled><Download size={16}/> {t.downloadUnavailable}</button></div></div>
         </section>
       </div>}

@@ -19,3 +19,6 @@ BioFlow is a new medical-document organization demo for Hacktoberfest 2026.
 
 - Every marker timeline data point must resolve to a source collection/report ID and date. Always use `markerHistory` for chart observations, never interpolate fictional readings or assume every report contains every marker.
 - Overview sparklines and the detailed selectable chart are separate components; ensure accessible keyboard selection and bilingual labels in both light and dark themes.
+
+- Show **all** measurements of the selected latest lab collection and label status only when that measurement has a valid source reference bound; missing bounds => "No reference" (never assume normal).
+- Latest-summary featured measurement may be chosen by a deterministic **visual deviation** heuristic, never treated as medical severity or diagnosis. Keep calculation logic tested and separate from UI.

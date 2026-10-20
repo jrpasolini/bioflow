@@ -28,6 +28,13 @@ const en = {
   trends: 'Trends',
   reports: 'Reports',
   lastCollection: 'Latest simulated collection',
+  featuredHigh: 'above the reference range',
+  featuredLow: 'below the reference range',
+  noOutOfRangeHighlight: 'No out-of-range result identified in this collection',
+  outsideReferenceCount: 'results outside the provided reference intervals',
+  allResultsLatest: 'All results from the latest collection',
+  noReference: 'No reference',
+  referenceDisclaimer: 'The highlighted result is selected by a visual deviation rule, not medical severity. Reference intervals here are fictional; clinical interpretation requires the original report.',
   markersCount: 'markers',
   demoOnly: 'Demo only',
   labMarkers: 'Lab markers',
@@ -68,6 +75,10 @@ const en = {
   creatinine: 'Creatinine',
   triglycerides: 'Triglycerides',
   hdl: 'HDL cholesterol',
+  urea: 'Urea',
+  ldl: 'LDL cholesterol',
+  totalCholesterol: 'Total cholesterol',
+  hemoglobin: 'Hemoglobin',
   labAurora: 'Aurora Laboratory (fictional)',
   labHorizonte: 'Horizon Laboratory (fictional)',
   pageTitle: 'BioFlow | Laboratory history',
@@ -99,6 +110,13 @@ const pt: Record<TranslationKey,string> = {
   trends: 'Evolução',
   reports: 'Laudos',
   lastCollection: 'Última coleta simulada',
+  featuredHigh: 'acima da referência',
+  featuredLow: 'abaixo da referência',
+  noOutOfRangeHighlight: 'Nenhum resultado fora da referência identificado nesta coleta',
+  outsideReferenceCount: 'resultados fora dos intervalos de referência informados',
+  allResultsLatest: 'Todos os resultados da última coleta',
+  noReference: 'Sem referência',
+  referenceDisclaimer: 'O destaque usa uma regra visual de desvio, não de gravidade médica. Os intervalos desta demonstração são fictícios; a interpretação clínica exige o laudo original.',
   markersCount: 'indicadores',
   demoOnly: 'Somente demonstração',
   labMarkers: 'Marcadores laboratoriais',
@@ -139,6 +157,10 @@ const pt: Record<TranslationKey,string> = {
   creatinine: 'Creatinina',
   triglycerides: 'Triglicerídeos',
   hdl: 'Colesterol HDL',
+  urea: 'Ureia',
+  ldl: 'Colesterol LDL',
+  totalCholesterol: 'Colesterol total',
+  hemoglobin: 'Hemoglobina',
   labAurora: 'Laboratório Aurora (fictício)',
   labHorizonte: 'Laboratório Horizonte (fictício)',
   pageTitle: 'BioFlow | Histórico laboratorial',
@@ -147,7 +169,8 @@ const pt: Record<TranslationKey,string> = {
 export const translations: Record<Locale, Record<TranslationKey,string>> = {'en-US': en, 'pt-BR': pt};
 
 const indicatorKeys = {
-  glucose:'glucose',hba1c:'hba1c',creatinine:'creatinine',triglycerides:'triglycerides',hdl:'hdl'
+  glucose:'glucose',hba1c:'hba1c',creatinine:'creatinine',triglycerides:'triglycerides',hdl:'hdl',
+  urea:'urea',ldl:'ldl',totalCholesterol:'totalCholesterol',hemoglobin:'hemoglobin'
 } as const;
 export function labelForIndicator(code: string, locale: Locale, fallback: string): string {
   const key = indicatorKeys[code as keyof typeof indicatorKeys];
