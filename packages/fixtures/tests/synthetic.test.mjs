@@ -14,3 +14,10 @@ test('fictional demographic data must be explicit, not copied from a real patien
   assert.match(contents, /dateOfBirth: '1958-09-07'/);
   assert.match(contents, /demoRecordId: 'BF-DEMO-001'/);
 });
+
+test('history demonstration includes multiple fully fabricated collection dates', () => {
+  assert.match(contents,/bf-demo-2023-02/);
+  assert.match(contents,/bf-demo-2024-05/);
+  assert.match(contents,/bf-demo-2026-03/);
+  assert.match(contents,/status:'synthetic-demo'/);
+});

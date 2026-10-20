@@ -80,3 +80,31 @@ button:focus-visible,select:focus-visible {outline:3px solid var(--accent);outli
 .patient-identity span {display:inline-flex;flex-wrap:wrap;gap:5px;align-items:center}
 .patient-identity strong {color:var(--text);font-weight:650}
 @media(max-width:540px){.patient-identity{gap:7px 12px;font-size:12px}}
+
+/* Marker sparklines on the overview cards, and one accessible point per lab result. */
+.indicator-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+.indicator {display:flex;align-items:center;justify-content:space-between;flex-direction:row;gap:8px;min-height:116px;overflow:hidden}
+.indicator-copy {display:flex;flex-direction:column;gap:7px;min-width:0;flex:1}
+.indicator-name {color:var(--muted);font-size:12px;line-height:1.3}
+.indicator-copy strong {font-size:27px;white-space:nowrap}
+.indicator-copy strong small {font-size:11px;font-weight:600}
+.indicator-meta {color:var(--muted);font-size:11px;line-height:1.4}
+.mini-sparkline {width:116px;height:48px;max-width:40%;flex-shrink:0;overflow:visible}
+.interactive-history {display:block;width:100%;height:auto}
+.history-point {cursor:pointer;outline:none}
+.history-point .point-dot {fill:var(--plot-stroke);stroke:var(--chart-bg);stroke-width:2;transition:r .12s ease}
+.history-point:hover .point-dot,.history-point:focus-visible .point-dot {stroke:var(--accent);stroke-width:4}
+.history-point:focus-visible .point-target {fill:var(--pill-bg)}
+.history-point.active .point-dot {stroke:var(--accent);stroke-width:3}
+.point-pagination {display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:14px}
+.point-pagination button {min-width:32px;min-height:32px;padding:4px 7px;border-radius:7px;background:var(--surface);border:1px solid var(--line-strong);color:var(--muted)}
+.point-pagination button.selected {background:var(--pill-bg);color:var(--pill-text);border-color:var(--accent)}
+.selected-exam {display:flex;gap:20px;align-items:center;justify-content:space-between;margin-top:15px;background:var(--source-bg);border:1px solid var(--source-border);padding:20px;border-radius:12px}
+.selected-exam h3 {margin:8px 0;font-size:28px;color:var(--text)}
+.selected-exam h3 small {font-size:13px;font-weight:500}
+.selected-exam p {font-size:13px}
+.selected-exam p strong {color:var(--text);font-weight:650}
+.open-report {background:var(--accent-bg);color:#fff;border:1px solid var(--accent-bg);border-radius:9px;padding:10px 14px;font-size:13px;font-weight:650;white-space:nowrap}
+.open-report:hover {filter:brightness(1.12)}
+@media(max-width:800px){.indicator-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.indicator-grid{grid-template-columns:1fr}.indicator-copy strong{font-size:25px}.selected-exam{flex-direction:column;align-items:stretch}.open-report{align-self:start}}

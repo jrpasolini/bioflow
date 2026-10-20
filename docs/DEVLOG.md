@@ -18,3 +18,7 @@
 - Language dictionaries live in apps/web/src/i18n.ts so future pages and Auth0 flows can reuse the same architecture.
 
 - Introduced a synthetic patient identification strip under Walter White: fictional DOB 1958-09-07, calculated age (UTC date), and BF-DEMO-001. Both languages use localized birth dates and labels.
+
+- Every distinct lab indicator now receives a mini chronological sparkline on its overview card.
+- Expanded the fabricated dataset to eight distinct collection dates. Each point on a detailed timeline is one real **synthetic fixture observation**, not interpolation, and links to its associated collection.
+- Added selectable SVG points (mouse/keyboard), mobile-accessible numbered point selectors, source collection metadata, and contextual open-collection action. Time spacing follows **collection order**, not elapsed days; the axis is labeled accordingly.

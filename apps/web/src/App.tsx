@@ -1,4 +1,5 @@
 import {useMemo,useState} from 'react';
+import {markerHistory,plotHistory} from './timeline';
 import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,Upload,ShieldCheck,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoPatient,demoReports,indicatorCodes,type Indicator} from '../../../packages/fixtures/src/synthetic';
 import {useThemePreference} from './theme';
@@ -12,21 +13,61 @@ function markerStatus(a: Indicator,t:ReturnType<typeof useLocale>['t']):string {
   if(a.referenceLow!==undefined&&a.value<a.referenceLow)return t.below;
   return t.within;
 }
-function Trend({code,locale}:{code:string;locale:Locale}){
-  const series=demoReports.flatMap(r=>r.results.filter(a=>a.code===code).map(a=>({...a,date:r.collectedAt})));
-  if(!series.length)return null;
-  const lo=Math.min(...series.map(a=>a.value)),hi=Math.max(...series.map(a=>a.value)),span=Math.max(1,hi-lo);
-  const x=(i:number)=>22+i*396/Math.max(1,series.length-1);
-  const y=(v:number)=>140-(v-lo)*95/span;
-  const points=series.map((s,i)=>x(i)+','+y(s.value)).join(' ');
-  const accessible=series.map(s=>formatDate(s.date,locale)+' '+formatValue(s.value,locale)+' '+s.unit).join('; ');
-  return <div className="trend-chart" role="img" aria-label={labelForIndicator(code,locale,series[0].name)+': '+accessible}>
-    <svg viewBox="0 0 440 165" aria-hidden="true">
-      <line x1="16" y1="142" x2="424" y2="142" stroke="var(--plot-axis)"/>
-      <polyline points={points} fill="none" stroke="var(--plot-stroke)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-      {series.map((s,i)=><g key={s.date}><circle cx={x(i)} cy={y(s.value)} r="5" fill="var(--plot-stroke)"/><text x={x(i)} y={y(s.value)-14} textAnchor="middle" fontSize="12" fill="var(--plot-label)">{formatValue(s.value,locale)}</text></g>)}
-    </svg>
-    <div className="chart-labels">{series.map(s=><span key={s.date}>{formatDate(s.date,locale)}</span>)}</div>
+function MiniSparkline({code}:{code:string}){
+  const series=markerHistory(demoReports,code);
+  const coords=plotHistory(series,116,48,5,7);
+  if(!coords.length)return null;
+  return <svg className="mini-sparkline" viewBox="0 0 116 48" aria-hidden="true" focusable="false">
+    <polyline fill="none" stroke="var(--plot-stroke)" strokeWidth="2.1" strokeLinejoin="round" strokeLinecap="round" points={coords.map(p=>p.x+','+p.y).join(' ')}/>
+    {coords.map((p,i)=><circle key={series[i].id} cx={p.x} cy={p.y} r={i===coords.length-1?3.1:2} fill="var(--plot-stroke)"/>)}
+  </svg>;
+}
+function Trend({code,locale,onOpenReport,t}:{
+  code:string;locale:Locale;onOpenReport:(reportId:string)=>void;t:ReturnType<typeof useLocale>['t']
+}){
+  const series=markerHistory(demoReports,code);
+  const [selectedPoint,setSelectedPoint]=useState<{code:string;id:string}|null>(null);
+  if(!series.length)return <p>{t.noHistory}</p>;
+  const selected=series.find(s=>selectedPoint?.code===code&&s.id===selectedPoint.id)??series[series.length-1];
+  const points=plotHistory(series,520,190,28,28);
+  const selectedIndex=series.findIndex(s=>s.id===selected.id);
+  const label=labelForIndicator(code,locale,series[0].name);
+  const chartLabel=t.historyFor+' '+label+'. '+t.collectionOrder;
+  return <div className="timeline-wrap">
+    <div className="trend-chart">
+      <svg className="interactive-history" viewBox="0 0 520 190" role="group" aria-label={chartLabel}>
+        <line x1="28" x2="492" y1="164" y2="164" stroke="var(--plot-axis)"/>
+        <polyline points={points.map(p=>p.x+','+p.y).join(' ')} fill="none" stroke="var(--plot-stroke)" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round"/>
+        {points.map((p,i)=>{
+          const s=series[i];
+          const pointLabel=label+', '+formatDate(s.collectedAt,locale)+', '+formatValue(s.value,locale)+' '+s.unit+', '+labelForLab(s.laboratory,locale);
+          return <g key={s.id} role="button" tabIndex={0} focusable="true"
+            aria-label={pointLabel} aria-pressed={s.id===selected.id}
+            className={'history-point '+(s.id===selected.id?'active':'')}
+            onClick={()=>setSelectedPoint({code,id:s.id})}
+            onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setSelectedPoint({code,id:s.id});}}}>
+            <title>{pointLabel}</title>
+            <circle cx={p.x} cy={p.y} r="13" fill="transparent" className="point-target"/>
+            <circle cx={p.x} cy={p.y} r={s.id===selected.id?7:5} className="point-dot"/>
+          </g>;
+        })}
+      </svg>
+      <div className="chart-labels"><span>{formatDate(series[0].collectedAt,locale)}</span><span>{t.collectionOrder}</span><span>{formatDate(series[series.length-1].collectedAt,locale)}</span></div>
+    </div>
+    <div className="point-pagination" aria-label={t.historyPoints}>
+      {series.map((s,i)=><button key={s.id} type="button" className={s.id===selected.id?'selected':''}
+        aria-label={formatDate(s.collectedAt,locale)+': '+formatValue(s.value,locale)+' '+s.unit}
+        aria-pressed={s.id===selected.id} title={formatDate(s.collectedAt,locale)}
+        onClick={()=>setSelectedPoint({code,id:s.id})}>{i+1}</button>)}
+    </div>
+    <section className="selected-exam" aria-live="polite" aria-label={t.selectedExam}>
+      <div><span className="eyebrow">{t.selectedExam} {selectedIndex+1}/{series.length}</span>
+        <h3>{formatValue(selected.value,locale)} <small>{selected.unit}</small></h3>
+        <p>{t.collectionDate}: <strong>{formatDate(selected.collectedAt,locale)}</strong></p>
+        <p>{t.laboratory}: <strong>{labelForLab(selected.laboratory,locale)}</strong></p>
+      </div>
+      <button type="button" className="open-report" onClick={()=>onOpenReport(selected.reportId)}>{t.openCollection} <span aria-hidden="true">→</span></button>
+    </section>
   </div>;
 }
 export default function App(){
@@ -67,7 +108,7 @@ export default function App(){
       {section==='overview'&&<>
         <section className="notice"><div><span className="eyebrow">{t.lastCollection}</span><h2>{date(latest.collectedAt)}</h2><p>{labName(latest.laboratory)} · {latest.results.length} {t.markersCount}</p></div><span className="pill">{t.demoOnly}</span></section>
         <h2 className="section-title">{t.labMarkers}</h2>
-        <div className="indicator-grid">{latest.results.map(a=><button key={a.code} className="indicator" onClick={()=>{setSelected(a.code);setSection('trends')}}><span>{indicatorName(a)}</span><strong>{fmt(a.value)} <small>{a.unit}</small></strong><span className="reference">{markerStatus(a,t)}</span></button>)}</div>
+        <div className="indicator-grid">{latest.results.map(a=><button key={a.code} className="indicator" aria-label={t.viewHistory+' '+indicatorName(a)+', '+fmt(a.value)+' '+a.unit} onClick={()=>{setSelected(a.code);setSection('trends')}}><span className="indicator-copy"><span className="indicator-name">{indicatorName(a)}</span><strong>{fmt(a.value)} <small>{a.unit}</small></strong><span className="indicator-meta">{date(latest.collectedAt)} · {markerStatus(a,t)}</span></span><MiniSparkline code={a.code}/></button>)}</div>
         <h2 className="section-title">{t.recentCollections}</h2>
         <div className="panel">{[...demoReports].reverse().map(r=><button className="report-row" key={r.id} onClick={()=>{setReportId(r.id);setSection('reports')}}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)} · {r.results.length} {t.fictionalResults}</small></span><span className="chevron">›</span></button>)}</div>
       </>}
@@ -75,7 +116,7 @@ export default function App(){
         <div className="detail-heading"><div><span className="eyebrow">{t.longitudinal}</span><h2>{t.trendHeading}</h2><p>{t.trendText}</p></div>
         <label>{t.marker}<select aria-label={t.selectMarker} value={selected} onChange={e=>setSelected(e.target.value)}>{latest.results.map(a=><option key={a.code} value={a.code}>{indicatorName(a)}</option>)}</select></label></div>
         <div className="value-card"><strong>{latestIndicator&&fmt(latestIndicator.value)}</strong><span>{latestIndicator?.unit} · {t.mostRecentResult}</span></div>
-        <Trend code={selected} locale={locale}/><p className="disclaimer">{t.medicalDisclaimer}</p>
+        <Trend code={selected} locale={locale} t={t} onOpenReport={(id)=>{setReportId(id);setSection('reports')}}/><p className="disclaimer">{t.medicalDisclaimer}</p>
       </section>}
       {section==='reports'&&<div className="reports-layout">
         <section className="panel reports-list"><h2>{t.collections}</h2>{[...demoReports].reverse().map(r=><button className={'report-row '+(r.id===reportId?'selected':'')} key={r.id} onClick={()=>setReportId(r.id)}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)}</small></span></button>)}</section>

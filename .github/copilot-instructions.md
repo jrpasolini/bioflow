@@ -16,3 +16,6 @@ BioFlow is a new medical-document organization demo for Hacktoberfest 2026.
 
 - The interface must be bilingual: `en-US` default and `pt-BR` optional. Use `apps/web/src/i18n.ts` for all user-facing text and locale-aware dates/numbers; do not hardcode copy in components.
 - Preserve both theme modes and language selection when adding features. Any new text must be translated in both locales.
+
+- Every marker timeline data point must resolve to a source collection/report ID and date. Always use `markerHistory` for chart observations, never interpolate fictional readings or assume every report contains every marker.
+- Overview sparklines and the detailed selectable chart are separate components; ensure accessible keyboard selection and bilingual labels in both light and dark themes.
