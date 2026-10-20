@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import ts from 'typescript';
 
 // Transpile a pure TypeScript module once to test its actual decision logic in Node.
-const source = readFileSync(new URL('../../apps/web/src/reference.ts', import.meta.url), 'utf8');
+const source = readFileSync(new URL('../../../apps/web/src/reference.ts', import.meta.url), 'utf8');
 const transpiled = ts.transpileModule(source, {compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
 const {referenceStatus,proportionalReferenceDeviation,chooseFeaturedResult} =
   await import('data:text/javascript;base64,'+Buffer.from(transpiled).toString('base64'));
