@@ -44,7 +44,7 @@ test('PDF list/upload/download stay disabled even if bindings accidentally exist
 });
 
 test('a published demo code cannot authorize private PDF endpoints',async()=>{
- const code='246810'; // UI-only shortcut; never a bearer token.
+ const code='110526'; // UI-only shortcut; never a bearer token.
  const binding={...env,ENABLE_PDF_ENDPOINTS:'true',REPORTS_BUCKET:{}};
  const response=await call('/api/patients/demo-walter-white/reports',{
   headers:{Authorization:'Bearer '+code,'X-Bioflow-Demo-Code':code}
