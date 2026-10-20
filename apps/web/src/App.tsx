@@ -5,9 +5,10 @@ import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
 import {Activity,ChartNoAxesCombined,FileText,HeartPulse,Download,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoReports as fixtureReports,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
-import {demoSources,heldoutDates} from '../../../packages/fixtures/src/demo-sources';
+import {demoSources} from '../../../packages/fixtures/src/demo-sources';
 import {AppActions} from './pwa';
 import {DemoEntry} from './demo-entry';
+import {GemmaImport} from './gemma-import';
 import {useDemoOverview} from './use-demo';
 import {useThemePreference} from './theme';
 import {useLocale,labelForIndicator,labelForLab,formatDate,formatBirthDate,formatValue,calculateAge,type Locale} from './i18n';
@@ -131,10 +132,8 @@ export default function App(){
     <main className="container">
       {!entered?<DemoEntry portuguese={locale==='pt-BR'} onExplore={()=>setEntered(true)}/>:<>
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
-      <section className="panel demo-sample-download" aria-label={locale==='pt-BR'?'Exames para testar':'Sample reports'}>
-        <div><strong>{locale==='pt-BR'?'26 laudos na base · 3 reservados para testar':'26 reports preloaded · 3 held out for testing'}</strong><p>{locale==='pt-BR'?'Baixe os três laudos fictícios mais recentes. Eles não estão incluídos no histórico inicial. A importação automática via Gemma está em preparação.':'Download the three newest fictional reports. They are excluded from the initial history. Automatic import with Gemma is being prepared.'}</p><small>{heldoutDates.map(d=>date(d)).join(' · ')}</small></div>
-        <a className="secondary" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={16}/>{locale==='pt-BR'?'Baixar 3 exames (ZIP)':'Download 3 reports (ZIP)'}</a>
-      </section>
+      <GemmaImport portuguese={locale==='pt-BR'} onReportsChanged={setSessionReports}/>
+
       {status==='offline'&&<p role="status" className="demo-source">{locale==='pt-BR'?'Não foi possível atualizar. Exibindo o histórico local.':'Unable to refresh. Showing local history.'}</p>}
       <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1 ref={historyHeading} tabIndex={-1}>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
       <nav className="tabs" aria-label={t.navLabel}>
