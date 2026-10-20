@@ -26,7 +26,7 @@ While Auth0 is not configured, the exercise is explicitly labeled as a simulatio
 ## ADR-007: One public entry screen without an MFA bypass (2026-10-20)
 
 The two-option landing page is replaced by one six-digit form. The visibly published
-`246810` code is deliberately NOT a secret: it is a presentation-only shortcut
+`110526` code is deliberately NOT a secret: it is a presentation-only shortcut
 to the synthetic public demo, not TOTP, Auth0, a recovery code, an API credential,
 or a real authenticated session.
 
