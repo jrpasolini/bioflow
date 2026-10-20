@@ -189,5 +189,6 @@ h2,.detail-panel h2{font-size:30px;line-height:1.2}
 
 .reference-badge.status-very-high{background:#f2d7cd;color:#7d2616;font-weight:800}
 .reference-badge.status-very-low{background:#cddff9;color:#183d78;font-weight:800}
+:root[data-theme="dark"] .theme-toggle .lucide-sun{color:#f6cd65}
 :root[data-theme="dark"] .reference-badge.status-very-high{background:#5c2a20;color:#ffcfbb}
 :root[data-theme="dark"] .reference-badge.status-very-low{background:#23466f;color:#d4e6ff}
