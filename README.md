@@ -11,7 +11,9 @@ BioFlow is a new application started during Hacktoberfest 2026 Week 3. It was co
 - React + TypeScript: overview, marker evolution and report details for fabricated collections.
 - Cloudflare Workers API: public synthetic overview and protected original-PDF upload, index and byte-for-byte download using private Cloudflare R2.
 - Authorization boundary: Auth0 JWT verification and allowlisted owner; secure routes fail closed until configured.
-- **Not yet integrated:** MongoDB Atlas, live Auth0 frontend login, Gemma extraction and production hosting. No real medical data may be processed in this prototype.
+- MongoDB Atlas: 26 baseline fictional reports and 258 numeric readings are seeded and verified. Worker read access is separate from visitor imports.
+- Google Gemma 4: PDF-to-Markdown extraction, reviewed preview and isolated, expiring visitor imports are implemented **behind an off-by-default Worker flag**. See [Gemma demo setup](docs/GEMMA_DEMO.md).
+- **Not yet live-certified:** real Gemma inference on the three sample PDFs, an isolated Atlas writer credential and TTL indexes, Cloudflare feature activation, production end-to-end test and Auth0 login. Never upload real medical records.
 
 ## Local development
 
@@ -42,7 +44,7 @@ npm run build
 
 ## Document preservation guarantee
 
-An uploaded canonical PDF remains byte-for-byte intact in a **private** R2 object. Its SHA-256 fingerprint and immutable object identifier are maintained separately from the extracted readings. Download is authorized by the backend; the original is never regenerated from AI output. The future MongoDB Atlas integration will link clinical records to private object metadata.
+An uploaded canonical PDF remains byte-for-byte intact in a **private** R2 object. Its SHA-256 fingerprint and immutable object identifier are maintained separately from the extracted readings. Download is authorized by the backend; the original is never regenerated from AI output. The current public demonstration has a separate short-lived MongoDB import workflow for three SHA-256-approved synthetic samples; private clinical storage remains a future authenticated feature.
 
 ## Development and competition
 
