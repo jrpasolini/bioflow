@@ -220,4 +220,7 @@ h2,.detail-panel h2{font-size:30px;line-height:1.2}
 .demo-auth-dialog input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .demo-auth-dialog [role=alert]{margin:0;color:var(--banner-text)}
 .header-actions .access-options{margin:0;min-height:42px}
+.integration-credits{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 20px;margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.8;text-align:center}
+.integration-credits a{color:var(--accent);text-underline-offset:3px}
+.integration-credits small{font-size:inherit;color:var(--muted)}
 @media(max-width:640px){.demo-entry{padding-top:30px}.entry-options{grid-template-columns:1fr;gap:16px}.entry-option{padding:23px}.entry-option button{width:100%}.entry-intro{font-size:15px}}
