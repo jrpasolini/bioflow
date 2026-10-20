@@ -3,7 +3,7 @@ import brFlag from 'flag-icons/flags/4x3/br.svg';
 import {useMemo,useState} from 'react';
 import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
-import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,Upload,FlaskConical,Moon,Sun} from 'lucide-react';
+import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoReports as fixtureReports,indicatorCodes,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
 import {AppActions} from './pwa';
 import {useDemoOverview} from './use-demo';
@@ -174,9 +174,12 @@ export default function App(){
           <div className="source-placeholder"><LockKeyhole size={23}/><div><strong>{locale==='pt-BR'?'Laudo original':'Original report'}</strong><p>{t.pdfNotAvailable}</p><button className="secondary" disabled><Download size={16}/> {t.downloadUnavailable}</button></div></div>
         </section>
       </div>}
-      <section className="next-step"><Upload size={21}/><div><strong>{t.importHeading}</strong><p>{t.integrations}</p></div><span className="pill">{t.inDevelopment}</span></section>
     </main>
-    <footer>{t.footer}</footer>
+    <footer className="site-footer">
+      <p className="footer-note">{t.footer}</p>
+      <p className="technology-label">BioFlow · {t.technologyCredits}</p>
+      <ul className="technology-credits" aria-label={t.technologyCredits}>{['React','TypeScript','Vite','Cloudflare Workers','MongoDB Atlas','Lucide','Newsreader','Figtree','flag-icons'].map(name=><li key={name}>{name}</li>)}</ul>
+    </footer>
   </div>;
 }
 
