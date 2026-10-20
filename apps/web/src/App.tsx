@@ -92,7 +92,9 @@ function Trend({code,reports,locale,onOpenReport,t}:{
 }
 export default function App(){
   const {data,status}=useDemoOverview();
-  const {patient:demoPatient,reports:demoReports}=data;
+  const {patient:demoPatient,reports:baseReports}=data;
+  const [sessionReports,setSessionReports]=useState<LabReport[]>([]);
+  const demoReports=useMemo(()=>[...baseReports,...sessionReports].sort((a,b)=>a.collectedAt.localeCompare(b.collectedAt)),[baseReports,sessionReports]);
   const latest=demoReports[demoReports.length-1];
   const {theme,toggleTheme}=useThemePreference();
   const {locale,changeLocale,t}=useLocale();
