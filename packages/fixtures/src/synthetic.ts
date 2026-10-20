@@ -2,6 +2,8 @@
 export type Indicator = {
   code: string; name: string; value: number; unit: string;
   referenceLow?: number; referenceHigh?: number;
+  /** Optional explicit attention interval from this exam, never inferred from proximity. */
+  referenceAttentionLow?: number; referenceAttentionHigh?: number;
 };
 export type LabReport = {
   id: string; patientId: string; collectedAt: string;
@@ -77,3 +79,4 @@ export const demoReports: LabReport[] = [
   ]}
 ];
 export const indicatorCodes = ['glucose','hba1c','creatinine','triglycerides','hdl','urea','ldl','totalCholesterol','hemoglobin'] as const;
+

@@ -145,6 +145,21 @@ button:focus-visible,select:focus-visible {outline:3px solid var(--accent);outli
 
 
 /* Editorial hierarchy observed in the owner's reference: self-hosted fonts, restrained weight. */
+.marker-history{margin-top:28px}
+.marker-history h3{font-size:27px;margin:0 0 14px}
+.marker-history ul{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.history-row{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:18px;align-items:center;text-align:left;padding:17px 20px;background:var(--surface);color:var(--text);border:0;border-bottom:1px solid var(--line-soft);min-height:76px}
+.marker-history li:last-child .history-row{border-bottom:0}
+.history-row:hover,.history-row.selected{background:var(--hover-bg)}
+.history-row.selected{box-shadow:inset 3px 0 var(--accent)}
+.history-row:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.history-collection{display:flex;flex-direction:column;gap:5px;font-size:14px}
+.history-collection>span,.history-collection small{color:var(--muted);font-size:12px}
+.history-value{font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:500}
+.history-value small{font-size:12px;font-weight:400}
+.reference-badge.status-attention{background:#f6edce;color:#795609}
+:root[data-theme="dark"] .reference-badge.status-attention{background:#493c1c;color:#f3d888}
+@media(max-width:540px){.history-row{padding:15px 12px;gap:9px;grid-template-columns:minmax(0,1fr) auto}.history-row>.reference-badge{grid-column:2}.history-collection{grid-row:span 2}.history-value{font-size:15px}}
 :root{--font-reading:'Figtree Variable',system-ui,-apple-system,'Segoe UI',sans-serif;--font-title:'Newsreader Variable','Iowan Old Style',Georgia,serif;font-family:var(--font-reading);font-optical-sizing:auto}
 :root:not([data-theme="dark"]){--page:#f3efe6;--surface:#fbf8f2;--text:#1c241f;--heading:#194c43;--muted:#6b7068;--muted-soft:#72776e;--line:#e4ded3;--line-soft:#e8e2d8;--line-strong:#dcd6cb;--chart-bg:#fbf8f2;--plot-axis:#d9d4c8;--plot-stroke:#285c50;--shadow-color:#2a352504;--hover-bg:#f2f3eb}
 h1,h2,h3{font-family:var(--font-title);font-weight:400;letter-spacing:-.025em}

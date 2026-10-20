@@ -1,6 +1,6 @@
-import type {LabReport} from '../../../packages/fixtures/src/synthetic';
+import type {LabReport,Indicator} from '../../../packages/fixtures/src/synthetic';
 
-export interface MarkerObservation {
+export interface MarkerObservation extends Indicator {
   id: string;
   reportId: string;
   collectedAt: string;
@@ -22,7 +22,9 @@ export function markerHistory(reports: readonly LabReport[], code: string): Mark
       code: result.code,
       name: result.name,
       value: result.value,
-      unit: result.unit
+      unit: result.unit,
+      referenceLow:result.referenceLow,referenceHigh:result.referenceHigh,
+      referenceAttentionLow:result.referenceAttentionLow,referenceAttentionHigh:result.referenceAttentionHigh
     }))
   ).sort((a,b) => a.collectedAt.localeCompare(b.collectedAt) || a.reportId.localeCompare(b.reportId));
 }

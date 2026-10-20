@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import {testModule} from '../../../scripts/test-module.mjs';
 const {markerHistory,plotHistory,smoothHistoryPath}=await testModule(new URL('../src/timeline.ts',import.meta.url),'timeline');
 const {localDemo}=await testModule(new URL('../src/demo-api.ts',import.meta.url),'timeline-fixture');
+const {referenceStatus}=await testModule(new URL('../src/reference.ts',import.meta.url),'timeline-reference');
+test('history uses each exam reference, including explicit attention intervals',()=>{
+ const reports=structuredClone(localDemo.reports.slice(0,3));
+ const values=[{referenceLow:70,referenceHigh:100},{referenceLow:70,referenceHigh:120},{referenceLow:70,referenceHigh:100,referenceAttentionLow:101,referenceAttentionHigh:120}];
+ reports.forEach((r,i)=>{r.results=[{code:'sample',name:'Sample',value:110,unit:'u',...values[i]}];});
+ const series=markerHistory(reports,'sample');
+ assert.deepEqual(series.map(referenceStatus),['high','normal','attention']);
+ assert.deepEqual(series.map(s=>s.reportId),reports.map(r=>r.id));
+});
 test('each plotted point retains its original exam, date and value',()=>{
  const series=markerHistory(localDemo.reports,'glucose');
  assert.equal(series.length,8);

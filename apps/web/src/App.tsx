@@ -13,7 +13,7 @@ const initialLatest=fixtureReports[fixtureReports.length-1];
 
 function markerStatus(a: Indicator,t:ReturnType<typeof useLocale>['t']):string {
   const status=referenceStatus(a);
-  return status==='high'?t.above:status==='low'?t.below:status==='normal'?t.within:t.noReference;
+  return status==='attention'?t.attention:status==='high'?t.above:status==='low'?t.below:status==='normal'?t.within:t.noReference;
 }
 const statusClass=(status:ReferenceStatus)=>'status-'+status;
 const searchKey=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
@@ -63,12 +63,6 @@ function Trend({code,reports,locale,onOpenReport,t}:{
       </svg>
       <div className="chart-labels"><span>{formatDate(series[0].collectedAt,locale)}</span><span>{t.collectionOrder}</span><span>{formatDate(series[series.length-1].collectedAt,locale)}</span></div>
     </div>
-    <div className="point-pagination" aria-label={t.historyPoints}>
-      {series.map((s,i)=><button key={s.id} type="button" className={s.id===selected.id?'selected':''}
-        aria-label={formatDate(s.collectedAt,locale)+': '+formatValue(s.value,locale)+' '+s.unit}
-        aria-pressed={s.id===selected.id} title={formatDate(s.collectedAt,locale)}
-        onClick={()=>setSelectedPoint({code,id:s.id})}>{i+1}</button>)}
-    </div>
     <section className="selected-exam" aria-live="polite" aria-label={t.selectedExam}>
       <div><span className="eyebrow">{t.selectedExam} {selectedIndex+1}/{series.length}</span>
         <h3>{formatValue(selected.value,locale)} <small>{selected.unit}</small></h3>
@@ -76,6 +70,18 @@ function Trend({code,reports,locale,onOpenReport,t}:{
         <p>{t.laboratory}: <strong>{labelForLab(selected.laboratory,locale)}</strong></p>
       </div>
       <button type="button" className="open-report" onClick={()=>onOpenReport(selected.reportId)}>{t.openCollection} <span aria-hidden="true">→</span></button>
+    </section>
+    <section className="marker-history" aria-label={t.historyFor+' '+label}>
+      <h3>{locale==='pt-BR'?'Histórico de exames':'Exam history'}</h3>
+      <ul>{[...series].reverse().map(s=>{
+        const state=referenceStatus(s);
+        const badge=state==='attention'?t.attention:state==='high'?(locale==='pt-BR'?'Alto':'High'):state==='low'?(locale==='pt-BR'?'Baixo':'Low'):state==='normal'?(locale==='pt-BR'?'Normal':'Normal'):t.noReference;
+        const range=s.referenceLow!==undefined&&s.referenceHigh!==undefined?formatValue(s.referenceLow,locale)+'–'+formatValue(s.referenceHigh,locale):s.referenceLow!==undefined?'≥ '+formatValue(s.referenceLow,locale):s.referenceHigh!==undefined?'≤ '+formatValue(s.referenceHigh,locale):null;
+        return <li key={s.id}><button type="button" className={'history-row '+(s.id===selected.id?'selected':'')} aria-pressed={s.id===selected.id} onClick={()=>setSelectedPoint({code,id:s.id})}>
+          <span className="history-collection"><strong>{formatDate(s.collectedAt,locale)}</strong><span>{labelForLab(s.laboratory,locale)}</span>{range&&<small>{locale==='pt-BR'?'Referência':'Reference'}: {range} {s.unit}</small>}{state==='attention'&&<small>{locale==='pt-BR'?'Faixa de atenção':'Attention interval'}: {s.referenceAttentionLow===undefined?'':('≥ '+formatValue(s.referenceAttentionLow,locale)+' ')}{s.referenceAttentionHigh===undefined?'':('≤ '+formatValue(s.referenceAttentionHigh,locale))} {s.unit}</small>}</span>
+          <strong className="history-value">{formatValue(s.value,locale)} <small>{s.unit}</small></strong><span className={'reference-badge '+statusClass(state)}>{badge}</span>
+        </button></li>;
+      })}</ul>
     </section>
   </div>;
 }

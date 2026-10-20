@@ -1,14 +1,17 @@
 import type {Indicator} from '../../../packages/fixtures/src/synthetic';
 
-export type ReferenceStatus = 'high' | 'low' | 'normal' | 'unknown';
+export type ReferenceStatus = 'high' | 'attention' | 'low' | 'normal' | 'unknown';
 
 /** Compare only against the specific result's reported reference interval.
  * Missing reference bounds must never be interpreted as "normal".
  */
 export function referenceStatus(result: Indicator): ReferenceStatus {
   const low=result.referenceLow, high=result.referenceHigh;
+  const attentionLow=result.referenceAttentionLow,attentionHigh=result.referenceAttentionHigh;
   if (!Number.isFinite(result.value) || (low!==undefined && !Number.isFinite(low))
     || (high!==undefined && !Number.isFinite(high)) || (low!==undefined && high!==undefined && low>high)) return 'unknown';
+  if((attentionLow!==undefined&&!Number.isFinite(attentionLow))||(attentionHigh!==undefined&&!Number.isFinite(attentionHigh))||(attentionLow!==undefined&&attentionHigh!==undefined&&attentionLow>attentionHigh))return 'unknown';
+  if((attentionLow!==undefined||attentionHigh!==undefined)&&(attentionLow===undefined||result.value>=attentionLow)&&(attentionHigh===undefined||result.value<=attentionHigh))return 'attention';
   if (low===undefined && high===undefined) return 'unknown';
   if (high!==undefined && result.value>high) return 'high';
   if (low!==undefined && result.value<low) return 'low';
@@ -35,3 +38,4 @@ export function chooseFeaturedResult(results: readonly Indicator[]): Indicator |
   }
   return featured;
 }
+
