@@ -5,6 +5,12 @@ dist/
 .env
 .env.*
 !.env.example
+# Additional Atlas/Cloudflare credential-file patterns
+*.env
+.dev.vars.*
+*credentials*.env
+*.pem
+*.key
 *.local
 *.log
 coverage/
