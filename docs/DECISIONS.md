@@ -22,3 +22,18 @@ The owner approved two entry choices on 2026-10-20: direct access to the entirel
 
 While Auth0 is not configured, the exercise is explicitly labeled as a simulation, displays a randomly generated example code and only checks that the visitor repeats that example. It must not collect real passwords, authenticator seeds or live authenticator codes; it must never create an authenticated session, unlock a protected route or suggest identity was verified. This UI demonstration is separate from the required real Auth0 MFA flow for future private accounts. No shared demo passcode grants access to private data.
 
+
+## ADR-007: One public entry screen without an MFA bypass (2026-10-20)
+
+The two-option landing page is replaced by one six-digit form. The visibly published
+`246810` code is deliberately NOT a secret: it is a presentation-only shortcut
+to the synthetic public demo, not TOTP, Auth0, a recovery code, an API credential,
+or a real authenticated session.
+
+Private accounts must use Auth0 Universal Login with required authenticator TOTP;
+the Auth0 tenant, frontend SDK callback, enforceable MFA policy and private-account
+authorization tests are **not yet configured**. Never allow this demo code to skip
+real login or authorize private R2/Atlas documents.
+
+The demo overview API is public by design regardless of this UI gate. Future synthetic
+Gemma imports need session isolation, rate limits, and a read/write safety review.

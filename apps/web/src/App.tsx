@@ -118,7 +118,7 @@ export default function App(){
     <header className="topbar">
       <div className="brand"><span className="brand-icon"><HeartPulse size={23}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
       <div className="header-actions">
-        {entered&&<><button type="button" className="secondary access-options" onClick={()=>setEntered(false)}>{locale==='pt-BR'?'Opções de acesso':'Access options'}</button><AppActions portuguese={locale==='pt-BR'}/></>}
+        {entered&&<><button type="button" className="secondary access-options" onClick={()=>setEntered(false)}>{locale==='pt-BR'?'Sair da demonstração':'Leave demo'}</button><AppActions portuguese={locale==='pt-BR'}/></>}
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
           <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><img className="locale-flag" src={usFlag} alt="" aria-hidden="true"/></button>
           <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><img className="locale-flag" src={brFlag} alt="" aria-hidden="true"/></button>
