@@ -116,7 +116,7 @@ export default function App(){
 
   return <div className="app">
     <header className="topbar">
-      <div className="brand"><span className="brand-icon"><HeartPulse size={23}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
+      <div className="brand"><span className="brand-icon" aria-hidden="true"><HeartPulse size={29}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
       <div className="header-actions">
         {entered&&<><button type="button" className="secondary access-options" onClick={()=>setEntered(false)}>{locale==='pt-BR'?'Sair da demonstração':'Leave demo'}</button><AppActions portuguese={locale==='pt-BR'}/></>}
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
