@@ -199,3 +199,25 @@ h2,.detail-panel h2{font-size:30px;line-height:1.2}
 .technology-credits{display:flex;justify-content:center;flex-wrap:wrap;gap:7px 17px;padding:0;margin:0;list-style:none;font-size:12px;color:var(--muted)}
 @media(max-width:1120px){.site-footer{margin-left:28px;margin-right:28px}}
 @media(max-width:540px){.site-footer{margin-left:15px;margin-right:15px;padding-top:20px}.footer-note{font-size:13px}}
+
+.demo-entry{padding:48px 0 16px;max-width:960px;margin:auto}
+.demo-entry>h1{max-width:760px;font-size:clamp(38px,5vw,58px);line-height:1.08;margin:16px 0}
+.entry-intro{color:var(--muted);font-size:17px;line-height:1.7;max-width:640px}
+.entry-options{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:34px 0 20px}
+.entry-option{display:flex;flex-direction:column;align-items:flex-start;border:1px solid var(--line-strong);border-radius:18px;padding:28px;background:var(--surface)}
+.entry-option>svg{color:var(--accent);margin-bottom:14px}
+.entry-option h2{margin:0;font-size:30px}
+.entry-option p{color:var(--muted);font-size:14px;line-height:1.75;margin:14px 0 24px;flex:1}
+.entry-option button{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:46px}
+.entry-primary{border-color:var(--hover-border)}
+.entry-note{font-size:13px;color:var(--muted);line-height:1.75;max-width:760px}
+.demo-auth-dialog .eyebrow{font-size:10px;display:block;padding-right:26px;line-height:1.7}
+.demo-auth-dialog form{display:flex;flex-direction:column;gap:14px}
+.example-code{padding:18px;background:var(--pill-bg);border-radius:12px;display:flex;flex-direction:column;gap:8px;color:var(--text)}
+.example-code span,.demo-code-label{font-size:13px;color:var(--muted)}
+.example-code output{font-size:28px;letter-spacing:.2em;font-variant-numeric:tabular-nums}
+.demo-auth-dialog input{width:100%;padding:13px;font:inherit;font-size:22px;letter-spacing:.2em;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text)}
+.demo-auth-dialog input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.demo-auth-dialog [role=alert]{margin:0;color:var(--banner-text)}
+.header-actions .access-options{margin:0;min-height:42px}
+@media(max-width:640px){.demo-entry{padding-top:30px}.entry-options{grid-template-columns:1fr;gap:16px}.entry-option{padding:23px}.entry-option button{width:100%}.entry-intro{font-size:15px}}
