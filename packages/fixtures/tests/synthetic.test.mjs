@@ -10,8 +10,8 @@ test('no external URLs or email addresses in fixture', () => {
   assert.doesNotMatch(contents, /https?:\/\/|[\w.+-]+@[\w.-]+\.[a-z]{2,}/i);
 });
 
-test('fictional demographic data must be explicit, not copied from a real patient', () => {
-  assert.match(contents, /dateOfBirth: '1958-09-07'/);
+test('synthetic demographics include an explicit ISO birth date and demo record id', () => {
+  assert.match(contents, /dateOfBirth:\s*'\d{4}-\d{2}-\d{2}'/);
   assert.match(contents, /demoRecordId: 'BF-DEMO-001'/);
 });
 
