@@ -16,6 +16,7 @@ function markerStatus(a: Indicator,t:ReturnType<typeof useLocale>['t']):string {
   return status==='high'?t.above:status==='low'?t.below:status==='normal'?t.within:t.noReference;
 }
 const statusClass=(status:ReferenceStatus)=>'status-'+status;
+const searchKey=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
 function MiniSparkline({code,reports}:{code:string;reports:LabReport[]}){
   const series=markerHistory(reports,code);
   const coords=plotHistory(series,116,48,5,7);
@@ -32,17 +33,20 @@ function Trend({code,reports,locale,onOpenReport,t}:{
   const [selectedPoint,setSelectedPoint]=useState<{code:string;id:string}|null>(null);
   if(!series.length)return <p>{t.noHistory}</p>;
   const selected=series.find(s=>selectedPoint?.code===code&&s.id===selectedPoint.id)??series[series.length-1];
-  const points=plotHistory(series,520,190,28,28);
+  const points=plotHistory(series,760,240,58,25);
+  const min=Math.min(...series.map(s=>s.value)),max=Math.max(...series.map(s=>s.value));
   const selectedIndex=series.findIndex(s=>s.id===selected.id);
   const label=labelForIndicator(code,locale,series[0].name);
   const chartLabel=t.historyFor+' '+label+'. '+t.collectionOrder;
   return <div className="timeline-wrap">
     <div className="trend-chart">
-      <svg className="interactive-history" viewBox="0 0 520 190" role="group" aria-label={chartLabel}>
-        <line x1="28" x2="492" y1="164" y2="164" stroke="var(--plot-axis)"/>
-        {[28,73,118,162].map(y=><line key={y} x1="28" x2="492" y1={y} y2={y} stroke="var(--plot-axis)" opacity=".45"/>)}
-        <path key={code} className="history-line" pathLength="1" d={smoothHistoryPath(points)} fill="none" stroke="var(--plot-stroke)" strokeWidth="2.5" strokeLinecap="round"/>
-        <line x1={points[selectedIndex]?.x} x2={points[selectedIndex]?.x} y1="15" y2="175" stroke="var(--plot-stroke)" strokeDasharray="3 5" opacity=".3"/>
+      <svg className="interactive-history" viewBox="0 0 760 240" role="group" aria-label={chartLabel}>
+        {[0,1,2,3].map(i=>{
+          const y=25+i*190/3,value=max-(max-min)*i/3;
+          return <g key={i} aria-hidden="true"><line x1="58" x2="702" y1={y} y2={y} stroke="var(--plot-axis)" opacity=".65"/><text x="47" y={y+4} textAnchor="end" className="chart-tick">{formatValue(value,locale)}</text></g>;
+        })}
+        <path key={code} className="history-line" pathLength="1" d={smoothHistoryPath(points)} fill="none" stroke="var(--plot-stroke)" strokeWidth="2" strokeLinecap="round"/>
+        <line x1={points[selectedIndex]?.x} x2={points[selectedIndex]?.x} y1="15" y2="225" stroke="var(--plot-stroke)" strokeDasharray="3 5" opacity=".25"/>
         {points.map((p,i)=>{
           const s=series[i];
           const pointLabel=label+', '+formatDate(s.collectedAt,locale)+', '+formatValue(s.value,locale)+' '+s.unit+', '+labelForLab(s.laboratory,locale);
@@ -53,7 +57,7 @@ function Trend({code,reports,locale,onOpenReport,t}:{
             onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setSelectedPoint({code,id:s.id});}}}>
             <title>{pointLabel}</title>
             <circle cx={p.x} cy={p.y} r="13" fill="transparent" className="point-target"/>
-            <circle cx={p.x} cy={p.y} r={s.id===selected.id?7:5} className="point-dot"/>
+            <circle cx={p.x} cy={p.y} r={s.id===selected.id?5:3.5} className="point-dot"/>
           </g>;
         })}
       </svg>
@@ -84,7 +88,9 @@ export default function App(){
   const [section,setSection]=useState<Section>('overview');
   const [selected,setSelected]=useState<string>(indicatorCodes[0]);
   const [reportId,setReportId]=useState(initialLatest.id);
+  const [reportSearch,setReportSearch]=useState('');
   const report=demoReports.find(r=>r.id===reportId)??latest;
+  const visibleResults=report.results.filter(a=>searchKey(labelForIndicator(a.code,locale,a.name)).includes(searchKey(reportSearch)));
   const latestIndicator=useMemo(()=>latest.results.find(a=>a.code===selected),[selected,latest]);
   const featured=useMemo(()=>chooseFeaturedResult(latest.results),[latest]);
   const outsideCount=latest.results.filter(a=>referenceStatus(a)==='high'||referenceStatus(a)==='low').length;
@@ -146,7 +152,7 @@ export default function App(){
         <div className="panel">{[...demoReports].reverse().map(r=><button className="report-row" key={r.id} onClick={()=>{setReportId(r.id);setSection('reports')}}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)} · {r.results.length} {t.fictionalResults}</small></span><span className="chevron">›</span></button>)}</div>
       </>}
       {section==='trends'&&<section className="panel detail-panel">
-        <div className="detail-heading"><div><span className="eyebrow">{t.longitudinal}</span><h2>{t.trendHeading}</h2><p>{t.trendText}</p></div>
+        <div className="detail-heading"><div><span className="eyebrow">{t.longitudinal}</span><h2>{latestIndicator?indicatorName(latestIndicator):t.trendHeading}</h2><p>{t.trendText}</p></div>
         <label>{t.marker}<select aria-label={t.selectMarker} value={selected} onChange={e=>setSelected(e.target.value)}>{latest.results.map(a=><option key={a.code} value={a.code}>{indicatorName(a)}</option>)}</select></label></div>
         <div className="value-card"><strong>{latestIndicator&&fmt(latestIndicator.value)}</strong><span>{latestIndicator?.unit} · {t.mostRecentResult}</span></div>
         <Trend reports={demoReports} code={selected} locale={locale} t={t} onOpenReport={(id)=>{setReportId(id);setSection('reports')}}/><p className="disclaimer">{t.medicalDisclaimer}</p>
@@ -154,7 +160,9 @@ export default function App(){
       {section==='reports'&&<div className="reports-layout">
         <section className="panel reports-list"><h2>{t.collections}</h2>{[...demoReports].reverse().map(r=><button className={'report-row '+(r.id===reportId?'selected':'')} key={r.id} onClick={()=>setReportId(r.id)}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)}</small></span></button>)}</section>
         <section className="panel detail-panel"><span className="eyebrow">{t.collectionDetails}</span><h2>{date(report.collectedAt)}</h2><p>{labName(report.laboratory)}</p>
-          <div className="results-list">{report.results.map(a=><div key={a.code} className="result-line"><span>{indicatorName(a)}</span><strong>{fmt(a.value)} {a.unit}</strong><span className={"reference-badge "+statusClass(referenceStatus(a))}>{markerStatus(a,t)}</span></div>)}</div>
+          <label className="report-search">{locale==='pt-BR'?'Buscar neste laudo':'Search this report'}<input type="search" value={reportSearch} onChange={e=>setReportSearch(e.target.value)} placeholder={locale==='pt-BR'?'Nome do marcador':'Marker name'}/></label>
+          <div className="results-list">{visibleResults.map(a=><div key={a.code} className="result-line"><span>{indicatorName(a)}</span><strong>{fmt(a.value)} {a.unit}</strong><span className={"reference-badge "+statusClass(referenceStatus(a))}>{markerStatus(a,t)}</span></div>)}</div>
+          {!visibleResults.length&&<p role="status">{locale==='pt-BR'?'Nenhum marcador encontrado nesta coleta.':'No matching marker in this collection.'}</p>}
           <div className="source-placeholder"><LockKeyhole size={23}/><div><strong>{locale==='pt-BR'?'Laudo original':'Original report'}</strong><p>{t.pdfNotAvailable}</p><button className="secondary" disabled><Download size={16}/> {t.downloadUnavailable}</button></div></div>
         </section>
       </div>}
