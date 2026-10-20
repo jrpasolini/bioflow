@@ -21,7 +21,7 @@ const encoder=new TextEncoder();
 const sessionLifetime=60*60*1000;
 const proofLifetime=20*60*1000;
 const hex=(bytes:Uint8Array)=>Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('');
-const validHex=(v:unknown)=>typeof v==='string'&&/^[0-9a-f]{64}$/.test(v);
+const validHex=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{64}$/.test(v);
 const isObject=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const validDate=(v:unknown):v is string=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v+'T00:00:00Z'));
 const clean=(v:unknown,n=100)=>typeof v==='string'?v.trim().slice(0,n):'';
