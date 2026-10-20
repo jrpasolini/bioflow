@@ -15,6 +15,17 @@ interface Env {
 const MAX_PDF_BYTES=10*1024*1024;
 const pdfId=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/**
+ * This claim can only authorize private access after jwtVerify checks the Auth0
+ * signature, audience and issuer. Issued by a post-login Auth0 Action *after*
+ * enforcing the authenticator OTP challenge; absent/malformed claims fail closed.
+ */
+export const BIOFLOW_MFA_CLAIM='https://jrpasolini.tech/bioflow/mfa';
+export function hasVerifiedMfa(payload:Record<string,unknown>):boolean {
+ return payload[BIOFLOW_MFA_CLAIM]===true;
+}
+
+
 function responseHeaders(req:Request,env:Env):Headers{
  const h=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin'});
  const origin=req.headers.get('Origin');
@@ -51,6 +62,7 @@ async function verifyOwner(req:Request,env:Env):Promise<true|Response>{
   const jwks=createRemoteJWKSet(new URL(issuer+'.well-known/jwks.json'));
   const {payload}=await jwtVerify(token,jwks,{issuer,audience:env.AUTH0_AUDIENCE,algorithms:['RS256']});
   if(payload.sub!==env.BIOFLOW_OWNER_SUB)return err(req,env,403,'forbidden');
+  if(!hasVerifiedMfa(payload))return err(req,env,403,'mfa_required');
   return true;
  }catch{return err(req,env,401,'invalid_or_expired_token');}
 }
