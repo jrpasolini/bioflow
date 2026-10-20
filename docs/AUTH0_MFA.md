@@ -1,6 +1,6 @@
 # Auth0 private-account MFA — integration contract
 
-The public code `246810` is a **non-secret, synthetic-demo-only UI shortcut**.
+The public code `110526` is a **non-secret, synthetic-demo-only UI shortcut**.
 It is not accepted by any private API, cannot mint an Auth0 token, and MUST NOT
 be set as an MFA recovery code. Do not put real medical data in this demo.
 
