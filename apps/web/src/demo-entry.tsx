@@ -61,3 +61,4 @@ export function DemoEntry({portuguese,onExplore,auth0}:{
    {recoverySimulated&&<p role="status">{p?'Simulação concluída: nenhum e-mail foi enviado. Contas reais usam a recuperação segura do Auth0.':'Simulation complete: no email was sent. Real accounts use Auth0 recovery.'}</p>}
   </details>
  </section>;
+}
