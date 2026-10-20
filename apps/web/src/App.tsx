@@ -1,11 +1,12 @@
 import usFlag from 'flag-icons/flags/4x3/us.svg';
 import brFlag from 'flag-icons/flags/4x3/br.svg';
-import {useMemo,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
 import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,FlaskConical,Moon,Sun} from 'lucide-react';
 import {demoReports as fixtureReports,indicatorCodes,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
 import {AppActions} from './pwa';
+import {DemoEntry} from './demo-entry';
 import {useDemoOverview} from './use-demo';
 import {useThemePreference} from './theme';
 import {useLocale,labelForIndicator,labelForLab,formatDate,formatBirthDate,formatValue,calculateAge,type Locale} from './i18n';
@@ -93,6 +94,9 @@ export default function App(){
   const latest=demoReports[demoReports.length-1];
   const {theme,toggleTheme}=useThemePreference();
   const {locale,changeLocale,t}=useLocale();
+  const [entered,setEntered]=useState(false);
+  const historyHeading=useRef<HTMLHeadingElement>(null);
+  useEffect(()=>{if(entered)historyHeading.current?.focus();},[entered]);
   const [section,setSection]=useState<Section>('overview');
   const [selected,setSelected]=useState<string>(indicatorCodes[0]);
   const [reportId,setReportId]=useState(initialLatest.id);
@@ -111,7 +115,7 @@ export default function App(){
     <header className="topbar">
       <div className="brand"><span className="brand-icon"><HeartPulse size={23}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
       <div className="header-actions">
-        <AppActions portuguese={locale==='pt-BR'}/>
+        {entered&&<><button type="button" className="secondary access-options" onClick={()=>setEntered(false)}>{locale==='pt-BR'?'Opções de acesso':'Access options'}</button><AppActions portuguese={locale==='pt-BR'}/></>}
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
           <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><img className="locale-flag" src={usFlag} alt="" aria-hidden="true"/></button>
           <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><img className="locale-flag" src={brFlag} alt="" aria-hidden="true"/></button>
@@ -122,9 +126,10 @@ export default function App(){
       </div>
     </header>
     <main className="container">
+      {!entered?<DemoEntry portuguese={locale==='pt-BR'} onExplore={()=>setEntered(true)}/>:<>
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
       {status==='offline'&&<p role="status" className="demo-source">{locale==='pt-BR'?'Não foi possível atualizar. Exibindo o histórico local.':'Unable to refresh. Showing local history.'}</p>}
-      <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
+      <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1 ref={historyHeading} tabIndex={-1}>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
       <nav className="tabs" aria-label={t.navLabel}>
         <button className={section==='overview'?'active':''} onClick={()=>setSection('overview')}><Activity size={18}/> {t.overview}</button>
         <button className={section==='trends'?'active':''} onClick={()=>setSection('trends')}><ChartNoAxesCombined size={18}/> {t.trends}</button>
@@ -174,6 +179,7 @@ export default function App(){
           <div className="source-placeholder"><LockKeyhole size={23}/><div><strong>{locale==='pt-BR'?'Laudo original':'Original report'}</strong><p>{t.pdfNotAvailable}</p><button className="secondary" disabled><Download size={16}/> {t.downloadUnavailable}</button></div></div>
         </section>
       </div>}
+      </>}
     </main>
     <footer className="site-footer">
       <p className="footer-note">{t.footer}</p>
