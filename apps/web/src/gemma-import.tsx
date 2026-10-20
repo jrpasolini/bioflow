@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,type FormEvent} from 'react';
-import {FilePlus2,LoaderCircle,ShieldCheck} from 'lucide-react';
+import {Download,FilePlus2,LoaderCircle,ShieldCheck} from 'lucide-react';
 import type {LabReport} from '../../../packages/fixtures/src/synthetic';
 
 type Reading={code:string;name:string;value:number;unit:string;sourcePage?:number;referenceLow?:number;referenceHigh?:number};
@@ -109,8 +109,9 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
   <div className="gemma-import-heading"><FilePlus2 size={24} aria-hidden="true"/>
    <div><span className="eyebrow">{p?'TESTE AO VIVO':'LIVE DEMO'}</span>
     <h2 id="gemma-title">{p?'Importar exame com Gemma':'Import a report with Gemma'}</h2></div></div>
-  <p>{p?'Use um dos três PDFs fictícios disponibilizados no artigo do DEV. A Gemma interpreta o laudo e você confere os números antes de adicionar ao seu histórico temporário.':'Use one of the three fictional PDFs linked in the DEV article. Gemma reads it and you review the values before adding them to your temporary history.'}</p>
+  <p>{p?'Escolha um dos três PDFs fictícios para testar. Confira os números extraídos pela Gemma antes de adicionar o laudo ao histórico desta sessão.':'Choose one of the three fictional PDFs to test. Review Gemma's extracted readings before adding the report to this session's history.'}</p>
   <p className="gemma-privacy"><ShieldCheck size={16}/>{p?'Apenas arquivos de teste previamente aprovados. Nenhum exame pessoal ou documento real.':'Approved test files only. Do not upload personal or actual medical documents.'}</p>
+  <a className="demo-samples-link" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={14} aria-hidden="true"/>{p?'Baixar os 3 PDFs fictícios de teste (ZIP)':'Download 3 fictional test PDFs (ZIP)'}</a>
   <form onSubmit={analyze} className="gemma-import-form">
    <label htmlFor="bioflow-new-pdf">{p?'Escolher PDF fictício':'Choose fictional PDF'}</label>
    <input id="bioflow-new-pdf" type="file" accept=".pdf,application/pdf" required disabled={fetching}
