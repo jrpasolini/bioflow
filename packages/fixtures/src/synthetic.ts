@@ -4,6 +4,8 @@ export type Indicator = {
   referenceLow?: number; referenceHigh?: number;
   /** Optional explicit attention interval from this exam, never inferred from proximity. */
   referenceAttentionLow?: number; referenceAttentionHigh?: number;
+  /** Inclusive limits explicitly supplied by this exam for very low/high values. */
+  referenceVeryLow?: number; referenceVeryHigh?: number;
 };
 export type LabReport = {
   id: string; patientId: string; collectedAt: string;

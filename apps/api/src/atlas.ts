@@ -34,7 +34,7 @@ async function readDemo(db:Db):Promise<{patient:DemoPatient;reports:LabReport[]}
   if(!reports.length) throw new Error('Demo reports not seeded');
   const ids=reports.map(r=>r.id);
   const resultDocs=await db.collection<DemoResult>('demo_results')
-    .find({reportId:{$in:ids},patientId:patient.id,isSynthetic:true},{projection:{_id:0,reportId:1,code:1,name:1,value:1,unit:1,referenceLow:1,referenceHigh:1,referenceAttentionLow:1,referenceAttentionHigh:1}})
+    .find({reportId:{$in:ids},patientId:patient.id,isSynthetic:true},{projection:{_id:0,reportId:1,code:1,name:1,value:1,unit:1,referenceLow:1,referenceHigh:1,referenceAttentionLow:1,referenceAttentionHigh:1,referenceVeryLow:1,referenceVeryHigh:1}})
     .maxTimeMS(3000).limit(5000).toArray();
   const byReport=new Map<string,Indicator[]>();
   for(const item of resultDocs){
@@ -44,7 +44,9 @@ async function readDemo(db:Db):Promise<{patient:DemoPatient;reports:LabReport[]}
       ...(item.referenceLow===undefined?{}:{referenceLow:item.referenceLow}),
       ...(item.referenceHigh===undefined?{}:{referenceHigh:item.referenceHigh}),
       ...(item.referenceAttentionLow===undefined?{}:{referenceAttentionLow:item.referenceAttentionLow}),
-      ...(item.referenceAttentionHigh===undefined?{}:{referenceAttentionHigh:item.referenceAttentionHigh})
+      ...(item.referenceAttentionHigh===undefined?{}:{referenceAttentionHigh:item.referenceAttentionHigh}),
+      ...(item.referenceVeryLow===undefined?{}:{referenceVeryLow:item.referenceVeryLow}),
+      ...(item.referenceVeryHigh===undefined?{}:{referenceVeryHigh:item.referenceVeryHigh})
     });
     byReport.set(item.reportId,readings);
   }

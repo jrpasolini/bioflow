@@ -24,7 +24,8 @@ export function markerHistory(reports: readonly LabReport[], code: string): Mark
       value: result.value,
       unit: result.unit,
       referenceLow:result.referenceLow,referenceHigh:result.referenceHigh,
-      referenceAttentionLow:result.referenceAttentionLow,referenceAttentionHigh:result.referenceAttentionHigh
+      referenceAttentionLow:result.referenceAttentionLow,referenceAttentionHigh:result.referenceAttentionHigh,
+      referenceVeryLow:result.referenceVeryLow,referenceVeryHigh:result.referenceVeryHigh
     }))
   ).sort((a,b) => a.collectedAt.localeCompare(b.collectedAt) || a.reportId.localeCompare(b.reportId));
 }

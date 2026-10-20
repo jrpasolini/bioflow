@@ -15,7 +15,7 @@ const initialLatest=fixtureReports[fixtureReports.length-1];
 
 function markerStatus(a: Indicator,t:ReturnType<typeof useLocale>['t']):string {
   const status=referenceStatus(a);
-  return status==='attention'?t.attention:status==='high'?t.above:status==='low'?t.below:status==='normal'?t.within:t.noReference;
+  return status==='very-high'?t.veryHigh:status==='very-low'?t.veryLow:status==='attention'?t.attention:status==='high'?t.above:status==='low'?t.below:status==='normal'?t.within:t.noReference;
 }
 const statusClass=(status:ReferenceStatus)=>'status-'+status;
 const searchKey=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
@@ -77,7 +77,7 @@ function Trend({code,reports,locale,onOpenReport,t}:{
       <h3>{locale==='pt-BR'?'Histórico de exames':'Exam history'}</h3>
       <ul>{[...series].reverse().map(s=>{
         const state=referenceStatus(s);
-        const badge=state==='attention'?t.attention:state==='high'?(locale==='pt-BR'?'Alto':'High'):state==='low'?(locale==='pt-BR'?'Baixo':'Low'):state==='normal'?(locale==='pt-BR'?'Normal':'Normal'):t.noReference;
+        const badge=markerStatus(s,t);
         const range=s.referenceLow!==undefined&&s.referenceHigh!==undefined?formatValue(s.referenceLow,locale)+'–'+formatValue(s.referenceHigh,locale):s.referenceLow!==undefined?'≥ '+formatValue(s.referenceLow,locale):s.referenceHigh!==undefined?'≤ '+formatValue(s.referenceHigh,locale):null;
         return <li key={s.id}><button type="button" className={'history-row '+(s.id===selected.id?'selected':'')} aria-pressed={s.id===selected.id} onClick={()=>setSelectedPoint({code,id:s.id})}>
           <span className="history-collection"><strong>{formatDate(s.collectedAt,locale)}</strong><span>{labelForLab(s.laboratory,locale)}</span>{range&&<small>{locale==='pt-BR'?'Referência':'Reference'}: {range} {s.unit}</small>}{state==='attention'&&<small>{locale==='pt-BR'?'Faixa de atenção':'Attention interval'}: {s.referenceAttentionLow===undefined?'':('≥ '+formatValue(s.referenceAttentionLow,locale)+' ')}{s.referenceAttentionHigh===undefined?'':('≤ '+formatValue(s.referenceAttentionHigh,locale))} {s.unit}</small>}</span>
@@ -101,7 +101,7 @@ export default function App(){
   const visibleResults=report.results.filter(a=>searchKey(labelForIndicator(a.code,locale,a.name)).includes(searchKey(reportSearch)));
   const latestIndicator=useMemo(()=>latest.results.find(a=>a.code===selected),[selected,latest]);
   const featured=useMemo(()=>chooseFeaturedResult(latest.results),[latest]);
-  const outsideCount=latest.results.filter(a=>referenceStatus(a)==='high'||referenceStatus(a)==='low').length;
+  const outsideCount=latest.results.filter(a=>['high','very-high','low','very-low'].includes(referenceStatus(a))).length;
   const date=(s:string)=>formatDate(s,locale);
   const fmt=(n:number)=>formatValue(n,locale);
   const indicatorName=(a:Indicator)=>labelForIndicator(a.code,locale,a.name);
@@ -135,7 +135,7 @@ export default function App(){
           <div className="latest-intro">
             <span className="eyebrow">{t.lastCollection}</span>
             <h2>{featured
-              ? <>{indicatorName(featured)}: {fmt(featured.value)} {featured.unit}, {referenceStatus(featured)==='high'?t.featuredHigh:t.featuredLow}.</>
+              ? <>{indicatorName(featured)}: {fmt(featured.value)} {featured.unit}, {['high','very-high'].includes(referenceStatus(featured))?t.featuredHigh:t.featuredLow}.</>
               : t.noOutOfRangeHighlight}</h2>
             <p>{date(latest.collectedAt)} · {labName(latest.laboratory)} · {latest.results.length} {t.markersCount}</p>
             <p className="latest-count">{outsideCount} {t.outsideReferenceCount}</p>

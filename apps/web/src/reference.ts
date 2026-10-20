@@ -1,6 +1,6 @@
 import type {Indicator} from '../../../packages/fixtures/src/synthetic';
 
-export type ReferenceStatus = 'high' | 'attention' | 'low' | 'normal' | 'unknown';
+export type ReferenceStatus = 'very-high' | 'high' | 'attention' | 'very-low' | 'low' | 'normal' | 'unknown';
 
 /** Compare only against the specific result's reported reference interval.
  * Missing reference bounds must never be interpreted as "normal".
@@ -8,9 +8,13 @@ export type ReferenceStatus = 'high' | 'attention' | 'low' | 'normal' | 'unknown
 export function referenceStatus(result: Indicator): ReferenceStatus {
   const low=result.referenceLow, high=result.referenceHigh;
   const attentionLow=result.referenceAttentionLow,attentionHigh=result.referenceAttentionHigh;
+  const veryLow=result.referenceVeryLow,veryHigh=result.referenceVeryHigh;
   if (!Number.isFinite(result.value) || (low!==undefined && !Number.isFinite(low))
     || (high!==undefined && !Number.isFinite(high)) || (low!==undefined && high!==undefined && low>high)) return 'unknown';
   if((attentionLow!==undefined&&!Number.isFinite(attentionLow))||(attentionHigh!==undefined&&!Number.isFinite(attentionHigh))||(attentionLow!==undefined&&attentionHigh!==undefined&&attentionLow>attentionHigh))return 'unknown';
+  if((veryLow!==undefined&&(!Number.isFinite(veryLow)||(low!==undefined&&veryLow>=low)))||(veryHigh!==undefined&&(!Number.isFinite(veryHigh)||(high!==undefined&&veryHigh<=high)))||(veryLow!==undefined&&veryHigh!==undefined&&veryLow>=veryHigh))return 'unknown';
+  if(veryLow!==undefined&&result.value<=veryLow)return 'very-low';
+  if(veryHigh!==undefined&&result.value>=veryHigh)return 'very-high';
   if((attentionLow!==undefined||attentionHigh!==undefined)&&(attentionLow===undefined||result.value>=attentionLow)&&(attentionHigh===undefined||result.value<=attentionHigh))return 'attention';
   if (low===undefined && high===undefined) return 'unknown';
   if (high!==undefined && result.value>high) return 'high';
@@ -21,9 +25,9 @@ export function referenceStatus(result: Indicator): ReferenceStatus {
 /** Nonclinical visual prominence heuristic, NOT a risk or severity score. */
 export function proportionalReferenceDeviation(result: Indicator): number {
   const status=referenceStatus(result);
-  if(status==='high' && result.referenceHigh!==undefined)
+  if((status==='high'||status==='very-high') && result.referenceHigh!==undefined)
     return (result.value-result.referenceHigh)/Math.max(Math.abs(result.referenceHigh),1);
-  if(status==='low' && result.referenceLow!==undefined)
+  if((status==='low'||status==='very-low') && result.referenceLow!==undefined)
     return (result.referenceLow-result.value)/Math.max(Math.abs(result.referenceLow),1);
   return 0;
 }
