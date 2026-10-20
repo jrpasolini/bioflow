@@ -1,8 +1,13 @@
 import {createRemoteJWKSet,jwtVerify} from 'jose';
 import {demoPatient} from '../../../packages/fixtures/src/synthetic';
 import {loadDemoFromAtlas,syntheticFallback} from './atlas';
+import {handleGemmaDemo,demoReady} from './demo-gemma';
 
 interface Env {
+  AI?: Ai;
+  DEMO_RATE_LIMITER?: RateLimit;
+  ENABLE_GEMMA_DEMO?: string;
+  DEMO_SESSION_SECRET?: string;
   REPORTS_BUCKET?: R2Bucket;
   AUTH0_ISSUER_BASE_URL?: string;
   AUTH0_AUDIENCE?: string;
@@ -127,7 +132,7 @@ export default {
    return new Response(null,{status:204,headers:responseHeaders(req,env)});
   }
   if(req.method==='GET'&&path==='/api/health'){
-   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB)});
+   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),gemmaReady:demoReady(env)});
   }
   if(req.method==='GET'&&path==='/api/demo/overview'){
    // Only explicitly synthetic data are exposed publicly.
@@ -140,6 +145,8 @@ export default {
     return err(req,env,503,'demo_database_unavailable');
    }
   }
+  if(['/api/demo/session','/api/demo/extract','/api/demo/commit','/api/demo/imports'].includes(path))
+   return handleGemmaDemo(req,env,path);
   const m=path.match(/^\/api\/patients\/([^/]+)\/reports(?:\/([^/]+)\/download)?$/);
   if(!m)return err(req,env,404,'not_found');
   if(env.ENABLE_PDF_ENDPOINTS!=='true'||!env.REPORTS_BUCKET)return err(req,env,503,'pdf_endpoints_disabled');
