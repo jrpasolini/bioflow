@@ -14,6 +14,7 @@ interface Env {
   BIOFLOW_OWNER_SUB?: string;
   APP_ORIGIN?: string;
   MONGODB_URI?: string;
+  MONGODB_DEMO_WRITE_URI?: string;
   MONGODB_DB?: string;
   ENABLE_PDF_ENDPOINTS?: string;
 }
