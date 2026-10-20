@@ -6,8 +6,7 @@ export interface GemmaEnv {
  DEMO_RATE_LIMITER?: RateLimit;
  ENABLE_GEMMA_DEMO?: string;
  DEMO_SESSION_SECRET?: string;
- MONGODB_URI?: string;
- MONGODB_DB?: string;
+ MONGODB_DEMO_WRITE_URI?: string;
 }
 type PdfResult={name:string;code:string;value:number;unit:string;sourcePage?:number;referenceLow?:number;referenceHigh?:number};
 export type ReviewedReport={collectedAt:string;laboratory:string;results:PdfResult[]};
@@ -73,7 +72,7 @@ async function verifyMac(secret:string,message:string,signature:string){
  return crypto.subtle.verify('HMAC',key,Uint8Array.from(signature.match(/../g)!,x=>parseInt(x,16)),encoder.encode(message));
 }
 function secretOk(env:GemmaEnv){return typeof env.DEMO_SESSION_SECRET==='string'&&env.DEMO_SESSION_SECRET.length>=32;}
-export function demoReady(env:GemmaEnv){return env.ENABLE_GEMMA_DEMO==='true'&&!!env.AI&&!!env.DEMO_RATE_LIMITER&&secretOk(env)&&!!env.MONGODB_URI;}
+export function demoReady(env:GemmaEnv){return env.ENABLE_GEMMA_DEMO==='true'&&!!env.AI&&!!env.DEMO_RATE_LIMITER&&secretOk(env)&&!!env.MONGODB_DEMO_WRITE_URI;}
 async function sessionId(req:Request,env:GemmaEnv):Promise<string|null>{
  const token=(req.headers.get('Authorization')||'').replace(/^Bearer /,'');
  const match=/^([0-9a-f-]{36})\.(\d{13})\.([0-9a-f]{64})$/.exec(token);
@@ -92,12 +91,11 @@ async function limit(req:Request,env:GemmaEnv,kind:string){
  return (await env.DEMO_RATE_LIMITER.limit({key:kind+':'+ip})).success;
 }
 async function withDb<T>(env:GemmaEnv,fn:(db:Db)=>Promise<T>):Promise<T>{
- const client=new MongoClient(env.MONGODB_URI!,{maxPoolSize:1,minPoolSize:0,serverSelectionTimeoutMS:5000,
+ const client=new MongoClient(env.MONGODB_DEMO_WRITE_URI!,{maxPoolSize:1,minPoolSize:0,serverSelectionTimeoutMS:5000,
   connectTimeoutMS:5000,socketTimeoutMS:5000,retryReads:false,retryWrites:false,appName:'bioflow-temporary-synthetic-imports'});
  try{
   await client.connect();
-  if(env.MONGODB_DB&&env.MONGODB_DB!=='bioflow_demo')throw Error('unexpected_database');
-  return await fn(client.db('bioflow_demo'));
+  return await fn(client.db('bioflow_sessions'));
  }finally{await client.close();}
 }
 async function begin(req:Request,env:GemmaEnv){
