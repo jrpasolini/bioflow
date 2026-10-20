@@ -57,7 +57,7 @@ export async function loadDemoFromAtlas(env:AtlasEnv):Promise<{patient:DemoPatie
   if(!env.MONGODB_URI)throw new Error('Atlas not configured');
   const databaseName=env.MONGODB_DB||'bioflow_demo';
   if(databaseName!=='bioflow_demo')throw new Error('Unexpected demo database name');
-  const client=new MongoClient(env.MONGODB_URI,{maxPoolSize:1,minPoolSize:0,serverSelectionTimeoutMS:5000});
+  const client=new MongoClient(env.MONGODB_URI);
   try {
     await client.connect();
     return await readDemo(client.db(databaseName));
