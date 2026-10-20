@@ -40,7 +40,7 @@ test('new route is disabled until explicitly enabled with all safety bindings',a
 
 test('demo token is temporary, and unknown PDF cannot reach paid model',async()=>{
  let calls=0;
- const env={ENABLE_GEMMA_DEMO:'true',DEMO_SESSION_SECRET:'z'.repeat(40),MONGODB_URI:'not-used-in-this-test',
+ const env={ENABLE_GEMMA_DEMO:'true',DEMO_SESSION_SECRET:'z'.repeat(40),MONGODB_DEMO_WRITE_URI:'not-used-in-this-test',
  AI:{toMarkdown:async()=>{calls++;throw Error('must not run');},run:async()=>{calls++;throw Error('must not run');}},
  DEMO_RATE_LIMITER:{limit:async()=>({success:true})}};
  const opts={method:'POST',headers:{'CF-Connecting-IP':'192.0.2.5'}};
@@ -58,6 +58,6 @@ test('demo token is temporary, and unknown PDF cannot reach paid model',async()=
 });
 
 test('no rate limiter means disabled, not public paid inference',()=>{
- const env={AI:{},MONGODB_URI:'x',DEMO_SESSION_SECRET:'s'.repeat(40),ENABLE_GEMMA_DEMO:'true'};
+ const env={AI:{},MONGODB_DEMO_WRITE_URI:'x',DEMO_SESSION_SECRET:'s'.repeat(40),ENABLE_GEMMA_DEMO:'true'};
  assert.equal(demoReady(env),false);
 });
