@@ -4,13 +4,19 @@
   "version": "0.1.0",
   "description": "BioFlow — Your Health. Your History. Your Control.",
   "type": "module",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w @bioflow/web",
     "dev:api": "npm run dev -w @bioflow/api",
     "test": "npm run test -w @bioflow/fixtures",
     "typecheck": "npm run typecheck -w @bioflow/web && npm run typecheck -w @bioflow/api",
-    "build": "npm run build -w @bioflow/web && npm run typecheck -w @bioflow/api"
+    "build": "npm run build -w @bioflow/web && npm run typecheck -w @bioflow/api",
+    "db:seed:demo": "node --env-file=.env.local scripts/seed-demo.mjs"
   },
-  "engines": {"node": ">=20.19"}
+  "engines": {
+    "node": ">=20.19"
+  }
 }

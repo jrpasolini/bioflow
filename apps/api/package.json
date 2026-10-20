@@ -1,6 +1,20 @@
 {
-  "name":"@bioflow/api","version":"0.1.0","private":true,"type":"module",
-  "scripts":{"dev":"wrangler dev","typecheck":"tsc --noEmit","deploy":"wrangler deploy"},
-  "dependencies":{"jose":"^5.10.0"},
-  "devDependencies":{"@cloudflare/workers-types":"^4.20251001.0","typescript":"^5.8.0","wrangler":"^4.10.0"}
+  "name": "@bioflow/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "jose": "^5.10.0",
+    "mongodb": "^6.15.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251001.0",
+    "typescript": "^5.8.0",
+    "wrangler": "^4.10.0"
+  }
 }

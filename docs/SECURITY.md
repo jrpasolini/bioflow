@@ -8,3 +8,10 @@
 6. **Secrets:** Keep Auth0 issuer/audience and owner controls server-side as appropriate; never log bearer tokens or expose privileged API credentials.
 7. **Operational readiness:** Real deployment requires retention, audit logs, regional processing review, incident response, key management, backups and data deletion controls.
 8. **Clinical purpose:** BioFlow is an organization and review tool; it does not produce diagnoses or substitute for certified laboratory documents.
+
+9. **MongoDB Atlas:** Use separate synthetic-only database `bioflow_demo` with least-privilege account.
+   Do not expose the connection string in frontend, GitHub, or logs. Public read route may query only
+   `demo_*` collections with `isSynthetic:true`, never real health data. Atlas IP allowlist must be
+   consciously configured before deploying dynamic-egress Workers.
+10. **Cloudflare Workers performance:** direct MongoDB connections incur handshake costs; adopt
+    Durable Objects if production traffic warrants persistent connections. Hyperdrive does not support MongoDB.

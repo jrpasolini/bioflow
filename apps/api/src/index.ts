@@ -1,5 +1,6 @@
 import {createRemoteJWKSet,jwtVerify} from 'jose';
-import {demoPatient,demoReports} from '../../../packages/fixtures/src/synthetic';
+import {demoPatient} from '../../../packages/fixtures/src/synthetic';
+import {loadDemoFromAtlas,syntheticFallback} from './atlas';
 
 interface Env {
   REPORTS_BUCKET?: R2Bucket;
@@ -7,6 +8,8 @@ interface Env {
   AUTH0_AUDIENCE?: string;
   BIOFLOW_OWNER_SUB?: string;
   APP_ORIGIN?: string;
+  MONGODB_URI?: string;
+  MONGODB_DB?: string;
 }
 const MAX_PDF_BYTES=10*1024*1024;
 const pdfId=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -113,7 +116,17 @@ export default {
   if(req.method==='GET'&&path==='/api/health'){
    return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB)});
   }
-  if(req.method==='GET'&&path==='/api/demo/overview')return json(req,env,{patient:demoPatient,reports:demoReports});
+  if(req.method==='GET'&&path==='/api/demo/overview'){
+   // Only explicitly synthetic data are exposed publicly.
+   if(!env.MONGODB_URI)return json(req,env,{...syntheticFallback,source:'synthetic-fixtures'});
+   try{
+    const content=await loadDemoFromAtlas(env);
+    return json(req,env,{...content,source:'mongodb-atlas-synthetic'});
+   }catch{
+    // Fail loudly instead of hiding a database outage behind stale fixture data.
+    return err(req,env,503,'demo_database_unavailable');
+   }
+  }
   const m=path.match(/^\/api\/patients\/([^/]+)\/reports(?:\/([^/]+)\/download)?$/);
   if(!m)return err(req,env,404,'not_found');
   const patientId=m[1],reportId=m[2];

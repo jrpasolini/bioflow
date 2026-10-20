@@ -27,3 +27,9 @@
 - A single highlighted headline is selected from out-of-range values by **proportional reference deviation**, a display heuristic only (NOT diagnosis, clinical risk or medical severity).
 - Added nine independently fabricated measurements to the latest demo collection and consistent status badges in report details. Reference ranges must be the original lab's approved intervals when real data are eventually supported.
 - Pure reference classification and highlighted-result selection have regression tests.
+
+- Prepared Atlas direct-TCP adapter with official MongoDB Node driver, isolated `bioflow_demo` collections,
+  proper report-to-observation reconstruction, deterministic seed script and limited demo indexes.
+- Worker `/api/demo/overview` uses Atlas once configured or synthetic fixtures when URI is absent;
+  if configured Atlas becomes unavailable it explicitly responds 503 instead of serving stale data.
+- No DB credentials, real records, Worker deployment or Atlas cloud resources created in this commit.

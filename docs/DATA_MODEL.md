@@ -1,13 +1,30 @@
-# Logical model — planned MongoDB integration
+# BioFlow data model
 
-The application intentionally separates document contents, metadata and clinical observations:
+## Implemented: isolated synthetic demo in MongoDB Atlas
 
-- `Patient`: ID, owner user ID, display name, synthetic flag
-- `LabReport`: ID, patient ID, collection date, lab, original document ID, review status
-- `OriginalDocument`: ID, patient ID, private R2 object key, SHA-256, filename, byte count, created-at and version
-- `AnalyteResult`: ID, report ID, indicator code, literal and numeric value, unit, reference interval, source page, review status
-- `ImportJob`: Gemma model/version, source document, extracted fields, human review, usage accounting
-- `AccessGrant`: patient-approved scopes, target user, expiry and revocation
-- `AuditEvent`: action metadata (never raw clinical values, PDFs or bearer tokens)
+The MongoDB Adapter (`apps/api/src/atlas.ts`) reads the `bioflow_demo` database
+with three intentionally public-demo-only collections:
 
-PDF bytes belong in private R2, not MongoDB. Canonical files and extracted measurements have different lifecycles and must never silently overwrite one another.
+- `demo_patients`: `id`, `displayName`, `dateOfBirth`, `demoRecordId`, `isSynthetic:true`.
+- `demo_reports`: `id`, `patientId`, `collectedAt`, `laboratory`, `status`, `isSynthetic:true`, `originalPdfId:null`.
+- `demo_results`: `id`, `patientId`, `reportId`, `code`, `name`, `value`, `unit`, `referenceLow`,
+  `referenceHigh`, `collectedAt`, `isSynthetic:true`.
+
+The API reconstructs reports from source-linked observations. The public demo never queries real collections.
+
+## Planned: separate authenticated records
+
+- `patients`: ID, immutable owner identity, display name and care profile.
+- `lab_reports`: ID, patient ID, collection date, lab, canonical document ID, review state.
+- `analyte_results`: ID, patient ID, report ID, marker code, literal and numeric value,
+  unit, source-page/region, lab-specific reference interval and review state.
+- `original_documents`: ID, patient ID, private R2 object key, SHA-256, original filename,
+  MIME type, byte count, upload timestamp, version, owner and retention policy.
+- `import_jobs`: model/version, document ID, extracted fields, confidence, review,
+  usage and failure state.
+- `access_grants`: patient-authorized resource scopes, user identity, expiry, revocation.
+- `audit_events`: action metadata without copying PDFs, bearer tokens or medical readings.
+
+*PDF bytes must never be stored in MongoDB or regenerated from AI text.*
+A report and its original source document have independent lifecycles.
+MongoDB records must enforce per-patient authorization in the API.

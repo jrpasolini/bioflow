@@ -22,3 +22,9 @@ BioFlow is a new medical-document organization demo for Hacktoberfest 2026.
 
 - Show **all** measurements of the selected latest lab collection and label status only when that measurement has a valid source reference bound; missing bounds => "No reference" (never assume normal).
 - Latest-summary featured measurement may be chosen by a deterministic **visual deviation** heuristic, never treated as medical severity or diagnosis. Keep calculation logic tested and separate from UI.
+
+- MongoDB synthetic demo uses `bioflow_demo` and `demo_*` collections only.
+  `scripts/seed-demo.mjs` may write ONLY these demo collections. It must never populate sensitive collections.
+- Store `MONGODB_URI` only in ignored local env or Wrangler secrets, never as `VITE_*`.
+- Public API must not return real clinical records, even if they are later stored in the same cluster.
+  Future patient routes require Auth0 owner authorization and per-resource filters in every DB query.
