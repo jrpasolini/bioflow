@@ -109,7 +109,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
   <div className="gemma-import-heading"><FilePlus2 size={24} aria-hidden="true"/>
    <div><span className="eyebrow">{p?'TESTE AO VIVO':'LIVE DEMO'}</span>
     <h2 id="gemma-title">{p?'Importar exame com Gemma':'Import a report with Gemma'}</h2></div></div>
-  <p>{p?'Escolha um dos três PDFs fictícios para testar. Confira os números extraídos pela Gemma antes de adicionar o laudo ao histórico desta sessão.':'Choose one of the three fictional PDFs to test. Review the readings extracted by Gemma before adding the report to this session's history.'}</p>
+  <p>{p?'Escolha um dos três PDFs fictícios para testar. Confira os números extraídos pela Gemma antes de adicionar o laudo ao histórico desta sessão.':'Choose one of the three fictional PDFs to test. Review the readings extracted by Gemma before adding the report to the temporary history.'}</p>
   <p className="gemma-privacy"><ShieldCheck size={16}/>{p?'Apenas arquivos de teste previamente aprovados. Nenhum exame pessoal ou documento real.':'Approved test files only. Do not upload personal or actual medical documents.'}</p>
   <a className="demo-samples-link" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={14} aria-hidden="true"/>{p?'Baixar os 3 PDFs fictícios de teste (ZIP)':'Download 3 fictional test PDFs (ZIP)'}</a>
   <form onSubmit={analyze} className="gemma-import-form">
