@@ -14,7 +14,8 @@ test('history uses each exam reference, including explicit attention intervals',
 });
 test('each plotted point retains its original exam, date and value',()=>{
  const series=markerHistory(localDemo.reports,'glucose');
- assert.equal(series.length,8);
+ assert.equal(series.length,localDemo.reports.filter(r=>r.results.some(a=>a.code==='glucose')).length);
+ assert.ok(series.length>8);
  for(const point of series){
   const report=localDemo.reports.find(r=>r.id===point.reportId);
   assert.equal(point.collectedAt,report.collectedAt);

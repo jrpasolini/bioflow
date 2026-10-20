@@ -15,13 +15,14 @@ export function parseDemoOverview(value:unknown):DemoOverview{
  if(!value.reports.length||value.reports.length>200)throw Error('invalid_reports');
  const ids=new Set<string>();
  const reports=value.reports.map((r:unknown):LabReport=>{
-  if(!record(r)||!text(r.id)||!r.id.startsWith('bf-demo-')||ids.has(r.id)||r.patientId!==p.id||r.isSynthetic!==true||r.status!=='synthetic-demo'||r.originalPdfId!==null||!date(r.collectedAt)||!text(r.laboratory)||!Array.isArray(r.results)||!r.results.length||r.results.length>100)throw Error('invalid_report');
+  if(!record(r)||!text(r.id)||!r.id.startsWith('bf-demo-')||ids.has(r.id)||r.patientId!==p.id||r.isSynthetic!==true||r.status!=='synthetic-demo'||r.originalPdfId!==null||!date(r.collectedAt)||!text(r.laboratory)||!Array.isArray(r.results)||r.results.length>100)throw Error('invalid_report');
   ids.add(r.id);
   const codes=new Set<string>();
   const results=r.results.map((a:unknown):Indicator=>{
    if(!record(a)||!text(a.code)||codes.has(a.code)||!text(a.name)||!text(a.unit)||!finite(a.value)||(a.referenceLow!==undefined&&!finite(a.referenceLow))||(a.referenceHigh!==undefined&&!finite(a.referenceHigh))||(a.referenceAttentionLow!==undefined&&!finite(a.referenceAttentionLow))||(a.referenceAttentionHigh!==undefined&&!finite(a.referenceAttentionHigh))||(a.referenceVeryLow!==undefined&&!finite(a.referenceVeryLow))||(a.referenceVeryHigh!==undefined&&!finite(a.referenceVeryHigh)))throw Error('invalid_result');
    codes.add(a.code);
-   return {code:a.code,name:a.name,value:a.value,unit:a.unit,...(a.referenceLow===undefined?{}:{referenceLow:a.referenceLow as number}),...(a.referenceHigh===undefined?{}:{referenceHigh:a.referenceHigh as number}),...(a.referenceAttentionLow===undefined?{}:{referenceAttentionLow:a.referenceAttentionLow as number}),...(a.referenceAttentionHigh===undefined?{}:{referenceAttentionHigh:a.referenceAttentionHigh as number}),...(a.referenceVeryLow===undefined?{}:{referenceVeryLow:a.referenceVeryLow as number}),...(a.referenceVeryHigh===undefined?{}:{referenceVeryHigh:a.referenceVeryHigh as number})};
+   if(a.sourcePage!==undefined&&(!Number.isInteger(a.sourcePage)||(a.sourcePage as number)<1||(a.sourcePage as number)>500))throw Error('invalid_source_page');
+   return {code:a.code,name:a.name,value:a.value,unit:a.unit,...(a.sourcePage===undefined?{}:{sourcePage:a.sourcePage as number}),...(a.referenceLow===undefined?{}:{referenceLow:a.referenceLow as number}),...(a.referenceHigh===undefined?{}:{referenceHigh:a.referenceHigh as number}),...(a.referenceAttentionLow===undefined?{}:{referenceAttentionLow:a.referenceAttentionLow as number}),...(a.referenceAttentionHigh===undefined?{}:{referenceAttentionHigh:a.referenceAttentionHigh as number}),...(a.referenceVeryLow===undefined?{}:{referenceVeryLow:a.referenceVeryLow as number}),...(a.referenceVeryHigh===undefined?{}:{referenceVeryHigh:a.referenceVeryHigh as number})};
   });
   return {id:r.id,patientId:p.id as string,collectedAt:r.collectedAt,laboratory:r.laboratory,status:'synthetic-demo',isSynthetic:true,originalPdfId:null,results};
  }).sort((a,b)=>a.collectedAt.localeCompare(b.collectedAt)||a.id.localeCompare(b.id));

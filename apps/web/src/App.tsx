@@ -3,8 +3,9 @@ import brFlag from 'flag-icons/flags/4x3/br.svg';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
-import {Activity,ChartNoAxesCombined,FileText,HeartPulse,LockKeyhole,Download,FlaskConical,Moon,Sun} from 'lucide-react';
-import {demoReports as fixtureReports,indicatorCodes,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
+import {Activity,ChartNoAxesCombined,FileText,HeartPulse,Download,FlaskConical,Moon,Sun} from 'lucide-react';
+import {demoReports as fixtureReports,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
+import {demoSources,heldoutDates} from '../../../packages/fixtures/src/demo-sources';
 import {AppActions} from './pwa';
 import {DemoEntry} from './demo-entry';
 import {useDemoOverview} from './use-demo';
@@ -98,14 +99,16 @@ export default function App(){
   const historyHeading=useRef<HTMLHeadingElement>(null);
   useEffect(()=>{if(entered)historyHeading.current?.focus();},[entered]);
   const [section,setSection]=useState<Section>('overview');
-  const [selected,setSelected]=useState<string>(indicatorCodes[0]);
+  const [selected,setSelected]=useState<string>('glucose');
   const [reportId,setReportId]=useState(initialLatest.id);
   const [reportSearch,setReportSearch]=useState('');
   const report=demoReports.find(r=>r.id===reportId)??latest;
   const visibleResults=report.results.filter(a=>searchKey(labelForIndicator(a.code,locale,a.name)).includes(searchKey(reportSearch)));
-  const latestIndicator=useMemo(()=>latest.results.find(a=>a.code===selected),[selected,latest]);
+  const allIndicators=useMemo(()=>[...new Map(demoReports.flatMap(r=>r.results).map(a=>[a.code,a])).values()],[demoReports]);
+  const latestIndicator=useMemo(()=>allIndicators.find(a=>a.code===selected),[selected,allIndicators]);
   const featured=useMemo(()=>chooseFeaturedResult(latest.results),[latest]);
   const outsideCount=latest.results.filter(a=>['high','very-high','low','very-low'].includes(referenceStatus(a))).length;
+  const referenceCount=latest.results.filter(a=>a.referenceLow!==undefined||a.referenceHigh!==undefined).length;
   const date=(s:string)=>formatDate(s,locale);
   const fmt=(n:number)=>formatValue(n,locale);
   const indicatorName=(a:Indicator)=>labelForIndicator(a.code,locale,a.name);
@@ -128,6 +131,10 @@ export default function App(){
     <main className="container">
       {!entered?<DemoEntry portuguese={locale==='pt-BR'} onExplore={()=>setEntered(true)}/>:<>
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
+      <section className="panel demo-sample-download" aria-label={locale==='pt-BR'?'Exames para testar':'Sample reports'}>
+        <div><strong>{locale==='pt-BR'?'26 laudos na base · 3 reservados para testar':'26 reports preloaded · 3 held out for testing'}</strong><p>{locale==='pt-BR'?'Baixe os três laudos fictícios mais recentes. Eles não estão incluídos no histórico inicial. A importação automática via Gemma está em preparação.':'Download the three newest fictional reports. They are excluded from the initial history. Automatic import with Gemma is being prepared.'}</p><small>{heldoutDates.map(d=>date(d)).join(' · ')}</small></div>
+        <a className="secondary" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={16}/>{locale==='pt-BR'?'Baixar 3 exames (ZIP)':'Download 3 reports (ZIP)'}</a>
+      </section>
       {status==='offline'&&<p role="status" className="demo-source">{locale==='pt-BR'?'Não foi possível atualizar. Exibindo o histórico local.':'Unable to refresh. Showing local history.'}</p>}
       <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1 ref={historyHeading} tabIndex={-1}>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
       <nav className="tabs" aria-label={t.navLabel}>
@@ -141,9 +148,9 @@ export default function App(){
             <span className="eyebrow">{t.lastCollection}</span>
             <h2>{featured
               ? <>{indicatorName(featured)}: {fmt(featured.value)} {featured.unit}, {['high','very-high'].includes(referenceStatus(featured))?t.featuredHigh:t.featuredLow}.</>
-              : t.noOutOfRangeHighlight}</h2>
+              : referenceCount?t.noOutOfRangeHighlight:(locale==='pt-BR'?'Consulte as referências no laudo completo':'Read reference intervals in the complete report')}</h2>
             <p>{date(latest.collectedAt)} · {labName(latest.laboratory)} · {latest.results.length} {t.markersCount}</p>
-            <p className="latest-count">{outsideCount} {t.outsideReferenceCount}</p>
+            <p className="latest-count">{referenceCount?<>{outsideCount} {t.outsideReferenceCount}</>:(locale==='pt-BR'?'As faixas ainda não foram transcritas para os gráficos.':'Reference intervals have not yet been transcribed for charting.')}</p>
           </div>
           <div className="latest-result-list" aria-label={t.allResultsLatest}>
             {latest.results.map(a=>{
@@ -162,11 +169,11 @@ export default function App(){
         <h2 className="section-title">{t.labMarkers}</h2>
         <div className="indicator-grid">{latest.results.map(a=><button key={a.code} className="indicator" aria-label={t.viewHistory+' '+indicatorName(a)+', '+fmt(a.value)+' '+a.unit} onClick={()=>{setSelected(a.code);setSection('trends')}}><span className="indicator-copy"><span className="indicator-name">{indicatorName(a)}</span><strong>{fmt(a.value)} <small>{a.unit}</small></strong><span className="indicator-meta">{date(latest.collectedAt)} · {markerStatus(a,t)}</span></span><MiniSparkline code={a.code} reports={demoReports}/></button>)}</div>
         <h2 className="section-title">{t.recentCollections}</h2>
-        <div className="panel">{[...demoReports].reverse().map(r=><button className="report-row" key={r.id} onClick={()=>{setReportId(r.id);setSection('reports')}}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)} · {r.results.length} {t.fictionalResults}</small></span><span className="chevron">›</span></button>)}</div>
+        <div className="panel">{[...demoReports].reverse().map(r=><button className="report-row" key={r.id} onClick={()=>{setReportId(r.id);setSection('reports')}}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)} · {r.results.length?`${r.results.length} ${locale==='pt-BR'?'campos numéricos':'numeric fields'}`:(locale==='pt-BR'?'Ver resultados no PDF':'Read results in the PDF')}</small></span><span className="chevron">›</span></button>)}</div>
       </>}
       {section==='trends'&&<section className="panel detail-panel">
         <div className="detail-heading"><div><span className="eyebrow">{t.longitudinal}</span><h2>{latestIndicator?indicatorName(latestIndicator):t.trendHeading}</h2><p>{t.trendText}</p></div>
-        <label>{t.marker}<select aria-label={t.selectMarker} value={selected} onChange={e=>setSelected(e.target.value)}>{latest.results.map(a=><option key={a.code} value={a.code}>{indicatorName(a)}</option>)}</select></label></div>
+        <label>{t.marker}<select aria-label={t.selectMarker} value={selected} onChange={e=>setSelected(e.target.value)}>{allIndicators.map(a=><option key={a.code} value={a.code}>{indicatorName(a)}</option>)}</select></label></div>
         <div className="value-card"><strong>{latestIndicator&&fmt(latestIndicator.value)}</strong><span>{latestIndicator?.unit} · {t.mostRecentResult}</span></div>
         <Trend reports={demoReports} code={selected} locale={locale} t={t} onOpenReport={(id)=>{setReportId(id);setSection('reports')}}/><p className="disclaimer">{t.medicalDisclaimer}</p>
       </section>}
@@ -174,9 +181,10 @@ export default function App(){
         <section className="panel reports-list"><h2>{t.collections}</h2>{[...demoReports].reverse().map(r=><button className={'report-row '+(r.id===reportId?'selected':'')} key={r.id} onClick={()=>setReportId(r.id)}><span className="doc-icon"><FileText size={18}/></span><span><strong>{date(r.collectedAt)}</strong><small>{labName(r.laboratory)}</small></span></button>)}</section>
         <section className="panel detail-panel"><span className="eyebrow">{t.collectionDetails}</span><h2>{date(report.collectedAt)}</h2><p>{labName(report.laboratory)}</p>
           <label className="report-search">{locale==='pt-BR'?'Buscar neste laudo':'Search this report'}<input type="search" value={reportSearch} onChange={e=>setReportSearch(e.target.value)} placeholder={locale==='pt-BR'?'Nome do marcador':'Marker name'}/></label>
-          <div className="results-list">{visibleResults.map(a=><div key={a.code} className="result-line"><span>{indicatorName(a)}</span><strong>{fmt(a.value)} {a.unit}</strong><span className={"reference-badge "+statusClass(referenceStatus(a))}>{markerStatus(a,t)}</span></div>)}</div>
-          {!visibleResults.length&&<p role="status">{locale==='pt-BR'?'Nenhum marcador encontrado nesta coleta.':'No matching marker in this collection.'}</p>}
-          <div className="source-placeholder"><LockKeyhole size={23}/><div><strong>{locale==='pt-BR'?'Laudo original':'Original report'}</strong><p>{t.pdfNotAvailable}</p><button className="secondary" disabled><Download size={16}/> {t.downloadUnavailable}</button></div></div>
+          <p>{locale==='pt-BR'?'Os gráficos mostram os campos numéricos transcritos. O PDF completo inclui os demais resultados e as referências originais. Faixas não transcritas não são inferidas.':'Charts show transcribed numeric fields. The complete PDF includes the remaining results and original reference intervals. Untranscribed intervals are not inferred.'}</p>
+          <div className="results-list">{visibleResults.map(a=><div key={a.code} className="result-line"><span>{indicatorName(a)}{a.sourcePage&&<small> · {locale==='pt-BR'?'pág.':'p.'} {a.sourcePage}</small>}</span><strong>{fmt(a.value)} {a.unit}</strong><span className={"reference-badge "+statusClass(referenceStatus(a))}>{markerStatus(a,t)}</span></div>)}</div>
+          {!visibleResults.length&&<p role="status">{report.results.length?(locale==='pt-BR'?'Nenhum marcador encontrado nesta coleta.':'No matching marker in this collection.'):(locale==='pt-BR'?'Este laudo não tem campos numéricos transcritos para gráficos. Consulte os resultados no PDF completo.':'This report has no numeric fields transcribed for charts. Read its results in the complete PDF.')}</p>}
+          <div className="source-placeholder"><FileText size={23}/><div><strong>{locale==='pt-BR'?'Laudo fictício completo':'Complete fictional report'}</strong>{demoSources[report.id]?<><p>{demoSources[report.id].pages} {locale==='pt-BR'?'páginas · transcrição sem identificadores; paginação refeita':'pages · transcription without identifiers; repaginated'}</p><a className="secondary" href={import.meta.env.BASE_URL+'demo/'+demoSources[report.id].file} target="_blank" rel="noopener noreferrer"><Download size={16}/> {locale==='pt-BR'?'Abrir PDF completo':'Open complete PDF'}</a></>:<p>{t.pdfNotAvailable}</p>}</div></div>
         </section>
       </div>}
       </>}

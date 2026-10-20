@@ -19,7 +19,7 @@ test('adapter fetches only public demo without cookies and validates source',asy
  const data=await fetchDemoOverview('https://api.example.test',new AbortController().signal,async(url,options)=>{
   assert.equal(String(url),'https://api.example.test/api/demo/overview');assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');
   return Response.json(body());
- });assert.equal(data.reports.length,8);
+ });assert.equal(data.reports.length,26);
 });
 test('outages, mislabeled fixtures, unsafe origins and aborts reject for visible local fallback',async()=>{
  const signal=new AbortController().signal;

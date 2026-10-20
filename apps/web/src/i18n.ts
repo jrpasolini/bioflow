@@ -175,11 +175,12 @@ const indicatorKeys = {
 } as const;
 export function labelForIndicator(code: string, locale: Locale, fallback: string): string {
   const key = indicatorKeys[code as keyof typeof indicatorKeys];
-  return key ? translations[locale][key] : fallback;
+  const english:Record<string,string>={glucosePostMeal:'Postprandial glucose',vldl:'VLDL cholesterol',nonHdl:'Non-HDL cholesterol',potassium:'Potassium',sodium:'Sodium',uricAcid:'Uric acid',ast:'AST',alt:'ALT',ck:'Creatine kinase',vitaminD:'25-hydroxyvitamin D',vitaminB12:'Vitamin B12',tsh:'TSH',t4Free:'Free T4',phosphorus:'Phosphorus',magnesium:'Magnesium',ionizedCalcium:'Ionized calcium',alkalinePhosphatase:'Alkaline phosphatase',gammaGt:'Gamma-GT',ferritin:'Ferritin',iron:'Iron',folate:'Folate',calciumTotal:'Total calcium',bun:'Blood urea nitrogen'};
+  return key ? translations[locale][key] : locale==='en-US'?(english[code]??fallback):fallback;
 }
 export function labelForLab(name: string, locale: Locale): string {
   const key = name.includes('Aurora') ? 'labAurora' : name.includes('Horizonte') ? 'labHorizonte' : null;
-  return key ? translations[locale][key] : name;
+  return key ? translations[locale][key] : locale==='en-US'?name.replace('(laudo fictício fornecido)','(supplied fictional report)'):name;
 }
 export function formatDate(dateISO: string, locale: Locale): string {
   return new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeZone:'UTC'})
