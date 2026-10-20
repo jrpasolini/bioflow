@@ -26,6 +26,7 @@ Only exact known fictional files are accepted. Their SHA-256s are in apps/api/sr
         db.demo_imports.createIndex({sessionId:1,sha256:1},{unique:true,name:"unique_session_sample"})
         db.demo_imports.createIndex({expiresAt:1},{expireAfterSeconds:0,name:"delete_expired_imports"})
 
+- Alternatively, with MONGODB_DEMO_WRITE_URI available securely in the ignored local .env.local, run npm run db:setup:demo-imports to create both indexes. This provisioning script touches only bioflow_sessions.
 - Indexes are REQUIRED: unique prevents concurrent duplicate writes and TTL ensures the import expires. TTL deletion is eventually consistent.
 - Set DEMO_SESSION_SECRET with a cryptographically random secret of at least 32 bytes via Cloudflare's secure secret input.
 - The wrangler.jsonc AI and rate limiting bindings are now declared. ENABLE_GEMMA_DEMO is deliberately FALSE by default.
