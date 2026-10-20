@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 
 export type Locale = 'en-US' | 'pt-BR';
-const STORAGE_KEY = 'bioflow.locale';
 
 const en = {
   tagline: 'Your health. Your history. Your control.',
@@ -202,13 +201,8 @@ export function formatBirthDate(dateISO: string, locale: Locale): string {
 export function formatValue(value: number, locale: Locale): string {
   return new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(value);
 }
-function readPreference(): Locale {
-  try { if (window.localStorage.getItem(STORAGE_KEY)==='pt-BR') return 'pt-BR'; }
-  catch { /* Private browsing may block storage. */ }
-  return 'en-US'; // Explicit project default: US English, not browser language.
-}
 export function useLocale() {
-  const [locale,setLocale] = useState<Locale>(readPreference);
+  const [locale,setLocale] = useState<Locale>('en-US');
   useEffect(()=>{
     document.documentElement.lang = locale;
     document.title = translations[locale].pageTitle;
@@ -216,8 +210,6 @@ export function useLocale() {
   },[locale]);
   const changeLocale = (next:Locale)=>{
     setLocale(next);
-    try {window.localStorage.setItem(STORAGE_KEY,next);}
-    catch { /* Current session still switches locale. */ }
   };
   return {locale,changeLocale,t: translations[locale]};
 }

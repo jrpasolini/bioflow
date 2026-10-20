@@ -1,3 +1,5 @@
+import usFlag from 'flag-icons/flags/4x3/us.svg';
+import brFlag from 'flag-icons/flags/4x3/br.svg';
 import {useMemo,useState} from 'react';
 import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
@@ -111,8 +113,8 @@ export default function App(){
       <div className="header-actions">
         <AppActions portuguese={locale==='pt-BR'}/>
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
-          <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><span aria-hidden="true">🇺🇸</span><span className="locale-code">EN</span></button>
-          <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><span aria-hidden="true">🇧🇷</span><span className="locale-code">PT</span></button>
+          <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><img className="locale-flag" src={usFlag} alt="" aria-hidden="true"/></button>
+          <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><img className="locale-flag" src={brFlag} alt="" aria-hidden="true"/></button>
         </div>
         <button type="button" className="theme-toggle" onClick={toggleTheme} aria-label={theme==='light'?t.enableDark:t.enableLight} aria-pressed={theme==='dark'} title={theme==='light'?t.enableDark:t.enableLight}>
           {theme==='light'?<Moon size={18}/>:<Sun size={18}/>}<span>{theme==='light'?t.dark:t.light}</span>

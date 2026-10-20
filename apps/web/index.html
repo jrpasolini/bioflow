@@ -16,10 +16,8 @@
       var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       var theme = (stored === 'dark' || stored === 'light') ? stored : (systemDark ? 'dark' : 'light');
       document.documentElement.dataset.theme = theme;
-      // English (US) is always the default unless the visitor selected Portuguese.
-      var lang = null;
-      try { lang = localStorage.getItem('bioflow.locale'); } catch (_) {}
-      document.documentElement.lang = lang === 'pt-BR' ? 'pt-BR' : 'en-US';
+      // Every page load starts in English; visitors can switch for the current session.
+      document.documentElement.lang = 'en-US';
       document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#0c1417' : '#f6f9f9');
     })();
   </script>
