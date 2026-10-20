@@ -185,6 +185,10 @@ export default function App(){
       <p className="footer-note">{t.footer}</p>
       <p className="technology-label">BioFlow · {t.technologyCredits}</p>
       <ul className="technology-credits" aria-label={t.technologyCredits}>{['React','TypeScript','Vite','Cloudflare Workers','MongoDB Atlas','Lucide','Newsreader','Figtree','flag-icons'].map(name=><li key={name}>{name}</li>)}</ul>
+      <p className="integration-credits">
+        <span>{locale==='pt-BR'?'Leitura de PDFs com':'PDF reading with'} <a href="https://deepmind.google/models/gemma/" target="_blank" rel="noopener noreferrer">Gemma</a> <small>· {locale==='pt-BR'?'em breve':'coming soon'}</small></span>
+        <span>{locale==='pt-BR'?'Autenticação 2FA com':'2FA authentication with'} <a href="https://auth0.com/" target="_blank" rel="noopener noreferrer">Auth0</a> <small>· {locale==='pt-BR'?'em breve':'coming soon'}</small></span>
+      </p>
     </footer>
   </div>;
 }
