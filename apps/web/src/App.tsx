@@ -8,6 +8,7 @@ import {demoReports as fixtureReports,type Indicator,type LabReport} from '../..
 import {demoSources} from '../../../packages/fixtures/src/demo-sources';
 import {AppActions} from './pwa';
 import {DemoEntry} from './demo-entry';
+import type {Auth0Session} from './auth0-session';
 import {GemmaImport} from './gemma-import';
 import {useDemoOverview} from './use-demo';
 import {useThemePreference} from './theme';
@@ -90,7 +91,7 @@ function Trend({code,reports,locale,onOpenReport,t}:{
     </section>
   </div>;
 }
-export default function App(){
+export default function App({auth0}:{auth0?:Auth0Session}={}){
   const {data,status}=useDemoOverview();
   const {patient:demoPatient,reports:baseReports}=data;
   const [sessionReports,setSessionReports]=useState<LabReport[]>([]);
@@ -99,8 +100,9 @@ export default function App(){
   const {theme,toggleTheme}=useThemePreference();
   const {locale,changeLocale,t}=useLocale();
   const [entered,setEntered]=useState(false);
+  const inDashboard=entered||auth0?.authenticated===true;
   const historyHeading=useRef<HTMLHeadingElement>(null);
-  useEffect(()=>{if(entered)historyHeading.current?.focus();},[entered]);
+  useEffect(()=>{if(inDashboard)historyHeading.current?.focus();},[inDashboard]);
   const [section,setSection]=useState<Section>('overview');
   const [selected,setSelected]=useState<string>('glucose');
   const [reportId,setReportId]=useState(initialLatest.id);
@@ -121,7 +123,7 @@ export default function App(){
     <header className="topbar">
       <div className="brand"><span className="brand-icon" aria-hidden="true"><HeartPulse size={34}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
       <div className="header-actions">
-        {entered&&<><button type="button" className="secondary access-options" onClick={()=>setEntered(false)}>{locale==='pt-BR'?'Sair da demonstração':'Leave demo'}</button><AppActions portuguese={locale==='pt-BR'}/></>}
+        {inDashboard&&<><button type="button" className="secondary access-options" onClick={()=>{if(auth0?.authenticated)auth0.logout();else setEntered(false);}}>{auth0?.authenticated?(locale==='pt-BR'?'Sair da conta Auth0':'Sign out of Auth0'):(locale==='pt-BR'?'Sair da demonstração':'Leave demo')}</button><AppActions portuguese={locale==='pt-BR'}/></>}
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
           <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><img className="locale-flag" src={usFlag} alt="" aria-hidden="true"/></button>
           <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><img className="locale-flag" src={brFlag} alt="" aria-hidden="true"/></button>
@@ -132,7 +134,7 @@ export default function App(){
       </div>
     </header>
     <main className="container">
-      {!entered?<DemoEntry portuguese={locale==='pt-BR'} onExplore={()=>setEntered(true)}/>:<>
+      {!inDashboard?<DemoEntry portuguese={locale==='pt-BR'} auth0={auth0} onExplore={()=>setEntered(true)}/>:<>
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
       <GemmaImport portuguese={locale==='pt-BR'} onReportsChanged={setSessionReports}/>
 
