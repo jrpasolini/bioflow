@@ -35,14 +35,14 @@ function Trend({code,reports,locale,onOpenReport,t}:{
   const selected=series.find(s=>selectedPoint?.code===code&&s.id===selectedPoint.id)??series[series.length-1];
   const points=plotHistory(series,760,240,58,25);
   const min=Math.min(...series.map(s=>s.value)),max=Math.max(...series.map(s=>s.value));
+  const ticks=min===max?[{y:120,value:min}]:[0,1,2,3].map(i=>({y:25+i*190/3,value:max-(max-min)*i/3}));
   const selectedIndex=series.findIndex(s=>s.id===selected.id);
   const label=labelForIndicator(code,locale,series[0].name);
   const chartLabel=t.historyFor+' '+label+'. '+t.collectionOrder;
   return <div className="timeline-wrap">
     <div className="trend-chart">
       <svg className="interactive-history" viewBox="0 0 760 240" role="group" aria-label={chartLabel}>
-        {[0,1,2,3].map(i=>{
-          const y=25+i*190/3,value=max-(max-min)*i/3;
+        {ticks.map(({y,value},i)=>{
           return <g key={i} aria-hidden="true"><line x1="58" x2="702" y1={y} y2={y} stroke="var(--plot-axis)" opacity=".65"/><text x="47" y={y+4} textAnchor="end" className="chart-tick">{formatValue(value,locale)}</text></g>;
         })}
         <path key={code} className="history-line" pathLength="1" d={smoothHistoryPath(points)} fill="none" stroke="var(--plot-stroke)" strokeWidth="2" strokeLinecap="round"/>
