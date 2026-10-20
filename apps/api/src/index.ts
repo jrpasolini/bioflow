@@ -146,8 +146,16 @@ export default {
     return err(req,env,503,'demo_database_unavailable');
    }
   }
-  if(['/api/demo/session','/api/demo/extract','/api/demo/commit','/api/demo/imports'].includes(path))
-   return handleGemmaDemo(req,env,path);
+  if(['/api/demo/session','/api/demo/extract','/api/demo/commit','/api/demo/imports'].includes(path)){
+   const result=await handleGemmaDemo(req,env,path);
+   const headers=new Headers(result.headers);
+   const cors=responseHeaders(req,env);
+   if(cors.has('Access-Control-Allow-Origin'))headers.set('Access-Control-Allow-Origin',cors.get('Access-Control-Allow-Origin')!);
+   headers.set('Vary','Origin');
+   headers.set('Cache-Control','no-store');
+   headers.set('X-Content-Type-Options','nosniff');
+   return new Response(result.body,{status:result.status,statusText:result.statusText,headers});
+  }
   const m=path.match(/^\/api\/patients\/([^/]+)\/reports(?:\/([^/]+)\/download)?$/);
   if(!m)return err(req,env,404,'not_found');
   if(env.ENABLE_PDF_ENDPOINTS!=='true'||!env.REPORTS_BUCKET)return err(req,env,503,'pdf_endpoints_disabled');
