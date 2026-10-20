@@ -50,7 +50,7 @@ test('demo token is temporary, and unknown PDF cannot reach paid model',async()=
  const badAuth=await handleGemmaDemo(new Request(base+'extract',{...opts,headers:{'CF-Connecting-IP':'192.0.2.5',Authorization:'Bearer incorrect'}}),env,'/api/demo/extract');
  assert.equal(badAuth.status,401);
  const form=new FormData();
- form.append('file',new File([new TextEncoder().encode('%PDF-1.4\nNOT-ONE-OF-OUR-THREE-SAMPLES\n')],'unknown.pdf',{type:'application/pdf'}));
+ form.append('file',new File([new TextEncoder().encode('%PDF-1.4\nNOT-ONE-OF-OUR-THREE-SAMPLES\n'+'x'.repeat(128))],'unknown.pdf',{type:'application/pdf'}));
  const rejected=await handleGemmaDemo(new Request(base+'extract',{...opts,headers:{'CF-Connecting-IP':'192.0.2.5',Authorization:'Bearer '+token},body:form}),env,'/api/demo/extract');
  assert.equal(rejected.status,403);
  assert.deepEqual(await rejected.json(),{error:'sample_not_allowed'});
