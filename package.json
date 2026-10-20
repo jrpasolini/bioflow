@@ -11,12 +11,16 @@
   "scripts": {
     "dev": "npm run dev -w @bioflow/web",
     "dev:api": "npm run dev -w @bioflow/api",
-    "test": "npm run test -w @bioflow/fixtures",
+    "test": "node --test packages/fixtures/tests/*.test.mjs apps/api/tests/*.test.mjs apps/web/tests/*.test.mjs",
     "typecheck": "npm run typecheck -w @bioflow/web && npm run typecheck -w @bioflow/api",
     "build": "npm run build -w @bioflow/web && npm run typecheck -w @bioflow/api",
-    "db:seed:demo": "node --env-file=.env.local scripts/seed-demo.mjs"
+    "db:seed:demo": "node --env-file=.env.local scripts/seed-demo.mjs",
+    "test:pwa": "node --test scripts/pwa.test.mjs"
   },
   "engines": {
     "node": ">=20.19"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }

@@ -10,6 +10,7 @@ interface Env {
   APP_ORIGIN?: string;
   MONGODB_URI?: string;
   MONGODB_DB?: string;
+  ENABLE_PDF_ENDPOINTS?: string;
 }
 const MAX_PDF_BYTES=10*1024*1024;
 const pdfId=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -114,7 +115,7 @@ export default {
    return new Response(null,{status:204,headers:responseHeaders(req,env)});
   }
   if(req.method==='GET'&&path==='/api/health'){
-   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB)});
+   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB)});
   }
   if(req.method==='GET'&&path==='/api/demo/overview'){
    // Only explicitly synthetic data are exposed publicly.
@@ -129,6 +130,7 @@ export default {
   }
   const m=path.match(/^\/api\/patients\/([^/]+)\/reports(?:\/([^/]+)\/download)?$/);
   if(!m)return err(req,env,404,'not_found');
+  if(env.ENABLE_PDF_ENDPOINTS!=='true'||!env.REPORTS_BUCKET)return err(req,env,503,'pdf_endpoints_disabled');
   const patientId=m[1],reportId=m[2];
   // Prototype owner boundary: only fictional patient is addressable.
   if(patientId!==demoPatient.id)return err(req,env,404,'not_found');
@@ -140,3 +142,4 @@ export default {
   return err(req,env,405,'method_not_allowed');
  }
 };
+

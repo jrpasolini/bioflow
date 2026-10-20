@@ -68,3 +68,8 @@ audit, retention and document versioning. Never populate them with the demo fixt
 This commit **does not create a real Atlas cluster, connect credentials, upload PDFs,
 configure an Auth0 tenant or deploy an API**. Those actions require the actual
 Atlas project and credentials plus the next authorization milestone.
+
+
+## Worker and frontend activation
+
+See [WORKER_DEPLOY.md](WORKER_DEPLOY.md) for the current credential-rotation gate, runtime read-only user, explicit ingress approval, live endpoint checks and frontend rollback. The React data adapter and PWA are implemented; activation still requires a tested public Worker origin.

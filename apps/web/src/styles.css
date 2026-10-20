@@ -106,6 +106,16 @@ button:focus-visible,select:focus-visible {outline:3px solid var(--accent);outli
 .selected-exam p strong {color:var(--text);font-weight:650}
 .open-report {background:var(--accent-bg);color:#fff;border:1px solid var(--accent-bg);border-radius:9px;padding:10px 14px;font-size:13px;font-weight:650;white-space:nowrap}
 .open-report:hover {filter:brightness(1.12)}
+.app-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.app-actions button{display:inline-flex;gap:8px;align-items:center;min-height:42px}
+.action-dialog{max-width:460px;width:calc(100% - 40px);padding:30px;border:1px solid var(--line-strong);border-radius:18px;background:var(--surface);color:var(--text)}
+.action-dialog::backdrop{background:#071b225c;backdrop-filter:blur(4px)}
+.action-dialog h2{font-family:Georgia,serif;font-size:28px;margin:4px 0 18px}
+.action-dialog p{line-height:1.7;color:var(--muted);margin-bottom:24px}
+.close-dialog{float:right;background:transparent;border:0;color:var(--text);padding:4px}
+.history-line{stroke-dasharray:1;stroke-dashoffset:0;animation:trace-history .65s ease-out}
+@keyframes trace-history{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.history-line{animation:none}.history-point .point-dot{transition:none}}
 @media(max-width:800px){.indicator-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){.indicator-grid{grid-template-columns:1fr}.indicator-copy strong{font-size:25px}.selected-exam{flex-direction:column;align-items:stretch}.open-report{align-self:start}}
 
@@ -132,3 +142,4 @@ button:focus-visible,select:focus-visible {outline:3px solid var(--accent);outli
 .results-list .result-line>span:first-child {flex:1;min-width:0}
 .results-list .result-line strong {font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:540px){.latest-summary{padding:20px 16px}.latest-result-row{gap:6px}.latest-result-name,.latest-result-value{font-size:12px}.reference-badge{font-size:10px;padding:5px 7px}.results-list .result-line{flex-wrap:wrap}.results-list .result-line>span:first-child{flex-basis:100%}}
+

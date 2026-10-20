@@ -29,6 +29,24 @@ export function markerHistory(reports: readonly LabReport[], code: string): Mark
 
 export interface ChartPoint {x:number; y:number}
 
+/** Monotone cubic interpolation: passes through each exam without inventing extrema. */
+export function smoothHistoryPath(points:readonly ChartPoint[]):string{
+ if(!points.length)return '';
+ const slopes=points.slice(1).map((p,i)=>(p.y-points[i].y)/(p.x-points[i].x));
+ const tangent=points.map((_,i)=>{
+  if(i===0)return slopes[0]||0;
+  if(i===points.length-1)return slopes[i-1]||0;
+  const a=slopes[i-1],b=slopes[i];
+  return a*b<=0?0:2*a*b/(a+b);
+ });
+ let path=`M ${points[0].x} ${points[0].y}`;
+ for(let i=1;i<points.length;i++){
+  const a=points[i-1],b=points[i],dx=(b.x-a.x)/3;
+  path+=` C ${a.x+dx} ${a.y+dx*tangent[i-1]}, ${b.x-dx} ${b.y-dx*tangent[i]}, ${b.x} ${b.y}`;
+ }
+ return path;
+}
+
 /**
  * Markers are chronologically ordered and displayed with one dot per exam.
  * Horizontal spacing is by collection sequence, NOT elapsed time.
@@ -45,3 +63,4 @@ export function plotHistory(series: readonly MarkerObservation[], width: number,
     y: span===0 ? height/2 : padY+(1-(item.value-min)/span)*innerHeight
   }));
 }
+

@@ -5,5 +5,6 @@
   "compatibility_flags": ["nodejs_compat"],
   // R2 binding is deliberately disabled until bucket provisioning:
   // "r2_buckets": [{"binding": "REPORTS_BUCKET", "bucket_name": "bioflow-private-reports"}],
-  "vars": {"APP_ORIGIN": "http://localhost:5173", "MONGODB_DB": "bioflow_demo"}
+  "vars": {"APP_ORIGIN": "https://bioflow-6d0z.onrender.com", "MONGODB_DB": "bioflow_demo", "ENABLE_PDF_ENDPOINTS": "false"}
 }
+
