@@ -4,7 +4,7 @@ import {DEMO_ACCESS_CODE,isDemoAccessCode} from './demo-access';
 
 /** One public entry form. Never grants an Auth0 session or backend permissions. */
 export function DemoEntry({portuguese,onExplore}:{portuguese:boolean;onExplore:()=>void}){
- const [code,setCode]=useState('');
+ const [code,setCode]=useState(DEMO_ACCESS_CODE);
  const [invalid,setInvalid]=useState(false);
  const p=portuguese;
  const submit=(event:FormEvent<HTMLFormElement>)=>{
@@ -20,7 +20,7 @@ export function DemoEntry({portuguese,onExplore}:{portuguese:boolean;onExplore:(
    <div className="entry-login-heading"><LockKeyhole size={27} aria-hidden="true"/>
     <div><span className="eyebrow">{p?'ENTRADA ÚNICA':'ONE ENTRY SCREEN'}</span><h2>{p?'Código de acesso':'Access code'}</h2></div>
    </div>
-   <p>{p?'Digite o código de seis dígitos para explorar os dados sintéticos. Contas privadas utilizarão Auth0 com aplicativo autenticador quando a integração estiver disponível.':'Enter the six-digit code to explore synthetic data. Private accounts will use Auth0 with an authenticator app once that integration is available.'}</p>
+   <p>{p?'Use o código demonstrativo abaixo para experimentar os recursos com dados fictícios. Sem cadastro.':'Use the demo code below to explore the features with fictional data. No registration needed.'}</p>
    <label className="demo-code-label" htmlFor="bioflow-entry-code">{p?'Código de seis dígitos':'Six-digit code'}</label>
    <input id="bioflow-entry-code" type="text" inputMode="numeric" autoComplete="off" spellCheck={false}
     pattern="[0-9]{6}" maxLength={6} required value={code}
@@ -29,12 +29,10 @@ export function DemoEntry({portuguese,onExplore}:{portuguese:boolean;onExplore:(
    {invalid&&<p id="bioflow-entry-error" role="alert">{p?'Código inválido. Use o código de demonstração indicado abaixo.':'Invalid code. Use the demo code shown below.'}</p>}
    <button type="submit" className="open-report">{p?'Entrar na demonstração':'Enter demo'} <ArrowRight size={17} aria-hidden="true"/></button>
    <p className="entry-note" id="bioflow-demo-notice">
-    {p?'Para testar sem cadastrar um autenticador, use o código público':'To try the app without setting up an authenticator, use the public code'} <strong className="demo-code-value">{DEMO_ACCESS_CODE}</strong>.
+    {p?'Código público da demonstração:':'Public demo code:'} <strong className="demo-code-value">{DEMO_ACCESS_CODE}</strong>.
     {' '}{p?'Ele dá acesso somente à demonstração fictícia. Não é 2FA, código de recuperação nem autenticação Auth0.':'It only opens the fictional demo. It is not 2FA, a recovery code or Auth0 authentication.'}
    </p>
   </form>
-  <div className="entry-auth0-note"><ShieldCheck size={22} aria-hidden="true"/>
-   <p>{p?'Contas particulares: Auth0 Universal Login com TOTP obrigatório, ainda não habilitado. Nenhum documento privado pode ser acessado com o código demonstrativo.':'Private accounts: Auth0 Universal Login with mandatory TOTP is not yet enabled. The demo code cannot access private documents.'}</p>
-  </div>
+  <div className="entry-auth0-note"><ShieldCheck size={20} aria-hidden="true"/><p>{p?'Acesso exclusivo aos laudos fictícios. O código não permite consultar arquivos privados.':'Fictional reports only. This code cannot access private files.'}</p></div>
  </section>;
 }
