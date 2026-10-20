@@ -229,3 +229,30 @@ h2,.detail-panel h2{font-size:30px;line-height:1.2}
 /* BioFlow identity: proportional wordmark, icon and tagline on narrow viewports. */
 @media(max-width:850px){.brand{font-size:27px;gap:11px}.brand-icon{width:48px;height:48px;flex-basis:48px;border-radius:13px}.brand small{font-size:12px;margin-top:4px}}
 @media(max-width:540px){.brand{font-size:26px;gap:10px}.brand-icon{width:45px;height:45px;flex-basis:45px;border-radius:12px}.brand small{font-size:11.5px;line-height:1.3;margin-top:3px}.brand>span:last-child{min-width:0}}
+
+
+/* Import workflow (functional, deliberately restrained until design review). */
+.gemma-import{margin:18px 0 26px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.gemma-import-heading{display:flex;align-items:center;gap:12px;color:var(--accent)}
+.gemma-import-heading h2{margin:5px 0;font-size:clamp(23px,3vw,30px);color:var(--heading)}
+.gemma-import>p{max-width:75ch;font-size:13px}
+.gemma-privacy{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px!important}
+.gemma-import-form{display:flex;align-items:center;flex-wrap:wrap;gap:14px 20px;border-top:1px solid var(--line-soft);padding-top:14px}
+.gemma-import-form label{font-size:13px;font-weight:700}
+.gemma-import-form input{max-width:100%;font:inherit;color:var(--text);font-size:13px}
+.gemma-import-form button{min-height:44px;display:inline-flex;align-items:center;gap:8px}
+.gemma-import-form button:disabled{opacity:.55}
+.gemma-review{border-top:1px solid var(--line-strong);padding-top:12px}
+.gemma-review h3{font-size:24px;margin:10px 0}
+.gemma-review details{margin:14px 0;max-height:360px;overflow:auto}
+.gemma-review summary{cursor:pointer;padding:8px 0;font-weight:700;font-size:13px}
+.gemma-results{padding:4px 8px}
+.gemma-results .result-line{display:flex;align-items:center;gap:12px}
+.gemma-results .result-line span{flex:1}
+.gemma-results .result-line strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+.gemma-buttons{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gemma-buttons .secondary{margin:0}
+.gemma-error{color:var(--banner-text)!important;font-weight:700}
+.gemma-saved{color:var(--accent)!important;font-weight:700}
+.gemma-session-total{font-size:12px!important}
+@media(max-width:540px){.gemma-import{padding:18px 14px}.gemma-import-form{align-items:stretch;flex-direction:column}.gemma-import-form .open-report{align-self:stretch;justify-content:center}}
