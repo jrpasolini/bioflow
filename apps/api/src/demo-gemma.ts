@@ -1,5 +1,6 @@
 import {MongoClient,type Db} from 'mongodb';
 import {SAMPLES,isSampleHash} from './demo-samples';
+import {canonicalCode,canonicalName,canonicalUnit} from '../../../packages/fixtures/src/analytes';
 
 export interface GemmaEnv {
  AI?: Ai;
@@ -24,11 +25,6 @@ const validHex=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{64}$/.te
 const isObject=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const validDate=(v:unknown):v is string=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v+'T00:00:00Z'));
 const clean=(v:unknown,n=100)=>typeof v==='string'?v.trim().slice(0,n):'';
-/** Stable short code from a label, so a missing "code" never costs us the reading. */
-function slug(v:string):string{
- return v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
-  .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,72);
-}
 /**
  * A document pipeline must always answer. Without a deadline a single slow stage
  * leaves the visitor staring at a spinner with no way to know what happened.
@@ -98,13 +94,17 @@ export function extractGemmaJson(raw:unknown,date:string):ReviewedReport {
   // panel mixes numeric readings with qualitative lines ("Ausentes"). Skip the row,
   // keep the report, and fail only when nothing usable survived.
   if(!isObject(item))continue;
-  const name=clean(item.name,120),unit=clean(item.unit,36);
-  let code=clean(item.code,72).toLowerCase().replace(/[^a-z0-9_-]/g,'-');
-  if(!code)code=slug(name);
+  const rawName=clean(item.name,120),rawCode=clean(item.code,72),rawUnit=clean(item.unit,36);
+  // Resolve the reading against the shared vocabulary before anything else, so a
+  // new extraction lands on the same series the history already plots instead of
+  // starting an orphan line of its own.
+  const code=canonicalCode(rawCode,rawName);
+  const name=rawName.length>=2?rawName:canonicalName(code);
+  const unit=canonicalUnit(code,rawUnit);
   // The model answers with whatever key it prefers ("numeric_value" is the common
   // one). The reading is the same reading; only the label differs.
   const value=toNumber(item.value??item.numeric_value??item.numericValue??item.result);
-  if(name.length<2||!code||value===undefined)continue;
+  if(!code||value===undefined)continue;
   const page=num(item.sourcePage),low=toNumber(item.referenceLow),high=toNumber(item.referenceHigh);
   if(page!==undefined&&(!Number.isInteger(page)||page<1||page>40))throw Error('invalid_page');
   if(low!==undefined&&high!==undefined&&low>high)throw Error('invalid_reference_interval');

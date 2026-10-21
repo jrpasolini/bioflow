@@ -97,7 +97,9 @@ test('one malformed row does not discard an otherwise readable report',()=>{
  ]};
  const parsed=extractGemmaJson({response:JSON.stringify(data)},'2026-05-15');
  assert.equal(parsed.results.length,2);
- assert.deepEqual(parsed.results.map(r=>r.code),['hemoglobina','leucocitos']);
+ // The readable rows are kept and resolved to the shared vocabulary, so they join
+ // the series the history already plots instead of starting orphan lines.
+ assert.deepEqual(parsed.results.map(r=>r.code),['hemoglobin','wbc']);
 });
 
 test('long documents are split on page breaks, never in one oversized call',()=>{
