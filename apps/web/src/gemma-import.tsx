@@ -107,20 +107,20 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
  }
  return <section className="panel gemma-import" aria-labelledby="gemma-title">
   <div className="gemma-import-heading"><FilePlus2 size={24} aria-hidden="true"/>
-   <div><span className="eyebrow">{p?'TESTE AO VIVO':'LIVE DEMO'}</span>
+   <div><span className="eyebrow">{p?'ENVIO DE PDF':'PDF UPLOAD'}</span>
     <h2 id="gemma-title">{p?'Analisar PDF com Google Gemma':'Analyze PDF with Google Gemma'}</h2></div></div>
-  <p>{p?'Escolha um dos três PDFs fictícios para testar. Confira os números extraídos pela Gemma antes de adicionar o laudo ao histórico desta sessão.':'Choose one of the three fictional PDFs to test. Review the readings extracted by Gemma before adding the report to the temporary history.'}</p>
+  <p>{base?(p?'Escolha um dos três PDFs fictícios para testar. Confira os números extraídos pela Gemma antes de adicionar o laudo ao histórico desta sessão.':'Choose one of the three fictional PDFs to test. Review the readings extracted by Gemma before adding the report to the temporary history.'):(p?'Conheça os exemplos baixando os três PDFs fictícios abaixo.':'Explore the examples by downloading the three fictional PDFs below.')}</p>
   <p className="gemma-privacy"><ShieldCheck size={16}/>{p?'Apenas arquivos de teste previamente aprovados. Nenhum exame pessoal ou documento real.':'Approved test files only. Do not upload personal or actual medical documents.'}</p>
   <a className="demo-samples-link" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={14} aria-hidden="true"/>{p?'Baixar os 3 PDFs fictícios de teste (ZIP)':'Download 3 fictional test PDFs (ZIP)'}</a>
   <form onSubmit={analyze} className="gemma-import-form">
    <label htmlFor="bioflow-new-pdf">{p?'Escolher PDF fictício':'Choose fictional PDF'}</label>
-   <input id="bioflow-new-pdf" type="file" accept=".pdf,application/pdf" required disabled={fetching}
+   <input id="bioflow-new-pdf" type="file" accept=".pdf,application/pdf" required disabled={fetching||!base}
     onChange={e=>{setFile(e.target.files?.[0]??null);setDraft(null);setError('');setStage('idle');}}/>
    <button className="open-report" type="submit" disabled={!file||fetching||!base}>
     {stage==='uploading'?<><LoaderCircle size={17}/>{p?'Interpretando...':'Extracting...'}</>:(p?'Analisar com Google Gemma':'Analyze with Google Gemma')}
    </button>
   </form>
-  {!base&&<p role="status">{p?'A API ainda não está conectada a esta versão do site.':'The API is not connected to this version of the site yet.'}</p>}
+  {!base&&<p role="status">{p?'A análise com Google Gemma será habilitada na próxima etapa.':'Analysis with Google Gemma will be enabled in the next stage.'}</p>}
   {error&&<p role="alert" className="gemma-error">{error}</p>}
   {draft&&<div className="gemma-review" aria-live="polite">
    <h3>{p?'Confira antes de salvar':'Review before saving'}</h3>
@@ -141,4 +141,5 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
   {saved.length>0&&<p className="gemma-session-total">{saved.length}/3 {p?'exames importados nesta sessão temporária. Os 26 laudos originais permanecem intactos.':'reports imported into this temporary session. All 26 original reports stay unchanged.'}</p>}
  </section>;
 }
+
 
