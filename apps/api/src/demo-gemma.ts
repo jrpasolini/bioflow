@@ -1,6 +1,6 @@
 import {MongoClient,type Db} from 'mongodb';
 import {SAMPLES,isSampleHash} from './demo-samples';
-import {canonicalCode,canonicalName,canonicalUnit} from '../../../packages/fixtures/src/analytes';
+import {canonicalCode,canonicalName,canonicalUnit,isLegendReading} from '../../../packages/fixtures/src/analytes';
 
 export interface GemmaEnv {
  AI?: Ai;
@@ -105,6 +105,11 @@ export function extractGemmaJson(raw:unknown,date:string):ReviewedReport {
   // one). The reading is the same reading; only the label differs.
   const value=toNumber(item.value??item.numeric_value??item.numericValue??item.result);
   if(!code||value===undefined)continue;
+  // A report prints grading legends under its results ("Bacteriúria ausente: < 58/uL;
+  // Raras: 59 a 1500/uL"). Those numbers parse as valid readings but are thresholds,
+  // not measurements; recording one would put a reference boundary in the history as
+  // if the patient had been tested for it.
+  if(isLegendReading(name,code))continue;
   const page=num(item.sourcePage),low=toNumber(item.referenceLow),high=toNumber(item.referenceHigh);
   if(page!==undefined&&(!Number.isInteger(page)||page<1||page>40))throw Error('invalid_page');
   if(low!==undefined&&high!==undefined&&low>high)throw Error('invalid_reference_interval');

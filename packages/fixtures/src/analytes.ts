@@ -350,3 +350,25 @@ export function canonicalUnit(code: string, unit: string): string {
 export function canonicalName(code: string): string {
   return byCode.get(code)?.name ?? '';
 }
+
+/**
+ * Laboratory reports print grading legends under the results, for example
+ * "Bacteriúria ausente: < 58/uL; Raras: 59 a 1500/uL; Moderada: 1500 a 4500/uL".
+ * Those numbers are the boundaries between grades, not measurements taken from the
+ * patient, yet they parse as perfectly valid numeric readings. Recording them would
+ * put a reference threshold in the history as if it were a result.
+ *
+ * The wording is what gives them away: a real analyte is a substance or a count,
+ * never a grade, a threshold or an interference warning.
+ */
+const LEGEND_TERMS = [
+  'threshold', 'interference', 'cutoff', 'cut-off',
+  'absent', 'rare', 'moderate', 'increased', 'decreased',
+  'limite', 'ausente', 'raras', 'raros', 'moderada', 'moderado',
+  'aumentada', 'aumentado', 'diminuida', 'diminuido', 'interferencia'
+];
+
+export function isLegendReading(name: string, code: string): boolean {
+  const haystack = normalizeKey(name + ' ' + code.replace(/[-_]/g, ' '));
+  return LEGEND_TERMS.some(term => haystack.includes(normalizeKey(term)));
+}
