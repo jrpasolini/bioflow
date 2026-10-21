@@ -25,10 +25,10 @@ test('CORS permits only the exact public BioFlow origin',async()=>{
   assert.equal(denied.status,403);assert.equal(denied.headers.get('Access-Control-Allow-Origin'),null);
  }
 });
-test('fixture-only response is labeled and has 26 reports / 258 numeric observations',async()=>{
+test('fixture-only response is labeled and has 26 reports / 585 numeric observations',async()=>{
  const r=await call('/api/demo/overview');const body=await r.json();
  assert.equal(body.source,'synthetic-fixtures');assert.equal(body.reports.length,26);
- assert.equal(body.reports.flatMap(r=>r.results).length,258);
+ assert.equal(body.reports.flatMap(r=>r.results).length,585);
 });
 test('configured but unavailable Atlas returns a sanitized error, never silent fixtures',async()=>{
  const r=await call('/api/demo/overview',{}, {...env,MONGODB_URI:'invalid-test-uri'});
