@@ -290,7 +290,7 @@ async function extract(req:Request,env:GemmaEnv,id:string){
    extracted=await runGemmaChunks(chunks,sample.date,chunk=>
     deadline(converter.run(MODEL,{messages:[
       {role:'system',content:systemPrompt},
-      {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\\n'+chunk}
+      {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\n'+chunk}
      ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model'));
   }catch{
    // Never sign or offer a preview built from only the successful chunks.
