@@ -172,7 +172,7 @@ async function begin(req:Request,env:GemmaEnv){
  const token=message+'.'+await mac(env.DEMO_SESSION_SECRET!,message);
  return json({token,expiresAt:new Date(expiry).toISOString(),maxImports:3});
 }
-const CHUNK_CHARS=5000;
+const CHUNK_CHARS=2500;
 const MAX_CHUNKS=10;
 /**
  * A 24-page report holds more readings than one generation can emit before the
@@ -239,7 +239,7 @@ async function extract(req:Request,env:GemmaEnv,id:string){
     return await deadline(converter.run(MODEL,{messages:[
       {role:'system',content:systemPrompt},
       {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\n'+chunk}
-     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),55000,'model') as Record<string,any>;
+     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model') as Record<string,any>;
    }catch{return null;}
   }));
   for(const raw of answers){
