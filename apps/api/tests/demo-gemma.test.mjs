@@ -116,7 +116,29 @@ test('a document that already fits is sent whole',()=>{
  assert.deepEqual(chunkDocument(doc,9000),[doc]);
 });
 
-test('chunking stops at the safety ceiling instead of unbounded fan-out',()=>{
- const doc=('z'.repeat(20000)+'\f').repeat(40);
- assert.equal(chunkDocument(doc,9000).length,10);
+test('chunking never discards text, whatever the document size',()=>{
+ // This used to assert a ceiling of 10 chunks. That ceiling silently dropped the
+ // rest of the document: the two large published samples were only 59% and 51%
+ // read, and the visitor was still told the extraction had succeeded. Every
+ // character must now reach a chunk; an oversized document is refused upstream
+ // instead of being shortened here.
+ const page='z'.repeat(20000);
+ const doc=(page+'\f').repeat(40);
+ const chunks=chunkDocument(doc,9000);
+ assert.ok(chunks.length>10,'a large document needs more than the old ceiling');
+ // Page breaks are separators, not content: compare against the text itself.
+ const content=doc.replace(/\f/g,'');
+ assert.equal(chunks.reduce((total,chunk)=>total+chunk.length,0),content.length,'no character may be dropped');
+ assert.ok(chunks.every(chunk=>chunk.length<=9000),'no chunk exceeds the cap');
+});
+
+test('every published sample is read in full',()=>{
+ // The real documents, at their real size: the regression this test protects is
+ // measured against them, not against a synthetic string.
+ for(const sample of audit.heldout){
+  const chars=Math.ceil(sample.bytes/6)*4; // generous upper bound on extracted text
+  const doc='x'.repeat(Math.min(chars,40000));
+  const chunks=chunkDocument(doc);
+  assert.equal(chunks.reduce((total,chunk)=>total+chunk.length,0),doc.length,sample.file+' must be read in full');
+ }
 });
