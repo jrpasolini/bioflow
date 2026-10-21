@@ -182,6 +182,22 @@ for(const file of files){
 
   // Urinalysis: only the numeric lines carry a measurement; qualitative results
   // (Negativo, Ausente, Límpido) are skipped rather than coerced to zero.
+  // Urine albumin and urine creatinine are printed in the RAC block, which sits
+  // with the serum creatinine results well before the EAS section. Their labels are
+  // unambiguous, so they are read wherever they appear.
+  for(let i=0;i<flat.length;i++){
+    const label=flat[i];
+    if(!label)continue;
+    const spec=URINE.find(u=>(u.code==='urineAlbumin'||u.code==='urineCreatinine')&&u.label.test(label));
+    if(!spec)continue;
+    const block=readAfter(lines,i);
+    if(!block)continue;
+    const value=resolve(block.value,block.range);
+    if(value===undefined)continue;
+    if(found.some(r=>r.code===spec.code))continue;
+    found.push({code:spec.code,name:spec.name,value,unit:spec.unit,sourcePage:block.page,
+      ...(block.range?{referenceLow:block.range[0],referenceHigh:block.range[1]}:{})});
+  }
   if(urineStart>=0){
     for(let i=urineStart;i<flat.length;i++){
       const label=flat[i];

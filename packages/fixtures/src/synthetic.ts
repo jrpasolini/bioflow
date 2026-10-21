@@ -2570,6 +2570,22 @@ export const demoReports: LabReport[] = [
         "value": 0.45,
         "unit": "ng/mL",
         "sourcePage": 16
+      },
+      {
+        "code": "urineAlbumin",
+        "name": "Albumina urinária",
+        "value": 3.8,
+        "unit": "μg/mL",
+        "sourcePage": 6
+      },
+      {
+        "code": "urineCreatinine",
+        "name": "Creatinina urinária",
+        "value": 93.3,
+        "unit": "mg/dL",
+        "sourcePage": 6,
+        "referenceLow": 63,
+        "referenceHigh": 250
       }
     ]
   },
@@ -3570,6 +3586,22 @@ export const demoReports: LabReport[] = [
         "value": 42.6,
         "unit": "mL/min/1,73 m²",
         "sourcePage": 5
+      },
+      {
+        "code": "urineAlbumin",
+        "name": "Albumina urinária",
+        "value": 3.3,
+        "unit": "μg/mL",
+        "sourcePage": 8
+      },
+      {
+        "code": "urineCreatinine",
+        "name": "Creatinina urinária",
+        "value": 120,
+        "unit": "mg/dL",
+        "sourcePage": 8,
+        "referenceLow": 63,
+        "referenceHigh": 250
       }
     ]
   },
@@ -4320,6 +4352,22 @@ export const demoReports: LabReport[] = [
         "value": 0.48,
         "unit": "ng/mL",
         "sourcePage": 19
+      },
+      {
+        "code": "urineAlbumin",
+        "name": "Albumina urinária",
+        "value": 3,
+        "unit": "μg/mL",
+        "sourcePage": 9
+      },
+      {
+        "code": "urineCreatinine",
+        "name": "Creatinina urinária",
+        "value": 111.4,
+        "unit": "mg/dL",
+        "sourcePage": 9,
+        "referenceLow": 63,
+        "referenceHigh": 250
       }
     ]
   },
@@ -4927,4 +4975,4 @@ export const demoReports: LabReport[] = [
     ]
   }
 ]
-export const indicatorCodes = ["albuminCreatinineRatio", "alkalinePhosphatase", "alt", "ast", "basophils", "blasts", "bun", "calciumTotal", "ck", "creatinine", "egfr", "eosinophils", "ferritin", "folate", "gammaGt", "glucose", "glucosePostMeal", "hba1c", "hdl", "hematocrit", "hemoglobin", "ionizedCalcium", "iron", "ldl", "lymphocytesAtypical", "lymphocytesTypical", "magnesium", "mch", "mchc", "mcv", "metamyelocytes", "monocytes", "mpv", "myelocytes", "neutrophilBands", "neutrophilSegmented", "nlr", "nonHdl", "phosphorus", "platelets", "potassium", "promyelocytes", "psa", "rbc", "rdwCv", "rdwSd", "sodium", "t4Free", "totalCholesterol", "triglycerides", "tsh", "undifferentiatedCells", "urea", "uricAcid", "urineBilirubin", "urineBlood", "urineDensity", "urineEpithelialCells", "urineErythrocytes", "urineGlucose", "urineKetones", "urineLeukocytes", "urinePh", "urineProtein", "urineUrobilinogen", "vitaminB12", "vitaminD", "vldl", "wbc"] as const;
+export const indicatorCodes = ["albuminCreatinineRatio", "alkalinePhosphatase", "alt", "ast", "basophils", "blasts", "bun", "calciumTotal", "ck", "creatinine", "egfr", "eosinophils", "ferritin", "folate", "gammaGt", "glucose", "glucosePostMeal", "hba1c", "hdl", "hematocrit", "hemoglobin", "ionizedCalcium", "iron", "ldl", "lymphocytesAtypical", "lymphocytesTypical", "magnesium", "mch", "mchc", "mcv", "metamyelocytes", "monocytes", "mpv", "myelocytes", "neutrophilBands", "neutrophilSegmented", "nlr", "nonHdl", "phosphorus", "platelets", "potassium", "promyelocytes", "psa", "rbc", "rdwCv", "rdwSd", "sodium", "t4Free", "totalCholesterol", "triglycerides", "tsh", "undifferentiatedCells", "urea", "uricAcid", "urineAlbumin", "urineBilirubin", "urineBlood", "urineCreatinine", "urineDensity", "urineEpithelialCells", "urineErythrocytes", "urineGlucose", "urineKetones", "urineLeukocytes", "urinePh", "urineProtein", "urineUrobilinogen", "vitaminB12", "vitaminD", "vldl", "wbc"] as const;

@@ -1468,6 +1468,22 @@
    "sourcePage": 16
   },
   {
+   "code": "urineAlbumin",
+   "name": "Albumina urinária",
+   "value": 3.8,
+   "unit": "μg/mL",
+   "sourcePage": 6
+  },
+  {
+   "code": "urineCreatinine",
+   "name": "Creatinina urinária",
+   "value": 93.3,
+   "unit": "mg/dL",
+   "sourcePage": 6,
+   "referenceLow": 63,
+   "referenceHigh": 250
+  },
+  {
    "code": "urineDensity",
    "name": "Densidade urinária",
    "value": 1.017,
@@ -2086,6 +2102,22 @@
    "sourcePage": 5
   },
   {
+   "code": "urineAlbumin",
+   "name": "Albumina urinária",
+   "value": 3.3,
+   "unit": "μg/mL",
+   "sourcePage": 8
+  },
+  {
+   "code": "urineCreatinine",
+   "name": "Creatinina urinária",
+   "value": 120,
+   "unit": "mg/dL",
+   "sourcePage": 8,
+   "referenceLow": 63,
+   "referenceHigh": 250
+  },
+  {
    "code": "urineDensity",
    "name": "Densidade urinária",
    "value": 1.016,
@@ -2555,6 +2587,22 @@
    "value": 0.48,
    "unit": "ng/mL",
    "sourcePage": 19
+  },
+  {
+   "code": "urineAlbumin",
+   "name": "Albumina urinária",
+   "value": 3,
+   "unit": "μg/mL",
+   "sourcePage": 9
+  },
+  {
+   "code": "urineCreatinine",
+   "name": "Creatinina urinária",
+   "value": 111.4,
+   "unit": "mg/dL",
+   "sourcePage": 9,
+   "referenceLow": 63,
+   "referenceHigh": 250
   },
   {
    "code": "urineDensity",
