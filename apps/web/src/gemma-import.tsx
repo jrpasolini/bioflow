@@ -36,7 +36,7 @@ function errorMessage(code:string,p:boolean):string {
   gemma_invalid_output:['A Gemma devolveu uma leitura incompleta. Tente outro PDF de teste.','Gemma returned an incomplete reading. Try another test PDF.'],
   invalid_pdf:['Arquivo inválido. Use um dos três PDFs fictícios de teste.','Invalid file. Use one of the three fictional test PDFs.']
  };
- return translations[code]?.[p?0:1]||(p?'Não foi possível concluir a operação.':'The operation could not be completed.');
+ return (translations[code]??translations[code.split('|')[0]])?.[p?0:1]||(p?'Não foi possível concluir a operação.':'The operation could not be completed.');
 }
 async function readResponse(response:Response){
  const json:unknown=await response.json();
