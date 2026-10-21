@@ -3,7 +3,7 @@ import brFlag from 'flag-icons/flags/4x3/br.svg';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
-import {Activity,ChartNoAxesCombined,FileText,HeartPulse,Download,FlaskConical,Moon,Sun} from 'lucide-react';
+import {Activity,ChartNoAxesCombined,FileText,HeartPulse,Download,FlaskConical,Moon,Sun,X} from 'lucide-react';
 import {demoReports as fixtureReports,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
 import {demoSources} from '../../../packages/fixtures/src/demo-sources';
 import {AppActions} from './pwa';
@@ -101,6 +101,7 @@ export default function App({auth0}:{auth0?:Auth0Session}={}){
   const {locale,changeLocale,t}=useLocale();
   const [entered,setEntered]=useState(false);
   const inDashboard=entered||auth0?.authenticated===true;
+  const uploadDialog=useRef<HTMLDialogElement>(null);
   const historyHeading=useRef<HTMLHeadingElement>(null);
   useEffect(()=>{if(inDashboard)historyHeading.current?.focus();},[inDashboard]);
   const [section,setSection]=useState<Section>('overview');
@@ -123,7 +124,7 @@ export default function App({auth0}:{auth0?:Auth0Session}={}){
     <header className="topbar">
       <div className="brand"><span className="brand-icon" aria-hidden="true"><HeartPulse size={34}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
       <div className="header-actions">
-        {inDashboard&&<><button type="button" className="secondary access-options" onClick={()=>{if(auth0?.authenticated)auth0.logout();else setEntered(false);}}>{auth0?.authenticated?(locale==='pt-BR'?'Sair da conta Auth0':'Sign out of Auth0'):(locale==='pt-BR'?'Sair da demonstração':'Leave demo')}</button><AppActions portuguese={locale==='pt-BR'}/></>}
+        {inDashboard&&<><button type="button" className="secondary access-options" onClick={()=>{if(auth0?.authenticated)auth0.logout();else setEntered(false);}}>{auth0?.authenticated?(locale==='pt-BR'?'Sair da conta Auth0':'Sign out of Auth0'):(locale==='pt-BR'?'Sair da demonstração':'Leave demo')}</button><AppActions portuguese={locale==='pt-BR'} onUpload={()=>uploadDialog.current?.showModal()}/></>}
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
           <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><img className="locale-flag" src={usFlag} alt="" aria-hidden="true"/></button>
           <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><img className="locale-flag" src={brFlag} alt="" aria-hidden="true"/></button>
@@ -136,7 +137,10 @@ export default function App({auth0}:{auth0?:Auth0Session}={}){
     <main className="container">
       {!inDashboard?<DemoEntry portuguese={locale==='pt-BR'} auth0={auth0} onExplore={()=>setEntered(true)}/>:<>
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
-      <GemmaImport portuguese={locale==='pt-BR'} onReportsChanged={setSessionReports}/>
+      <dialog id="report-upload-dialog" ref={uploadDialog} className="action-dialog import-dialog" aria-labelledby="gemma-title" onClick={event=>{if(event.target===event.currentTarget)uploadDialog.current?.close();}}>
+        <button type="button" className="close-dialog" onClick={()=>uploadDialog.current?.close()} aria-label={locale==='pt-BR'?'Fechar envio de exame':'Close report upload'}><X size={20}/></button>
+        <GemmaImport portuguese={locale==='pt-BR'} onReportsChanged={setSessionReports}/>
+      </dialog>
 
       {status==='offline'&&<p role="status" className="demo-source">{locale==='pt-BR'?'Não foi possível atualizar. Exibindo o histórico local.':'Unable to refresh. Showing local history.'}</p>}
       <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1 ref={historyHeading} tabIndex={-1}>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
@@ -200,4 +204,5 @@ export default function App({auth0}:{auth0?:Auth0Session}={}){
     </footer>
   </div>;
 }
+
 

@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Download,Upload,X} from 'lucide-react';
 type InstallEvent=Event&{prompt:()=>Promise<void>;userChoice:Promise<{outcome:string}>};
-export function AppActions({portuguese}:{portuguese:boolean}){
+export function AppActions({portuguese,onUpload}:{portuguese:boolean;onUpload:()=>void}){
  const [install,setInstall]=useState<InstallEvent|null>(null);
  const [installed,setInstalled]=useState(false);
  const dialog=useRef<HTMLDialogElement>(null);
@@ -13,17 +13,13 @@ export function AppActions({portuguese}:{portuguese:boolean}){
   return ()=>{window.removeEventListener('beforeinstallprompt',ready);window.removeEventListener('appinstalled',done);};
  },[]);
  const showInstall=()=>dialog.current?.showModal();
- const goToImport=()=>{
-  document.getElementById('gemma-title')?.scrollIntoView({behavior:'smooth',block:'start'});
-  document.getElementById('bioflow-new-pdf')?.focus({preventScroll:true});
- };
  return <>
   <div className="app-actions">
    {!installed&&<button className="secondary" onClick={async()=>{
     if(!install){showInstall();return;}
     try{await install.prompt();await install.userChoice;}finally{setInstall(null);}
    }}><Download size={16}/>{portuguese?'Instalar':'Install'}</button>}
-   <button className="open-report" onClick={goToImport}><Upload size={16}/>{portuguese?'Testar PDF':'Try PDF'}</button>
+   <button className="open-report" onClick={onUpload} aria-haspopup="dialog" aria-controls="report-upload-dialog"><Upload size={16}/>{portuguese?'Enviar PDF':'Upload PDF'}</button>
   </div>
   <dialog ref={dialog} className="action-dialog" aria-labelledby="action-title">
    <button className="close-dialog" onClick={()=>dialog.current?.close()} aria-label={portuguese?'Fechar':'Close'}><X size={20}/></button>
@@ -33,3 +29,4 @@ export function AppActions({portuguese}:{portuguese:boolean}){
   </dialog>
  </>;
 }
+
