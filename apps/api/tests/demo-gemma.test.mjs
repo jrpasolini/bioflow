@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {testModule} from '../../../scripts/test-module.mjs';
 
-const {handleGemmaDemo,demoReady,extractGemmaJson,chunkDocument}=await testModule(new URL('../src/demo-gemma.ts',import.meta.url),'demo-gemma');
+const {handleGemmaDemo,demoReady,extractGemmaJson,chunkDocument,parseGemmaChunk,runGemmaChunks}=await testModule(new URL('../src/demo-gemma.ts',import.meta.url),'demo-gemma');
 const {SAMPLES,isSampleHash}=await testModule(new URL('../src/demo-samples.ts',import.meta.url),'demo-samples');
 const audit=JSON.parse(await readFile(new URL('../../../docs/PDF_PUBLICATION_AUDIT.json',import.meta.url),'utf8'));
 const base='https://bioflow.example/api/demo/';
@@ -142,3 +142,61 @@ test('every published sample is read in full',()=>{
   assert.equal(chunks.reduce((total,chunk)=>total+chunk.length,0),doc.length,sample.file+' must be read in full');
  }
 });
+
+test('a Gemma chunk needs parseable JSON and a results array, even if HTTP succeeded',()=>{
+ const date='2026-10-02';
+ assert.throws(()=>parseGemmaChunk({response:'{\"results\": ['},date),/invalid_model_json/);
+ assert.throws(()=>parseGemmaChunk({response:JSON.stringify({laboratory:'Lab'})},date),/invalid_model_schema/);
+ assert.throws(()=>parseGemmaChunk({response:JSON.stringify({results:'none'})},date),/invalid_model_schema/);
+ assert.throws(()=>parseGemmaChunk({response:JSON.stringify({results:[42]})},date),/invalid_model_schema/);
+ assert.throws(()=>parseGemmaChunk({response:JSON.stringify({collectedAt:'2026-01-01',results:[]})},date),/invalid_model_metadata/);
+ // Empty arrays are legitimate for cover sheets and administrative pages.
+ assert.deepEqual(parseGemmaChunk({response:JSON.stringify({results:[]})},date),{laboratory:'',results:[]});
+});
+
+test('invalid JSON in one chunk is retried and only fully validated chunks are merged',async()=>{
+ const calls=new Map();
+ const date='2026-10-02';
+ const data=await runGemmaChunks(['page-1','page-2','page-3'],date,async chunk=>{
+  const attempt=(calls.get(chunk)||0)+1;calls.set(chunk,attempt);
+  if(chunk==='page-2'&&attempt===1)return {response:'{\"results\": ['};
+  if(chunk==='page-3')return {response:JSON.stringify({results:[]})};
+  return {choices:[{message:{content:JSON.stringify({
+   collectedAt:date,laboratory:'Lab demonstration',results:[{code:chunk,name:'Test',value:1,unit:'mg/dL'}]
+  })}}]};
+ });
+ assert.equal(calls.get('page-1'),1);
+ assert.equal(calls.get('page-2'),2);
+ assert.equal(calls.get('page-3'),1);
+ assert.equal(data.laboratory,'Lab demonstration');
+ assert.deepEqual(data.results.map(row=>row.code),['page-1','page-2']);
+});
+
+test('a persistently malformed chunk aborts the complete document instead of returning a partial report',async()=>{
+ const calls=new Map();
+ await assert.rejects(runGemmaChunks(['good','bad'],'2026-10-02',async chunk=>{
+  calls.set(chunk,(calls.get(chunk)||0)+1);
+  if(chunk==='bad')return {response:'{\"results\": ['};
+  return {response:JSON.stringify({results:[{code:'glucose',name:'Glucose',value:93,unit:'mg/dL'}]})};
+ }),/incomplete_extraction/);
+ assert.equal(calls.get('good'),1);
+ assert.equal(calls.get('bad'),2);
+});
+
+test('malformed chunk schema or transport errors get one retry; a second failure rejects the whole extraction',async()=>{
+ let attempts=0;
+ const accepted=await runGemmaChunks(['only'],'2026-10-02',async()=>{
+  attempts++;
+  if(attempts===1)throw Error('model_unavailable');
+  return {response:JSON.stringify({results:[]})};
+ });
+ assert.equal(attempts,2);
+ assert.deepEqual(accepted.results,[]);
+ let failures=0;
+ await assert.rejects(runGemmaChunks(['only'],'2026-10-02',async()=>{
+  failures++;
+  return {response:JSON.stringify({results:null})};
+ }),/incomplete_extraction/);
+ assert.equal(failures,2);
+});
+
