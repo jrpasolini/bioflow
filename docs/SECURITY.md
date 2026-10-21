@@ -15,3 +15,10 @@
    consciously configured before deploying dynamic-egress Workers.
 10. **Cloudflare Workers performance:** direct MongoDB connections incur handshake costs; adopt
     Durable Objects if production traffic warrants persistent connections. Hyperdrive does not support MongoDB.
+11. **BioFlow user MFA (required, pending implementation):** Auth0 login must enforce an authenticator-app TOTP second factor for access to private accounts and records. Test enrollment, challenge, recovery and rejection of sessions that have not satisfied the required MFA policy. Keep account MFA separate from the Worker's read-only Atlas credential and the Atlas administration login. See ADR-005.
+
+
+12. **Public shortcut:** The visible code `110526` cannot unlock any protected
+    API, R2 object or private patient record. It is a presentation-only gate
+    to already-public fictional data, never an MFA or recovery-code bypass.
+    Real accounts require Auth0 Universal Login and enforced TOTP.

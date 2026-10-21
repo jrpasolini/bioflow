@@ -1,4 +1,5 @@
 node_modules/
+.npm-cache/
 dist/
 .wrangler/
 .dev.vars
@@ -24,3 +25,4 @@ coverage/
 real-data/
 private/
 secrets/
+

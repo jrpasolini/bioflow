@@ -1,3 +1,4 @@
+import {parseDemoOverview} from '../../../packages/fixtures/src/demo-contract';
 import {MongoClient, type Db} from 'mongodb';
 import {demoPatient,demoReports,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
 
@@ -24,24 +25,29 @@ interface DemoResult extends Indicator {
 async function readDemo(db:Db):Promise<{patient:DemoPatient;reports:LabReport[]}> {
   const patient=await db.collection<DemoPatient>('demo_patients').findOne(
     {id:DEMO_PATIENT,isSynthetic:true},
-    {projection:{_id:0,id:1,displayName:1,dateOfBirth:1,demoRecordId:1,isSynthetic:1}}
+    {maxTimeMS:3000,projection:{_id:0,id:1,displayName:1,dateOfBirth:1,demoRecordId:1,isSynthetic:1}}
   );
   if(!patient) throw new Error('Demo data not seeded');
   const reports=await db.collection<DemoReport>('demo_reports')
-    .find({patientId:patient.id,isSynthetic:true},{projection:{_id:0}})
-    .sort({collectedAt:1,id:1}).limit(200).toArray();
+    .find({patientId:patient.id,isSynthetic:true,status:'synthetic-demo',originalPdfId:null},{projection:{_id:0,id:1,patientId:1,collectedAt:1,laboratory:1,status:1,isSynthetic:1,originalPdfId:1}})
+    .maxTimeMS(3000).sort({collectedAt:1,id:1}).limit(200).toArray();
   if(!reports.length) throw new Error('Demo reports not seeded');
   const ids=reports.map(r=>r.id);
   const resultDocs=await db.collection<DemoResult>('demo_results')
-    .find({reportId:{$in:ids},patientId:patient.id,isSynthetic:true},{projection:{_id:0}})
-    .limit(5000).toArray();
+    .find({reportId:{$in:ids},patientId:patient.id,isSynthetic:true},{projection:{_id:0,reportId:1,code:1,name:1,value:1,unit:1,sourcePage:1,referenceLow:1,referenceHigh:1,referenceAttentionLow:1,referenceAttentionHigh:1,referenceVeryLow:1,referenceVeryHigh:1}})
+    .maxTimeMS(3000).limit(5000).toArray();
   const byReport=new Map<string,Indicator[]>();
   for(const item of resultDocs){
     const readings=byReport.get(item.reportId)||[];
     readings.push({
       code:item.code,name:item.name,value:item.value,unit:item.unit,
+      ...(item.sourcePage===undefined?{}:{sourcePage:item.sourcePage}),
       ...(item.referenceLow===undefined?{}:{referenceLow:item.referenceLow}),
-      ...(item.referenceHigh===undefined?{}:{referenceHigh:item.referenceHigh})
+      ...(item.referenceHigh===undefined?{}:{referenceHigh:item.referenceHigh}),
+      ...(item.referenceAttentionLow===undefined?{}:{referenceAttentionLow:item.referenceAttentionLow}),
+      ...(item.referenceAttentionHigh===undefined?{}:{referenceAttentionHigh:item.referenceAttentionHigh}),
+      ...(item.referenceVeryLow===undefined?{}:{referenceVeryLow:item.referenceVeryLow}),
+      ...(item.referenceVeryHigh===undefined?{}:{referenceVeryHigh:item.referenceVeryHigh})
     });
     byReport.set(item.reportId,readings);
   }
@@ -57,13 +63,18 @@ export async function loadDemoFromAtlas(env:AtlasEnv):Promise<{patient:DemoPatie
   if(!env.MONGODB_URI)throw new Error('Atlas not configured');
   const databaseName=env.MONGODB_DB||'bioflow_demo';
   if(databaseName!=='bioflow_demo')throw new Error('Unexpected demo database name');
-  const client=new MongoClient(env.MONGODB_URI);
+  const client=new MongoClient(env.MONGODB_URI,{
+    maxPoolSize:1,minPoolSize:0,serverSelectionTimeoutMS:5000,
+    connectTimeoutMS:5000,socketTimeoutMS:5000,
+    retryReads:false,appName:'bioflow-public-demo'
+  });
   try {
     await client.connect();
-    return await readDemo(client.db(databaseName));
+    return parseDemoOverview(await readDemo(client.db(databaseName)));
   } finally {
     await client.close();
   }
 }
 
 export const syntheticFallback = {patient:demoPatient,reports:demoReports};
+

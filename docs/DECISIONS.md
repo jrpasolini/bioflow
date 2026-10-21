@@ -11,3 +11,29 @@ The initial public routes return fictitious data only. Real document routes deny
 
 ## ADR-004: Clinical review and provenance
 Cloud-hosted Gemma will propose structured extraction; MongoDB Atlas will store source references and human-approved fields. No automatic diagnosis, silent corrections or implicit grants.
+
+## ADR-005: Authenticator MFA for BioFlow users
+The owner confirmed on 2026-10-20 that authenticator-app two-factor authentication is a requirement for BioFlow user login. Implement it through Auth0 using TOTP, with enrollment and recovery handled in the identity provider's flow. Explain the password-plus-authenticator flow to users and validate MFA enforcement before enabling access to private records. Authenticator enrollment secrets and recovery codes must never be collected in chat or committed to the repository.
+
+This decision concerns interactive BioFlow accounts. The Worker database identity remains separately restricted to read on bioflow_demo and scoped to bioflow-cluster. The public synthetic demo remains available independently of private account access. MFA integration is planned, not implemented or enabled by this decision.
+
+## ADR-006: Frictionless public demo and optional 2FA interface exercise
+The owner approved two entry choices on 2026-10-20: direct access to the entirely fictional public history, and an optional 2FA interface exercise. Neither requires an account, password or authenticator app. Both lead to the same synthetic public data.
+
+While Auth0 is not configured, the exercise is explicitly labeled as a simulation, displays a randomly generated example code and only checks that the visitor repeats that example. It must not collect real passwords, authenticator seeds or live authenticator codes; it must never create an authenticated session, unlock a protected route or suggest identity was verified. This UI demonstration is separate from the required real Auth0 MFA flow for future private accounts. No shared demo passcode grants access to private data.
+
+
+## ADR-007: One public entry screen without an MFA bypass (2026-10-20)
+
+The two-option landing page is replaced by one six-digit form. The visibly published
+`110526` code is deliberately NOT a secret: it is a presentation-only shortcut
+to the synthetic public demo, not TOTP, Auth0, a recovery code, an API credential,
+or a real authenticated session.
+
+Private accounts must use Auth0 Universal Login with required authenticator TOTP;
+the Auth0 tenant, frontend SDK callback, enforceable MFA policy and private-account
+authorization tests are **not yet configured**. Never allow this demo code to skip
+real login or authorize private R2/Atlas documents.
+
+The demo overview API is public by design regardless of this UI gate. Future synthetic
+Gemma imports need session isolation, rate limits, and a read/write safety review.

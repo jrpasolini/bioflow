@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 
 export type Locale = 'en-US' | 'pt-BR';
-const STORAGE_KEY = 'bioflow.locale';
 
 const en = {
   tagline: 'Your health. Your history. Your control.',
@@ -20,29 +19,32 @@ const en = {
   dateOfBirth: 'Date of birth',
   age: 'Age',
   years: 'years',
-  demoPatientId: 'Demo record ID',
+  demoPatientId: 'Record ID',
   description: 'Your markers, test results and reports, all in one place.',
-  simulatedCollections: 'simulated collections',
+  simulatedCollections: 'collections',
   navLabel: 'Sections',
   overview: 'Overview',
   trends: 'Trends',
   reports: 'Reports',
-  lastCollection: 'Latest simulated collection',
+  lastCollection: 'Latest collection',
   featuredHigh: 'above the reference range',
   featuredLow: 'below the reference range',
   noOutOfRangeHighlight: 'No out-of-range result identified in this collection',
   outsideReferenceCount: 'results outside the provided reference intervals',
   allResultsLatest: 'All results from the latest collection',
   noReference: 'No reference',
-  referenceDisclaimer: 'The highlighted result is selected by a visual deviation rule, not medical severity. Reference intervals here are fictional; clinical interpretation requires the original report.',
+  referenceDisclaimer: 'The highlighted result is selected by a visual deviation rule, not medical severity. Clinical interpretation requires the original report.',
   markersCount: 'markers',
   demoOnly: 'Demo only',
   labMarkers: 'Lab markers',
-  above: 'Above range',
-  below: 'Below range',
-  within: 'Within range',
+  attention: 'Attention',
+  veryHigh: 'Very high',
+  veryLow: 'Very low',
+  above: 'Above',
+  below: 'Below',
+  within: 'Normal',
   recentCollections: 'Recent collections',
-  fictionalResults: 'fictional results',
+  fictionalResults: 'results',
   longitudinal: 'Longitudinal tracking',
   viewHistory: 'View history for',
   historyFor: 'Historical results for',
@@ -54,7 +56,7 @@ const en = {
   openCollection: 'Open collection',
   noHistory: 'No historical results available',
   trendHeading: 'Marker trends',
-  trendText: 'Historical trends based entirely on synthetic results.',
+  trendText: 'Select a marker, then an exam to see its collection details.',
   marker: 'Marker',
   selectMarker: 'Choose a lab marker',
   mostRecentResult: 'most recent result',
@@ -63,12 +65,10 @@ const en = {
   collections: 'Collections',
   collectionDetails: 'Collection details',
   canonicalPdf: 'Original PDF preserved',
-  pdfNotAvailable: 'These simulated collections have no attached PDFs yet. In the integrated version, the original uploaded document will be securely stored and available for authorized download without changes.',
-  downloadUnavailable: 'Original unavailable in this demo',
-  importHeading: 'Intelligent report import',
-  integrations: 'Coming soon: Auth0 login, private R2 PDF storage, Gemma 4 assisted review and MongoDB Atlas.',
-  inDevelopment: 'In development',
-  footer: 'BioFlow · Initial prototype · Your history, your control.',
+  pdfNotAvailable: 'This collection has no linked PDF yet. Download will be available with authorized access to the original file.',
+  downloadUnavailable: 'Download original · unavailable',
+  footer: 'Family support, not a diagnosis. The collected history comes with the app. Original PDFs will have protected access.',
+  technologyCredits: 'Built with',
   trendSeparator: ': ',
   glucose: 'Glucose',
   hba1c: 'Hemoglobin A1c',
@@ -79,8 +79,8 @@ const en = {
   ldl: 'LDL cholesterol',
   totalCholesterol: 'Total cholesterol',
   hemoglobin: 'Hemoglobin',
-  labAurora: 'Aurora Laboratory (fictional)',
-  labHorizonte: 'Horizon Laboratory (fictional)',
+  labAurora: 'Aurora Laboratory',
+  labHorizonte: 'Horizon Laboratory',
   pageTitle: 'BioFlow | Laboratory history',
   pageDescription: 'BioFlow — your health, your history, your control.'
 };
@@ -102,29 +102,32 @@ const pt: Record<TranslationKey,string> = {
   dateOfBirth: 'Data de nascimento',
   age: 'Idade',
   years: 'anos',
-  demoPatientId: 'ID fictício',
+  demoPatientId: 'Identificação',
   description: 'Seus indicadores, suas coletas e seus laudos em um só lugar.',
-  simulatedCollections: 'coletas simuladas',
+  simulatedCollections: 'coletas',
   navLabel: 'Seções',
   overview: 'Visão geral',
   trends: 'Evolução',
   reports: 'Laudos',
-  lastCollection: 'Última coleta simulada',
+  lastCollection: 'Última coleta',
   featuredHigh: 'acima da referência',
   featuredLow: 'abaixo da referência',
   noOutOfRangeHighlight: 'Nenhum resultado fora da referência identificado nesta coleta',
   outsideReferenceCount: 'resultados fora dos intervalos de referência informados',
   allResultsLatest: 'Todos os resultados da última coleta',
   noReference: 'Sem referência',
-  referenceDisclaimer: 'O destaque usa uma regra visual de desvio, não de gravidade médica. Os intervalos desta demonstração são fictícios; a interpretação clínica exige o laudo original.',
+  referenceDisclaimer: 'O destaque usa uma regra visual de desvio, não de gravidade médica. A interpretação clínica exige o laudo original.',
   markersCount: 'indicadores',
   demoOnly: 'Somente demonstração',
   labMarkers: 'Marcadores laboratoriais',
-  above: 'Acima da referência',
-  below: 'Abaixo da referência',
-  within: 'Na referência',
+  attention: 'Atenção',
+  veryHigh: 'Muito alto',
+  veryLow: 'Muito baixo',
+  above: 'Acima',
+  below: 'Abaixo',
+  within: 'Normal',
   recentCollections: 'Coletas recentes',
-  fictionalResults: 'resultados fictícios',
+  fictionalResults: 'resultados',
   longitudinal: 'Acompanhamento longitudinal',
   viewHistory: 'Ver histórico de',
   historyFor: 'Histórico de resultados de',
@@ -136,7 +139,7 @@ const pt: Record<TranslationKey,string> = {
   openCollection: 'Abrir coleta',
   noHistory: 'Nenhum resultado histórico disponível',
   trendHeading: 'Evolução dos indicadores',
-  trendText: 'Histórico construído com resultados inteiramente fictícios.',
+  trendText: 'Selecione um marcador e um exame para ver os detalhes da coleta.',
   marker: 'Marcador',
   selectMarker: 'Selecionar marcador',
   mostRecentResult: 'resultado mais recente',
@@ -145,12 +148,10 @@ const pt: Record<TranslationKey,string> = {
   collections: 'Coletas',
   collectionDetails: 'Detalhes da coleta',
   canonicalPdf: 'PDF original preservado',
-  pdfNotAvailable: 'As coletas simuladas ainda não possuem PDFs anexados. Na versão integrada, o documento original enviado ficará protegido e disponível para download autorizado, sem alterações.',
-  downloadUnavailable: 'Original indisponível nesta demo',
-  importHeading: 'Importação inteligente de laudos',
-  integrations: 'Em breve: login Auth0, armazenamento privado de PDF no R2, revisão assistida pelo Gemma 4 e MongoDB Atlas.',
-  inDevelopment: 'Em desenvolvimento',
-  footer: 'BioFlow · Protótipo inicial · Sua história, seu controle.',
+  pdfNotAvailable: 'Esta coleta ainda não tem um PDF vinculado. O download será liberado com acesso autorizado ao arquivo original.',
+  downloadUnavailable: 'Baixar original · indisponível',
+  footer: 'Apoio familiar, não um diagnóstico. O histórico já reunido vem com o aplicativo. Os PDFs originais terão acesso protegido.',
+  technologyCredits: 'Criado com',
   trendSeparator: ': ',
   glucose: 'Glicose',
   hba1c: 'Hemoglobina glicada',
@@ -161,8 +162,8 @@ const pt: Record<TranslationKey,string> = {
   ldl: 'Colesterol LDL',
   totalCholesterol: 'Colesterol total',
   hemoglobin: 'Hemoglobina',
-  labAurora: 'Laboratório Aurora (fictício)',
-  labHorizonte: 'Laboratório Horizonte (fictício)',
+  labAurora: 'Laboratório Aurora',
+  labHorizonte: 'Laboratório Horizonte',
   pageTitle: 'BioFlow | Histórico laboratorial',
   pageDescription: 'BioFlow — sua saúde, sua história, seu controle.'
 };
@@ -174,11 +175,12 @@ const indicatorKeys = {
 } as const;
 export function labelForIndicator(code: string, locale: Locale, fallback: string): string {
   const key = indicatorKeys[code as keyof typeof indicatorKeys];
-  return key ? translations[locale][key] : fallback;
+  const english:Record<string,string>={glucosePostMeal:'Postprandial glucose',vldl:'VLDL cholesterol',nonHdl:'Non-HDL cholesterol',potassium:'Potassium',sodium:'Sodium',uricAcid:'Uric acid',ast:'AST',alt:'ALT',ck:'Creatine kinase',vitaminD:'25-hydroxyvitamin D',vitaminB12:'Vitamin B12',tsh:'TSH',t4Free:'Free T4',phosphorus:'Phosphorus',magnesium:'Magnesium',ionizedCalcium:'Ionized calcium',alkalinePhosphatase:'Alkaline phosphatase',gammaGt:'Gamma-GT',ferritin:'Ferritin',iron:'Iron',folate:'Folate',calciumTotal:'Total calcium',bun:'Blood urea nitrogen'};
+  return key ? translations[locale][key] : locale==='en-US'?(english[code]??fallback):fallback;
 }
 export function labelForLab(name: string, locale: Locale): string {
   const key = name.includes('Aurora') ? 'labAurora' : name.includes('Horizonte') ? 'labHorizonte' : null;
-  return key ? translations[locale][key] : name;
+  return key ? translations[locale][key] : locale==='en-US'?name.replace('(laudo fictício fornecido)','(supplied fictional report)'):name;
 }
 export function formatDate(dateISO: string, locale: Locale): string {
   return new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeZone:'UTC'})
@@ -200,13 +202,8 @@ export function formatBirthDate(dateISO: string, locale: Locale): string {
 export function formatValue(value: number, locale: Locale): string {
   return new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(value);
 }
-function readPreference(): Locale {
-  try { if (window.localStorage.getItem(STORAGE_KEY)==='pt-BR') return 'pt-BR'; }
-  catch { /* Private browsing may block storage. */ }
-  return 'en-US'; // Explicit project default: US English, not browser language.
-}
 export function useLocale() {
-  const [locale,setLocale] = useState<Locale>(readPreference);
+  const [locale,setLocale] = useState<Locale>('en-US');
   useEffect(()=>{
     document.documentElement.lang = locale;
     document.title = translations[locale].pageTitle;
@@ -214,8 +211,7 @@ export function useLocale() {
   },[locale]);
   const changeLocale = (next:Locale)=>{
     setLocale(next);
-    try {window.localStorage.setItem(STORAGE_KEY,next);}
-    catch { /* Current session still switches locale. */ }
   };
   return {locale,changeLocale,t: translations[locale]};
 }
+

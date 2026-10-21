@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="theme-color" content="#f6f9f9"/>
   <meta name="description" content="BioFlow — your health, your history, your control."/>
+  <link rel="manifest" href="%BASE_URL%manifest.webmanifest"/>
+  <link rel="apple-touch-icon" href="%BASE_URL%icon-192.png"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
   <title>BioFlow | Laboratory history</title>
   <script>
     (function () {
@@ -13,13 +16,12 @@
       var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       var theme = (stored === 'dark' || stored === 'light') ? stored : (systemDark ? 'dark' : 'light');
       document.documentElement.dataset.theme = theme;
-      // English (US) is always the default unless the visitor selected Portuguese.
-      var lang = null;
-      try { lang = localStorage.getItem('bioflow.locale'); } catch (_) {}
-      document.documentElement.lang = lang === 'pt-BR' ? 'pt-BR' : 'en-US';
+      // Every page load starts in English; visitors can switch for the current session.
+      document.documentElement.lang = 'en-US';
       document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#0c1417' : '#f6f9f9');
     })();
   </script>
 </head>
 <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
 </html>
+

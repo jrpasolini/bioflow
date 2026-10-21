@@ -10,6 +10,24 @@ const {referenceStatus,proportionalReferenceDeviation,chooseFeaturedResult} =
   await import('data:text/javascript;base64,'+Buffer.from(transpiled).toString('base64'));
 
 const marker=(value,low,high)=>({code:'demo',name:'Synthetic',value,unit:'u',referenceLow:low,referenceHigh:high});
+test('very high and very low require explicit per-exam thresholds',()=>{
+  assert.equal(referenceStatus(marker(1000,10,20)),'high');
+  assert.equal(referenceStatus(marker(-1000,10,20)),'low');
+  const explicit={...marker(30,10,20),referenceVeryLow:5,referenceVeryHigh:30};
+  assert.equal(referenceStatus(explicit),'very-high');
+  assert.equal(referenceStatus({...explicit,value:5}),'very-low');
+  assert.equal(referenceStatus({...explicit,value:25}),'high');
+  assert.equal(referenceStatus({...explicit,value:8}),'low');
+  assert.equal(referenceStatus({...explicit,referenceVeryHigh:15}),'unknown');
+});
+test('attention requires an explicit exam interval, never an inferred near-limit zone',()=>{
+  assert.equal(referenceStatus(marker(99,70,100)),'normal');
+  const explicit={...marker(105,70,100),referenceAttentionLow:101,referenceAttentionHigh:120};
+  assert.equal(referenceStatus(explicit),'attention');
+  assert.equal(referenceStatus({...explicit,value:121}),'high');
+  assert.equal(referenceStatus({...explicit,value:69}),'low');
+  assert.equal(referenceStatus({...explicit,referenceAttentionLow:130}),'unknown');
+});
 test('reference ranges classify high, low, in-range and unknown',()=>{
   assert.equal(referenceStatus(marker(6.6,4,5.7)),'high');
   assert.equal(referenceStatus(marker(38,40,undefined)),'low');
@@ -27,3 +45,4 @@ test('highlight is strictly out-of-range, stable and not a medical severity judg
   assert.equal(proportionalReferenceDeviation(normal),0);
   assert.ok(proportionalReferenceDeviation(above)>proportionalReferenceDeviation(below));
 });
+

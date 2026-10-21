@@ -1,0 +1,304 @@
+{
+  "authorization": "Owner explicitly confirmed all internal data invented and approved public demo use on 2026-10-20. Copies additionally remove administrative identifiers.",
+  "repository": "jrpasolini/bioflow",
+  "path": "apps/web/public/demo/bioflow-3-exames.zip",
+  "zipSha256": "c665b7ecb9b8a40f4b95f06d33a37d930255875425bf78cc881a50f654b96f23",
+  "zipBytes": 70717,
+  "pdfCountInZip": 3,
+  "heldout": [
+    {
+      "file": "bioflow-teste-2026-05-15.pdf",
+      "bytes": 41944,
+      "sha256": "7a3234fc1d3e22595180a6b3e15718a3060b0730f7ea08b6271ffdc5a33d5dc0",
+      "pages": 24,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "bioflow-teste-2026-10-01.pdf",
+      "bytes": 24857,
+      "sha256": "0250babe3d28ef61062ebd4b3cca2387648e4cfc4e09dbdb0fb736c565f7b2d1",
+      "pages": 25,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "bioflow-teste-2026-10-02.pdf",
+      "bytes": 49298,
+      "sha256": "901abea157ab2b14685545059a782d50a92cb7462855a2ee50970b84473ba0a2",
+      "pages": 29,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    }
+  ],
+  "baseline": [
+    {
+      "file": "laudo-2013-07-13.pdf",
+      "bytes": 15504,
+      "sha256": "bc6860d2b79bcc7f967d9f8418d705f78289e737b9b981a33210ea363bb8960d",
+      "pages": 7,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2013-11-25.pdf",
+      "bytes": 28209,
+      "sha256": "3ab27830cb5b12c0b48534b9a38878e11044c2fd4abfacc334d3f3aa9bf2da04",
+      "pages": 17,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2014-09-11.pdf",
+      "bytes": 15980,
+      "sha256": "da71a35747706511a0d0a415ed4f3295a622a9c9a39a3fd4151adc7d680c9d02",
+      "pages": 8,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2014-12-15.pdf",
+      "bytes": 30152,
+      "sha256": "bcd9fcd245c441e0f2a70ee76fcb7bf81c2a9179968367a51c3b9630c2ce5376",
+      "pages": 18,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2015-06-02.pdf",
+      "bytes": 23021,
+      "sha256": "efe3cd650f3ac0b06db72967939bb8e08a93bc21a264a8912f9ae7417a693b5c",
+      "pages": 13,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2015-07-20.pdf",
+      "bytes": 62322,
+      "sha256": "5a57242db218855c5881c1f792513af90348f5c55f5d6a81963ef2db3c0aab1c",
+      "pages": 40,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-04-12.pdf",
+      "bytes": 2529,
+      "sha256": "aafded7f81a81fdcb3462874192ea7431d3dcf8e60eb130f4e6745cce1827242",
+      "pages": 1,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-06-20.pdf",
+      "bytes": 23671,
+      "sha256": "00a0463005e31f9dc21977d6b92ae2aff45cf9f9e5d9a583d46e6719b8de61d9",
+      "pages": 12,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-08-09.pdf",
+      "bytes": 10995,
+      "sha256": "e2494ebfca0dc2d1bbf6eabb6be2dd0b023710e286c7bee2bb52fc713236f813",
+      "pages": 6,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-08-24.pdf",
+      "bytes": 2534,
+      "sha256": "110d3ae44802a703c21215d9e61082ea77e25a9599182dd62a5acb85ad0535a8",
+      "pages": 1,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-11-11.pdf",
+      "bytes": 3821,
+      "sha256": "cc5b971a86b10f86c97c664b6e90b59e2689e118a0a55d17512bfd0bfe9f79c3",
+      "pages": 2,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-11-19.pdf",
+      "bytes": 3068,
+      "sha256": "434921401df652677ff7bdf51615d5563bbdab85ea9bb05919db9e9da1e9c295",
+      "pages": 1,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2022-12-09.pdf",
+      "bytes": 4611,
+      "sha256": "f0eac91c6c001ec25831fa13f7eaf07a7c9d3cc115428a1424e0f6d82535fa50",
+      "pages": 2,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2023-06-23.pdf",
+      "bytes": 15122,
+      "sha256": "a4b0e6df2aef170641054dc83840b97a3ce3a1b316b56aa9ce793745b9112a51",
+      "pages": 9,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2023-09-05.pdf",
+      "bytes": 23250,
+      "sha256": "b0321bacc3374ac9d3ef124b6fd13030f6fad75d0dda2ac14e8fc2bc32cfd928",
+      "pages": 13,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2024-01-22.pdf",
+      "bytes": 37406,
+      "sha256": "3b379070df01c7d16d4e179ec893cf387dcb3987c4dffd2ab2c057e788861d42",
+      "pages": 22,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2024-03-12.pdf",
+      "bytes": 24256,
+      "sha256": "062998fa9d94df8a047ccea745d2341a70d23ab9304b7d4379577890050a6ddb",
+      "pages": 14,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2024-06-19.pdf",
+      "bytes": 27243,
+      "sha256": "3f21496e6d255911f9140fa9052b145dc6c9843d8bffb22ce8a67557d6dc97aa",
+      "pages": 17,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2024-07-25.pdf",
+      "bytes": 30681,
+      "sha256": "35441b2d58f206eaeb66349a553ea58f8cdb9dd2f9f3a1ea8b89ffa2ad4a830f",
+      "pages": 19,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2024-08-23.pdf",
+      "bytes": 40229,
+      "sha256": "db3b4e22e7484883acff6e254368ca136c9b1a881742199507a0c20527b673e4",
+      "pages": 24,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2024-11-25.pdf",
+      "bytes": 30081,
+      "sha256": "9959cbeba4e472e0c0b46efb1f2116ebfe8859a1f1808e07b47a48821b407c69",
+      "pages": 18,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2025-03-06.pdf",
+      "bytes": 16901,
+      "sha256": "6f9925346b3cfd1c62c671a83cb6e5443f0dfe91c48d4780d886021a673a8159",
+      "pages": 10,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2025-03-20.pdf",
+      "bytes": 43370,
+      "sha256": "b9a4f0e5c82ea54af27827eb0b56313ce1561bea298fc87017a4bedb439773b1",
+      "pages": 25,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2025-05-10.pdf",
+      "bytes": 36798,
+      "sha256": "904e210f72c22442377760c4759cc20bf0dbb582303361373d13efbfc83dcd04",
+      "pages": 22,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2025-06-28.pdf",
+      "bytes": 8227,
+      "sha256": "e2ed8395987802d8e58692db8fe75f54198b9180d3406831b56b2eeee5ae69f6",
+      "pages": 4,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    },
+    {
+      "file": "laudo-2025-08-21.pdf",
+      "bytes": 30903,
+      "sha256": "3df34563dfa0d993f259eeb3281f011caf91b262ed356cfc1931c4b2b1bfb90b",
+      "pages": 19,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0
+    }
+  ],
+  "noOriginalPdfBytesPublished": true,
+  "scan": "Every exact binary PDF decoded and scanned, not merely its filename."
+}
