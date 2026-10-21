@@ -1,4 +1,4 @@
-import {readdir,readFile,writeFile} from 'node:fs/promises';
+import {readdir,readFile,writeFile,unlink} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 const subpath=process.argv[2]||'';
 if(subpath && subpath!=='bioflow')throw Error('unsupported_subpath');
@@ -28,3 +28,14 @@ self.addEventListener('fetch',event=>{
  }
 });
 `);
+
+
+// The public subpath is served behind the main site. Do not publish a second
+// Auth0 entry at the hosting provider root, whose origin is not a callback.
+// Render can then redirect / to the canonical BioFlow URL.
+if(subpath){
+ await unlink(new URL('../apps/web/dist/index.html',import.meta.url)).catch(error=>{
+  if(error.code!=='ENOENT')throw error;
+ });
+}
+
