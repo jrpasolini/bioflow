@@ -5,7 +5,7 @@ if(subpath && subpath!=='bioflow')throw Error('unsupported_subpath');
 const base=subpath?'/bioflow/':'/';
 const dist=new URL('../apps/web/dist/'+(subpath?'bioflow/':''),import.meta.url);
 const assets=(await readdir(new URL('assets/',dist))).map(file=>base+'assets/'+file);
-const shell=[base,base+'manifest.webmanifest',base+'icon-192.png',base+'icon-512.png',...assets];
+const shell=[base,base+'manifest.webmanifest',base+'favicon.svg',base+'icon-192.png',base+'icon-512.png',...assets];
 const manifest=JSON.parse(await readFile(new URL('manifest.webmanifest',dist),'utf8'));
 manifest.id=base;manifest.start_url=base;manifest.scope=base;
 manifest.icons=manifest.icons.map(icon=>({...icon,src:base+icon.src.split('/').at(-1)}));
