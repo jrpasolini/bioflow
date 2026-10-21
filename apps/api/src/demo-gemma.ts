@@ -172,7 +172,7 @@ async function begin(req:Request,env:GemmaEnv){
  const token=message+'.'+await mac(env.DEMO_SESSION_SECRET!,message);
  return json({token,expiresAt:new Date(expiry).toISOString(),maxImports:3});
 }
-const CHUNK_CHARS=9000;
+const CHUNK_CHARS=5000;
 const MAX_CHUNKS=10;
 /**
  * A 24-page report holds more readings than one generation can emit before the
@@ -231,7 +231,7 @@ async function extract(req:Request,env:GemmaEnv,id:string){
   const chunks=chunkDocument(result.data);
   const merged:unknown[]=[];
   let laboratory='';
-  const diag={chunks:0,answered:0,candidates:0,parsed:0,items:0,keys:'',itemKeys:''};
+  const diag={chunks:0,answered:0,candidates:0,parsed:0,items:0,maxLen:0,parseFailed:0,keys:'',itemKeys:''};
   diag.chunks=chunks.length;
   // Chunks run concurrently: the page count must not multiply the visitor's wait.
   const answers=await Promise.all(chunks.map(async chunk=>{
@@ -239,7 +239,7 @@ async function extract(req:Request,env:GemmaEnv,id:string){
     return await deadline(converter.run(MODEL,{messages:[
       {role:'system',content:systemPrompt},
       {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\n'+chunk}
-     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:3072}),55000,'model') as Record<string,any>;
+     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),55000,'model') as Record<string,any>;
    }catch{return null;}
   }));
   for(const raw of answers){
@@ -251,7 +251,8 @@ async function extract(req:Request,env:GemmaEnv,id:string){
    const begin=candidate.indexOf('{'),finish=candidate.lastIndexOf('}');
    if(begin<0||finish<=begin)continue;
    let parsed:any;
-   try{parsed=JSON.parse(candidate.slice(begin,finish+1));}catch{continue;}
+   try{parsed=JSON.parse(candidate.slice(begin,finish+1));}
+   catch{diag.parseFailed++;diag.maxLen=Math.max(diag.maxLen,candidate.length);continue;}
    diag.parsed++;
    if(parsed&&typeof parsed==='object'&&!diag.keys)diag.keys=Object.keys(parsed).join(',').slice(0,120);
    if(parsed&&Array.isArray(parsed.results)){diag.items+=parsed.results.length;
