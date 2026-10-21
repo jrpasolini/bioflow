@@ -1,4 +1,4 @@
-import {readdir,readFile,writeFile,unlink} from 'node:fs/promises';
+import {readdir,readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 const subpath=process.argv[2]||'';
 if(subpath && subpath!=='bioflow')throw Error('unsupported_subpath');
@@ -30,12 +30,12 @@ self.addEventListener('fetch',event=>{
 `);
 
 
-// The public subpath is served behind the main site. Do not publish a second
-// Auth0 entry at the hosting provider root, whose origin is not a callback.
-// Render can then redirect / to the canonical BioFlow URL.
+// The provider's root is only an alias; Auth0 uses the canonical public subpath.
+// A small redirect page also works when the host gives static files priority
+// over dashboard redirect rules.
 if(subpath){
- await unlink(new URL('../apps/web/dist/index.html',import.meta.url)).catch(error=>{
-  if(error.code!=='ENOENT')throw error;
- });
+ await writeFile(new URL('../apps/web/dist/index.html',import.meta.url),`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BioFlow</title><meta http-equiv="refresh" content="0;url=https://jrpasolini.tech/bioflow/"><link rel="canonical" href="https://jrpasolini.tech/bioflow/"></head><body><p><a href="https://jrpasolini.tech/bioflow/">Open BioFlow</a></p></body></html>
+`);
 }
 
