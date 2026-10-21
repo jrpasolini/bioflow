@@ -2,8 +2,8 @@
   "authorization": "Owner explicitly confirmed all internal data invented and approved public demo use on 2026-10-20. Copies additionally remove administrative identifiers.",
   "repository": "jrpasolini/bioflow",
   "path": "apps/web/public/demo/bioflow-3-exames.zip",
-  "zipSha256": "c665b7ecb9b8a40f4b95f06d33a37d930255875425bf78cc881a50f654b96f23",
-  "zipBytes": 70717,
+  "zipSha256": "fff1d5e1fc050fe723fb785cc48efc90325e3cbda92da1a13057883cbc3fe4ba",
+  "zipBytes": 65628,
   "pdfCountInZip": 3,
   "heldout": [
     {
@@ -18,13 +18,14 @@
     },
     {
       "file": "bioflow-teste-2026-10-01.pdf",
-      "bytes": 24857,
-      "sha256": "0250babe3d28ef61062ebd4b3cca2387648e4cfc4e09dbdb0fb736c565f7b2d1",
-      "pages": 25,
+      "bytes": 6304,
+      "sha256": "c1e81086f4a118470b7e1313a2f3b8bbd4c5d3e5e30621a2e525e55f160744ee",
+      "pages": 8,
       "directIdentifierScan": "passed",
       "fictionalPersona": "Walter White",
       "author": "BioFlow",
-      "embeddedAttachments": 0
+      "embeddedAttachments": 0,
+      "note": "Fictional panel with readable readings; replaces a copy that held only cover pages."
     },
     {
       "file": "bioflow-teste-2026-10-02.pdf",

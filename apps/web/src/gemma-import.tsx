@@ -26,9 +26,14 @@ function errorMessage(code:string,p:boolean):string {
   sample_not_allowed:['Use somente um dos três PDFs fictícios oferecidos no artigo.','Only the three fictional PDFs linked in the article are accepted.'],
   pdf_conversion_failed:['Não foi possível ler o PDF.','The PDF could not be converted.'],
   gemma_extraction_failed:['A Gemma não conseguiu interpretar este documento. Tente novamente.','Gemma could not read this document. Please retry.'],
+  demo_limit_reached:['Esta sessão já importou os 3 exames de teste. Os dados temporários expiram em 60 minutos.','This session already imported all 3 test reports. Temporary data expires in 60 minutes.'],
   rate_limited:['Limite temporário de tentativas. Aguarde um minuto.','Temporary request limit. Please wait one minute.'],
   demo_persistence_failed:['Não foi possível gravar a simulação no MongoDB.','Could not save this simulation in MongoDB.'],
-  demo_session_required:['Sua sessão expirou. Recarregue a página para recomeçar.','Your session expired. Refresh the page to start again.']
+  demo_session_required:['Sua sessão expirou. Recarregue a página para recomeçar.','Your session expired. Refresh the page to start again.'],
+  'gemma_invalid_output|no_results_extracted':['Este PDF de teste não tem leituras numéricas — é só capa e páginas administrativas. Escolha outro dos três.','This test PDF has no numeric readings — it is only cover and administrative pages. Try one of the other two.'],
+  'gemma_invalid_output|invalid_model_json':['A leitura saiu incompleta desta vez. Tente novamente.','The reading came back incomplete this time. Please retry.'],
+  gemma_invalid_output:['A Gemma devolveu uma leitura incompleta. Tente outro PDF de teste.','Gemma returned an incomplete reading. Try another test PDF.'],
+  invalid_pdf:['Arquivo inválido. Use um dos três PDFs fictícios de teste.','Invalid file. Use one of the three fictional test PDFs.']
  };
  return translations[code]?.[p?0:1]||(p?'Não foi possível concluir a operação.':'The operation could not be completed.');
 }
@@ -36,7 +41,10 @@ async function readResponse(response:Response){
  const json:unknown=await response.json();
  if(!response.ok){
   const code=!!json&&typeof json==='object'&&'error' in json?String(json.error):'error';
-  throw Error(code);
+  // The backend explains *why* it refused; carrying that through lets the visitor
+  // read a real sentence instead of a generic apology.
+  const reason=!!json&&typeof json==='object'&&'reason' in json?String((json as {reason?:unknown}).reason):'';
+  throw Error(reason?code+'|'+reason:code);
  }
  return json;
 }
@@ -137,7 +145,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
     <button type="button" className="secondary" onClick={()=>{setDraft(null);setStage('idle');}} disabled={fetching}>{p?'Descartar':'Discard'}</button>
    </div>
   </div>}
-  {stage==='saved'&&<p role="status" className="gemma-saved">{p?'Exame salvo! Seus gráficos e a lista foram atualizados nesta sessão.':'Saved! The charts and report list were updated for your session.'}</p>}
+  {stage==='saved'&&<p role="status" className="gemma-saved">{p?'Exame salvo! Seus gráficos e a lista foram atualizados nesta sessão temporária. Este exame desaparece sozinho em 60 minutos.':'Saved! The charts and report list were updated for this temporary session. This report disappears on its own in 60 minutes.'}</p>}
   {saved.length>0&&<p className="gemma-session-total">{saved.length}/3 {p?'exames importados nesta sessão temporária. Os 26 laudos originais permanecem intactos.':'reports imported into this temporary session. All 26 original reports stay unchanged.'}</p>}
  </section>;
 }
