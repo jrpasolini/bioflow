@@ -133,7 +133,7 @@ export default {
    return new Response(null,{status:204,headers:responseHeaders(req,env)});
   }
   if(req.method==='GET'&&path==='/api/health'){
-   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),gemmaReady:demoReady(env),build:'gemma-v5'});
+   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),gemmaReady:demoReady(env),build:'gemma-v6-strict-chunks'});
   }
   if(req.method==='GET'&&path==='/api/demo/overview'){
    // Only explicitly synthetic data are exposed publicly.
