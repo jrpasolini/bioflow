@@ -30,7 +30,7 @@ Only exact known fictional files are accepted. Their SHA-256s are in apps/api/sr
 - Indexes are REQUIRED: unique prevents concurrent duplicate writes and TTL ensures the import expires. TTL deletion is eventually consistent.
 - Set DEMO_SESSION_SECRET with a cryptographically random secret of at least 32 bytes via Cloudflare's secure secret input.
 - The wrangler.jsonc AI and rate limiting bindings are now declared. ENABLE_GEMMA_DEMO is deliberately FALSE by default.
-- Test the complete workflow, rate controls, auth/expiring session, both database privileges, CORS allowlist, and Gemma output from the exact three sample PDFs. Verify one visitor cannot see another visitor's temporary data. Confirm Mongo baseline counts remain 26 reports/258 numeric readings after uploads.
+- Test the complete workflow, rate controls, auth/expiring session, both database privileges, CORS allowlist, and Gemma output from the exact three sample PDFs. Verify one visitor cannot see another visitor's temporary data. Confirm Mongo baseline counts remain 26 reports/604 numeric readings after uploads.
 - Only after those tests, explicitly enable ENABLE_GEMMA_DEMO=true and deploy the Worker; rebuild the web app with VITE_API_BASE_URL set to the verified HTTPS Worker origin. Do not enable private R2 PDF endpoints or Auth0 until separately configured.
 - No real medical data may be processed by the public demo.
 

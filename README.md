@@ -11,7 +11,7 @@ BioFlow is a new application started during Hacktoberfest 2026 Week 3. It was co
 - React + TypeScript: overview, marker evolution and report details for fabricated collections.
 - Cloudflare Workers API: public synthetic overview and protected original-PDF upload, index and byte-for-byte download using private Cloudflare R2.
 - Authorization boundary: Auth0 JWT verification and allowlisted owner; secure routes fail closed until configured.
-- MongoDB Atlas: 26 baseline fictional reports and 258 numeric readings are seeded and verified. Worker read access is separate from visitor imports.
+- MongoDB Atlas: 26 baseline fictional reports and 604 numeric readings are seeded and verified. Worker read access is separate from visitor imports.
 - Google Gemma 4: PDF-to-Markdown extraction, reviewed preview and isolated, expiring visitor imports are implemented **behind an off-by-default Worker flag**. See [Gemma demo setup](docs/GEMMA_DEMO.md).
 - **Not yet live-certified:** real Gemma inference on the three sample PDFs, an isolated Atlas writer credential and TTL indexes, Cloudflare feature activation, production end-to-end test and Auth0 login. Never upload real medical records.
 
