@@ -3,8 +3,16 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-10-19",
   "compatibility_flags": ["nodejs_compat"],
-  // R2 binding is deliberately disabled until bucket provisioning:
+  "ai": {"binding": "AI"},
+  "ratelimits": [
+    {"name": "DEMO_RATE_LIMITER", "namespace_id": "8701", "simple": {"limit": 3, "period": 60}}
+  ],
+  // Private real-medical PDF routes remain OFF pending Auth0 + R2 setup.
   // "r2_buckets": [{"binding": "REPORTS_BUCKET", "bucket_name": "bioflow-private-reports"}],
-  "vars": {"APP_ORIGIN": "https://bioflow-6d0z.onrender.com", "MONGODB_DB": "bioflow_demo", "ENABLE_PDF_ENDPOINTS": "false"}
+  "vars": {
+    "APP_ORIGIN": "https://jrpasolini.tech",
+    "MONGODB_DB": "bioflow_demo",
+    "ENABLE_PDF_ENDPOINTS": "false",
+    "ENABLE_GEMMA_DEMO": "false"
+  }
 }
-

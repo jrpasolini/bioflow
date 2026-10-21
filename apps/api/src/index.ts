@@ -1,19 +1,36 @@
 import {createRemoteJWKSet,jwtVerify} from 'jose';
 import {demoPatient} from '../../../packages/fixtures/src/synthetic';
 import {loadDemoFromAtlas,syntheticFallback} from './atlas';
+import {handleGemmaDemo,demoReady} from './demo-gemma';
 
 interface Env {
+  AI?: Ai;
+  DEMO_RATE_LIMITER?: RateLimit;
+  ENABLE_GEMMA_DEMO?: string;
+  DEMO_SESSION_SECRET?: string;
   REPORTS_BUCKET?: R2Bucket;
   AUTH0_ISSUER_BASE_URL?: string;
   AUTH0_AUDIENCE?: string;
   BIOFLOW_OWNER_SUB?: string;
   APP_ORIGIN?: string;
   MONGODB_URI?: string;
+  MONGODB_DEMO_WRITE_URI?: string;
   MONGODB_DB?: string;
   ENABLE_PDF_ENDPOINTS?: string;
 }
 const MAX_PDF_BYTES=10*1024*1024;
 const pdfId=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * This claim can only authorize private access after jwtVerify checks the Auth0
+ * signature, audience and issuer. Issued by a post-login Auth0 Action *after*
+ * enforcing the authenticator OTP challenge; absent/malformed claims fail closed.
+ */
+export const BIOFLOW_MFA_CLAIM='https://jrpasolini.tech/bioflow/mfa';
+export function hasVerifiedMfa(payload:Record<string,unknown>):boolean {
+ return payload[BIOFLOW_MFA_CLAIM]===true;
+}
+
 
 function responseHeaders(req:Request,env:Env):Headers{
  const h=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin'});
@@ -51,6 +68,7 @@ async function verifyOwner(req:Request,env:Env):Promise<true|Response>{
   const jwks=createRemoteJWKSet(new URL(issuer+'.well-known/jwks.json'));
   const {payload}=await jwtVerify(token,jwks,{issuer,audience:env.AUTH0_AUDIENCE,algorithms:['RS256']});
   if(payload.sub!==env.BIOFLOW_OWNER_SUB)return err(req,env,403,'forbidden');
+  if(!hasVerifiedMfa(payload))return err(req,env,403,'mfa_required');
   return true;
  }catch{return err(req,env,401,'invalid_or_expired_token');}
 }
@@ -115,7 +133,7 @@ export default {
    return new Response(null,{status:204,headers:responseHeaders(req,env)});
   }
   if(req.method==='GET'&&path==='/api/health'){
-   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB)});
+   return json(req,env,{ok:true,service:'bioflow-api',demoOnly:true,databaseConfigured:!!env.MONGODB_URI,pdfEndpointsEnabled:env.ENABLE_PDF_ENDPOINTS==='true'&&!!env.REPORTS_BUCKET&&!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),storageReady:!!env.REPORTS_BUCKET,authReady:!!(env.AUTH0_ISSUER_BASE_URL&&env.AUTH0_AUDIENCE&&env.BIOFLOW_OWNER_SUB),gemmaReady:demoReady(env)});
   }
   if(req.method==='GET'&&path==='/api/demo/overview'){
    // Only explicitly synthetic data are exposed publicly.
@@ -127,6 +145,16 @@ export default {
     // Fail loudly instead of hiding a database outage behind stale fixture data.
     return err(req,env,503,'demo_database_unavailable');
    }
+  }
+  if(['/api/demo/session','/api/demo/extract','/api/demo/commit','/api/demo/imports'].includes(path)){
+   const result=await handleGemmaDemo(req,env,path);
+   const headers=new Headers(result.headers);
+   const cors=responseHeaders(req,env);
+   if(cors.has('Access-Control-Allow-Origin'))headers.set('Access-Control-Allow-Origin',cors.get('Access-Control-Allow-Origin')!);
+   headers.set('Vary','Origin');
+   headers.set('Cache-Control','no-store');
+   headers.set('X-Content-Type-Options','nosniff');
+   return new Response(result.body,{status:result.status,statusText:result.statusText,headers});
   }
   const m=path.match(/^\/api\/patients\/([^/]+)\/reports(?:\/([^/]+)\/download)?$/);
   if(!m)return err(req,env,404,'not_found');

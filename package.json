@@ -15,6 +15,7 @@
     "typecheck": "npm run typecheck -w @bioflow/web && npm run typecheck -w @bioflow/api",
     "build": "npm run build -w @bioflow/web && npm run typecheck -w @bioflow/api",
     "db:seed:demo": "node --env-file=.env.local scripts/seed-demo.mjs",
+    "db:setup:demo-imports": "node --env-file=.env.local scripts/setup-demo-imports.mjs",
     "test:pwa": "node --test scripts/pwa.test.mjs",
     "build:subpath": "npm run build -w @bioflow/web && npm exec -w @bioflow/web -- vite build --base=/bioflow/ --outDir dist/bioflow && node scripts/build-sw.mjs bioflow",
     "test:subpath": "node --test scripts/subpath.test.mjs"

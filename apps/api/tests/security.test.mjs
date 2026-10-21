@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {testModule} from '../../../scripts/test-module.mjs';
-const {default:worker}=await testModule(new URL('../src/index.ts',import.meta.url),'api');
+const {default:worker,hasVerifiedMfa,BIOFLOW_MFA_CLAIM}=await testModule(new URL('../src/index.ts',import.meta.url),'api');
 const origin='https://jrpasolini.tech';
 const env={APP_ORIGIN:origin,ENABLE_PDF_ENDPOINTS:'false'};
 const call=(path,options={},bindings=env)=>worker.fetch(new Request('https://bioflow.test'+path,options),bindings);
@@ -41,4 +41,22 @@ test('PDF list/upload/download stay disabled even if bindings accidentally exist
   assert.equal(r.status,503);assert.deepEqual(await r.json(),{error:'pdf_endpoints_disabled'});
  }
  assert.equal((await call('/api/patients/demo-walter-white/reports/00000000-0000-0000-0000-000000000000/download',{},bindings)).status,503);
+});
+
+test('a published demo code cannot authorize private PDF endpoints',async()=>{
+ const code='110526'; // UI-only shortcut; never a bearer token.
+ const binding={...env,ENABLE_PDF_ENDPOINTS:'true',REPORTS_BUCKET:{}};
+ const response=await call('/api/patients/demo-walter-white/reports',{
+  headers:{Authorization:'Bearer '+code,'X-Bioflow-Demo-Code':code}
+ },binding);
+ assert.equal(response.status,503);
+ assert.deepEqual(await response.json(),{error:'auth_not_configured'});
+});
+
+test('private account needs a signed, explicitly boolean MFA claim',()=>{
+ assert.equal(hasVerifiedMfa({}),false);
+ assert.equal(hasVerifiedMfa({[BIOFLOW_MFA_CLAIM]:false}),false);
+ assert.equal(hasVerifiedMfa({[BIOFLOW_MFA_CLAIM]:'true'}),false);
+ assert.equal(hasVerifiedMfa({[BIOFLOW_MFA_CLAIM]:true}),true);
+ assert.equal(hasVerifiedMfa({'amr':['pwd','mfa']}),false);
 });

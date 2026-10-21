@@ -28,3 +28,14 @@ self.addEventListener('fetch',event=>{
  }
 });
 `);
+
+
+// The provider's root is only an alias; Auth0 uses the canonical public subpath.
+// A small redirect page also works when the host gives static files priority
+// over dashboard redirect rules.
+if(subpath){
+ await writeFile(new URL('../apps/web/dist/index.html',import.meta.url),`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BioFlow</title><meta http-equiv="refresh" content="0;url=https://jrpasolini.tech/bioflow/"><link rel="canonical" href="https://jrpasolini.tech/bioflow/"></head><body><p><a href="https://jrpasolini.tech/bioflow/">Open BioFlow</a></p></body></html>
+`);
+}
+

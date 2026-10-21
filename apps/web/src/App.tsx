@@ -3,11 +3,13 @@ import brFlag from 'flag-icons/flags/4x3/br.svg';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {markerHistory,plotHistory,smoothHistoryPath} from './timeline';
 import {referenceStatus,chooseFeaturedResult,type ReferenceStatus} from './reference';
-import {Activity,ChartNoAxesCombined,FileText,HeartPulse,Download,FlaskConical,Moon,Sun} from 'lucide-react';
+import {Activity,ChartNoAxesCombined,FileText,HeartPulse,Download,FlaskConical,Moon,Sun,X} from 'lucide-react';
 import {demoReports as fixtureReports,type Indicator,type LabReport} from '../../../packages/fixtures/src/synthetic';
-import {demoSources,heldoutDates} from '../../../packages/fixtures/src/demo-sources';
+import {demoSources} from '../../../packages/fixtures/src/demo-sources';
 import {AppActions} from './pwa';
 import {DemoEntry} from './demo-entry';
+import type {Auth0Session} from './auth0-session';
+import {GemmaImport} from './gemma-import';
 import {useDemoOverview} from './use-demo';
 import {useThemePreference} from './theme';
 import {useLocale,labelForIndicator,labelForLab,formatDate,formatBirthDate,formatValue,calculateAge,type Locale} from './i18n';
@@ -89,15 +91,19 @@ function Trend({code,reports,locale,onOpenReport,t}:{
     </section>
   </div>;
 }
-export default function App(){
+export default function App({auth0}:{auth0?:Auth0Session}={}){
   const {data,status}=useDemoOverview();
-  const {patient:demoPatient,reports:demoReports}=data;
+  const {patient:demoPatient,reports:baseReports}=data;
+  const [sessionReports,setSessionReports]=useState<LabReport[]>([]);
+  const demoReports=useMemo(()=>[...baseReports,...sessionReports].sort((a,b)=>a.collectedAt.localeCompare(b.collectedAt)),[baseReports,sessionReports]);
   const latest=demoReports[demoReports.length-1];
   const {theme,toggleTheme}=useThemePreference();
   const {locale,changeLocale,t}=useLocale();
   const [entered,setEntered]=useState(false);
+  const inDashboard=entered||auth0?.authenticated===true;
+  const uploadDialog=useRef<HTMLDialogElement>(null);
   const historyHeading=useRef<HTMLHeadingElement>(null);
-  useEffect(()=>{if(entered)historyHeading.current?.focus();},[entered]);
+  useEffect(()=>{if(inDashboard)historyHeading.current?.focus();},[inDashboard]);
   const [section,setSection]=useState<Section>('overview');
   const [selected,setSelected]=useState<string>('glucose');
   const [reportId,setReportId]=useState(initialLatest.id);
@@ -116,9 +122,9 @@ export default function App(){
 
   return <div className="app">
     <header className="topbar">
-      <div className="brand"><span className="brand-icon"><HeartPulse size={23}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
+      <div className="brand"><span className="brand-icon" aria-hidden="true"><HeartPulse size={34}/></span><span>BioFlow<small>{t.tagline}</small></span></div>
       <div className="header-actions">
-        {entered&&<><button type="button" className="secondary access-options" onClick={()=>setEntered(false)}>{locale==='pt-BR'?'Opções de acesso':'Access options'}</button><AppActions portuguese={locale==='pt-BR'}/></>}
+        {inDashboard&&<><button type="button" className="secondary access-options" onClick={()=>{if(auth0?.authenticated)auth0.logout();else setEntered(false);}}>{auth0?.authenticated?(locale==='pt-BR'?'Sair da conta Auth0':'Sign out of Auth0'):(locale==='pt-BR'?'Sair da demonstração':'Leave demo')}</button><AppActions portuguese={locale==='pt-BR'} onUpload={()=>uploadDialog.current?.showModal()}/></>}
         <div className="locale-switch" role="group" aria-label={t.languageSwitcher}>
           <button type="button" lang="en-US" aria-label={t.chooseEnglish} title="English (United States)" aria-pressed={locale==='en-US'} className={locale==='en-US'?'selected':''} onClick={()=>changeLocale('en-US')}><img className="locale-flag" src={usFlag} alt="" aria-hidden="true"/></button>
           <button type="button" lang="pt-BR" aria-label={t.choosePortuguese} title="Português (Brasil)" aria-pressed={locale==='pt-BR'} className={locale==='pt-BR'?'selected':''} onClick={()=>changeLocale('pt-BR')}><img className="locale-flag" src={brFlag} alt="" aria-hidden="true"/></button>
@@ -129,12 +135,13 @@ export default function App(){
       </div>
     </header>
     <main className="container">
-      {!entered?<DemoEntry portuguese={locale==='pt-BR'} onExplore={()=>setEntered(true)}/>:<>
+      {!inDashboard?<DemoEntry portuguese={locale==='pt-BR'} auth0={auth0} onExplore={()=>setEntered(true)}/>:<>
       <div className="demo-banner"><FlaskConical size={20}/><span><strong>{t.demoHeadline}</strong> {t.demoText}</span></div>
-      <section className="panel demo-sample-download" aria-label={locale==='pt-BR'?'Exames para testar':'Sample reports'}>
-        <div><strong>{locale==='pt-BR'?'26 laudos na base · 3 reservados para testar':'26 reports preloaded · 3 held out for testing'}</strong><p>{locale==='pt-BR'?'Baixe os três laudos fictícios mais recentes. Eles não estão incluídos no histórico inicial. A importação automática via Gemma está em preparação.':'Download the three newest fictional reports. They are excluded from the initial history. Automatic import with Gemma is being prepared.'}</p><small>{heldoutDates.map(d=>date(d)).join(' · ')}</small></div>
-        <a className="secondary" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={16}/>{locale==='pt-BR'?'Baixar 3 exames (ZIP)':'Download 3 reports (ZIP)'}</a>
-      </section>
+      <dialog id="report-upload-dialog" ref={uploadDialog} className="action-dialog import-dialog" aria-labelledby="gemma-title" onClick={event=>{if(event.target===event.currentTarget)uploadDialog.current?.close();}}>
+        <button type="button" className="close-dialog" onClick={()=>uploadDialog.current?.close()} aria-label={locale==='pt-BR'?'Fechar envio de exame':'Close report upload'}><X size={20}/></button>
+        <GemmaImport portuguese={locale==='pt-BR'} onReportsChanged={setSessionReports}/>
+      </dialog>
+
       {status==='offline'&&<p role="status" className="demo-source">{locale==='pt-BR'?'Não foi possível atualizar. Exibindo o histórico local.':'Unable to refresh. Showing local history.'}</p>}
       <div className="page-title"><div><span className="eyebrow">{t.labHistory}</span><h1 ref={historyHeading} tabIndex={-1}>{demoPatient.displayName}</h1><div className="patient-identity" aria-label={t.patientIdentity}><span><strong>{t.dateOfBirth}:</strong> {formatBirthDate(demoPatient.dateOfBirth,locale)}</span><span><strong>{t.age}:</strong> {calculateAge(demoPatient.dateOfBirth)} {t.years}</span><span><strong>{t.demoPatientId}:</strong> {demoPatient.demoRecordId}</span></div><p>{t.description}</p></div><span className="pill">{demoReports.length} {t.simulatedCollections}</span></div>
       <nav className="tabs" aria-label={t.navLabel}>
@@ -193,11 +200,9 @@ export default function App(){
       <p className="footer-note">{t.footer}</p>
       <p className="technology-label">BioFlow · {t.technologyCredits}</p>
       <ul className="technology-credits" aria-label={t.technologyCredits}>{['React','TypeScript','Vite','Cloudflare Workers','MongoDB Atlas','Lucide','Newsreader','Figtree','flag-icons'].map(name=><li key={name}>{name}</li>)}</ul>
-      <p className="integration-credits">
-        <span>{locale==='pt-BR'?'Leitura de PDFs com':'PDF reading with'} <a href="https://deepmind.google/models/gemma/" target="_blank" rel="noopener noreferrer">Gemma</a> <small>· {locale==='pt-BR'?'em breve':'coming soon'}</small></span>
-        <span>{locale==='pt-BR'?'Autenticação 2FA com':'2FA authentication with'} <a href="https://auth0.com/" target="_blank" rel="noopener noreferrer">Auth0</a> <small>· {locale==='pt-BR'?'em breve':'coming soon'}</small></span>
-      </p>
+
     </footer>
   </div>;
 }
+
 
