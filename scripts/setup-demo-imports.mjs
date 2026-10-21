@@ -16,7 +16,15 @@ if(!uri||!/^mongodb(\+srv)?:\/\//.test(uri)){
   await client.connect();
   const coll=client.db('bioflow_sessions').collection('demo_imports');
   const unique=await coll.createIndex({sessionId:1,sha256:1},{name:'unique_session_sample',unique:true});
-  const ttl=await coll.createIndex({expiresAt:1},{name:'delete_expired_imports',expireAfterSeconds:0});
+  // A TTL index on the same key may already exist under a different name; MongoDB
+  // allows only one, so adopt the existing one instead of failing the whole setup.
+  const existing=await coll.indexes();
+  const ttlIndex=existing.find(index=>{
+   const keys=Object.keys(index.key);
+   return keys.length===1&&keys[0]==='expiresAt'&&index.expireAfterSeconds!==undefined;
+  });
+  const ttl=ttlIndex?ttlIndex.name
+   :await coll.createIndex({expiresAt:1},{name:'delete_expired_imports',expireAfterSeconds:0});
   console.log('Isolated demo indexes ready:',unique,ttl);
  }catch{
   console.error('Could not configure the isolated session indexes. Check access and existing index options.');

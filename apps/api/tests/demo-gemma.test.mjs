@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {testModule} from '../../../scripts/test-module.mjs';
 
-const {handleGemmaDemo,demoReady,extractGemmaJson}=await testModule(new URL('../src/demo-gemma.ts',import.meta.url),'demo-gemma');
+const {handleGemmaDemo,demoReady,extractGemmaJson,chunkDocument}=await testModule(new URL('../src/demo-gemma.ts',import.meta.url),'demo-gemma');
 const {SAMPLES,isSampleHash}=await testModule(new URL('../src/demo-samples.ts',import.meta.url),'demo-samples');
 const audit=JSON.parse(await readFile(new URL('../../../docs/PDF_PUBLICATION_AUDIT.json',import.meta.url),'utf8'));
 const base='https://bioflow.example/api/demo/';
@@ -26,7 +26,12 @@ test('Gemma output needs an explicit, verifiable date and numeric values',()=>{
  const parsed=extractGemmaJson(ai,'2026-05-15');
  assert.deepEqual(parsed,data);
  assert.throws(()=>extractGemmaJson(ai,'2026-10-02'),/invalid_model_metadata/);
- assert.throws(()=>extractGemmaJson({response:'{"collectedAt":"2026-05-15","laboratory":"X","results":[{"code":"glucose","name":"Glicose","value":"98","unit":"mg"}]}'},'2026-05-15'),/invalid_result/);
+ // A quoted but unambiguous number is accepted on purpose: Brazilian reports print
+ // "5,170" and the model echoes it as text. Anything non-numeric still throws.
+ assert.equal(extractGemmaJson({response:'{"collectedAt":"2026-05-15","laboratory":"X","results":[{"code":"glucose","name":"Glicose","value":"98","unit":"mg"}]}'},'2026-05-15').results[0].value,98);
+ // A value carrying its own unit is ambiguous, so the row is dropped; with nothing
+ // left the report fails as unreadable rather than inventing a number.
+ assert.throws(()=>extractGemmaJson({response:'{"collectedAt":"2026-05-15","laboratory":"X","results":[{"code":"glucose","name":"Glicose","value":"98 mg/dL","unit":"mg"}]}'},'2026-05-15'),/no_results_extracted/);
  assert.throws(()=>extractGemmaJson({response:'nothing'},'2026-05-15'),/invalid_model_json/);
 });
 
@@ -60,4 +65,56 @@ test('demo token is temporary, and unknown PDF cannot reach paid model',async()=
 test('no rate limiter means disabled, not public paid inference',()=>{
  const env={AI:{},MONGODB_DEMO_WRITE_URI:'x',DEMO_SESSION_SECRET:'s'.repeat(40),ENABLE_GEMMA_DEMO:'true'};
  assert.equal(demoReady(env),false);
+});
+
+test('Brazilian decimal comma is normalised instead of rejected',()=>{
+ const data={collectedAt:'2026-05-15',laboratory:'Labortel',results:[
+  {code:'hemacias',name:'Hemácias',value:'5,170',unit:'milhões/mm3'},
+  {code:'hemoglobina',name:'Hemoglobina',value:'15,30',unit:'g/dL'},
+  {code:'hematocrito',name:'Hematócrito',value:'46,70',unit:'%',referenceLow:'41,0',referenceHigh:'53,0'},
+  {code:'vcm',name:'VCM',value:'1.234,5',unit:'fL'}
+ ]};
+ const parsed=extractGemmaJson({response:JSON.stringify(data)},'2026-05-15');
+ assert.equal(parsed.results[0].value,5.17);
+ assert.equal(parsed.results[1].value,15.3);
+ assert.equal(parsed.results[2].value,46.7);
+ assert.equal(parsed.results[2].referenceLow,41);
+ assert.equal(parsed.results[2].referenceHigh,53);
+ assert.equal(parsed.results[3].value,1234.5);
+});
+
+test('a non-numeric value is still refused, never coerced',()=>{
+ const data={collectedAt:'2026-05-15',laboratory:'Labortel',results:[
+  {code:'x',name:'Marcador',value:'negativo',unit:'-'}]};
+ assert.throws(()=>extractGemmaJson({response:JSON.stringify(data)},'2026-05-15'),/no_results_extracted/);
+});
+
+test('one malformed row does not discard an otherwise readable report',()=>{
+ const data={collectedAt:'2026-05-15',laboratory:'Labortel',results:[
+  {code:'hemoglobina',name:'Hemoglobina',value:'15,30',unit:'g/dL'},
+  {code:'ausentes',name:'Ausentes',value:'Ausentes',unit:''},
+  {code:'leucocitos',name:'Leucócitos',value:'6.800',unit:'/mm3'}
+ ]};
+ const parsed=extractGemmaJson({response:JSON.stringify(data)},'2026-05-15');
+ assert.equal(parsed.results.length,2);
+ assert.deepEqual(parsed.results.map(r=>r.code),['hemoglobina','leucocitos']);
+});
+
+test('long documents are split on page breaks, never in one oversized call',()=>{
+ const page='\f'+'x'.repeat(3000);
+ const doc=page.repeat(5)+'\f'+'y'.repeat(500);
+ const chunks=chunkDocument(doc,9000);
+ assert.ok(chunks.length>1,'expected several chunks');
+ assert.ok(chunks.every(c=>c.length<=9000),'no chunk exceeds the cap');
+ assert.equal(chunks.slice(0,10).map(c=>c.length).reduce((a,b)=>a+b,0)<=10*9000,true);
+});
+
+test('a document that already fits is sent whole',()=>{
+ const doc='short report body';
+ assert.deepEqual(chunkDocument(doc,9000),[doc]);
+});
+
+test('chunking stops at the safety ceiling instead of unbounded fan-out',()=>{
+ const doc=('z'.repeat(20000)+'\f').repeat(40);
+ assert.equal(chunkDocument(doc,9000).length,10);
 });
