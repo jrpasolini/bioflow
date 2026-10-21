@@ -660,6 +660,13 @@
    "referenceHigh": 10
   },
   {
+   "code": "undifferentiatedCells",
+   "name": "Células indiferenciadas",
+   "value": 0,
+   "unit": "%",
+   "sourcePage": 1
+  },
+  {
    "code": "platelets",
    "name": "Plaquetas",
    "value": 0.162,
@@ -906,6 +913,13 @@
    "sourcePage": 1,
    "referenceLow": 2,
    "referenceHigh": 10
+  },
+  {
+   "code": "undifferentiatedCells",
+   "name": "Células indiferenciadas",
+   "value": 0,
+   "unit": "%",
+   "sourcePage": 1
   },
   {
    "code": "platelets",
@@ -1415,6 +1429,22 @@
    "referenceHigh": 10
   },
   {
+   "code": "undifferentiatedCells",
+   "name": "Células indiferenciadas",
+   "value": 0,
+   "unit": "%",
+   "sourcePage": 2
+  },
+  {
+   "code": "nlr",
+   "name": "Razão neutrófilos/linfócitos",
+   "value": 1.08,
+   "unit": "índice",
+   "sourcePage": 2,
+   "referenceLow": 1,
+   "referenceHigh": 3
+  },
+  {
    "code": "platelets",
    "name": "Plaquetas",
    "value": 0.222,
@@ -1422,6 +1452,20 @@
    "sourcePage": 2,
    "referenceLow": 140,
    "referenceHigh": 400
+  },
+  {
+   "code": "egfr",
+   "name": "TFG estimada",
+   "value": 48.7,
+   "unit": "mL/min/1,73 m²",
+   "sourcePage": 4
+  },
+  {
+   "code": "psa",
+   "name": "PSA total",
+   "value": 0.45,
+   "unit": "ng/mL",
+   "sourcePage": 16
   },
   {
    "code": "urineDensity",
@@ -2010,6 +2054,22 @@
    "referenceHigh": 10
   },
   {
+   "code": "undifferentiatedCells",
+   "name": "Células indiferenciadas",
+   "value": 0,
+   "unit": "%",
+   "sourcePage": 1
+  },
+  {
+   "code": "nlr",
+   "name": "Razão neutrófilos/linfócitos",
+   "value": 2.33,
+   "unit": "índice",
+   "sourcePage": 1,
+   "referenceLow": 1,
+   "referenceHigh": 3
+  },
+  {
    "code": "platelets",
    "name": "Plaquetas",
    "value": 0.198,
@@ -2017,6 +2077,13 @@
    "sourcePage": 1,
    "referenceLow": 140,
    "referenceHigh": 400
+  },
+  {
+   "code": "egfr",
+   "name": "TFG estimada",
+   "value": 42.6,
+   "unit": "mL/min/1,73 m²",
+   "sourcePage": 5
   },
   {
    "code": "urineDensity",
@@ -2442,6 +2509,22 @@
    "referenceHigh": 10
   },
   {
+   "code": "undifferentiatedCells",
+   "name": "Células indiferenciadas",
+   "value": 0,
+   "unit": "%",
+   "sourcePage": 1
+  },
+  {
+   "code": "nlr",
+   "name": "Razão neutrófilos/linfócitos",
+   "value": 1.48,
+   "unit": "índice",
+   "sourcePage": 1,
+   "referenceLow": 1,
+   "referenceHigh": 3
+  },
+  {
    "code": "platelets",
    "name": "Plaquetas",
    "value": 0.186,
@@ -2458,6 +2541,20 @@
    "sourcePage": 1,
    "referenceLow": 7.5,
    "referenceHigh": 11.5
+  },
+  {
+   "code": "egfr",
+   "name": "TFG estimada",
+   "value": 46,
+   "unit": "mL/min/1,73 m²",
+   "sourcePage": 6
+  },
+  {
+   "code": "psa",
+   "name": "PSA total",
+   "value": 0.48,
+   "unit": "ng/mL",
+   "sourcePage": 19
   },
   {
    "code": "urineDensity",

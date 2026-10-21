@@ -93,7 +93,11 @@ const HEMO=[
   {code:'lymphocytesAtypical',label:/^linfocitos atipicos$/,name:'Linfócitos atípicos',unit:'%'},
   {code:'monocytes',label:/^monocitos$/,name:'Monócitos',unit:'%'},
   {code:'platelets',label:/^plaquetas:?$/,name:'Plaquetas',unit:'milhares/mm³',ref:'milhares'},
-  {code:'mpv',label:/^mpv$/,name:'MPV',unit:'fL'}
+  {code:'mpv',label:/^mpv$/,name:'MPV',unit:'fL'},
+  {code:'undifferentiatedCells',label:/^celulas indiferenciadas$/,name:'Células indiferenciadas',unit:'%'},
+  {code:'nlr',label:/^razao neutrofilos\/linfocitos/,name:'Razão neutrófilos/linfócitos',unit:'índice'},
+  {code:'psa',label:/^psa total/,name:'PSA total',unit:'ng/mL'},
+  {code:'egfr',label:/^taxa de filtracao glomerular|^etfg$/,name:'TFG estimada',unit:'mL/min/1,73 m²'}
 ];
 
 const URINE=[
@@ -109,6 +113,8 @@ const URINE=[
   {code:'urineLeukocytes',label:/^leucocitos$/,name:'Leucócitos urinários',unit:'/uL'},
   {code:'urineEpithelialCells',label:/^celulas epiteliais escamosas$/,name:'Células epiteliais escamosas',unit:'/uL'},
   {code:'albuminCreatinineRatio',label:/^relacao albumina\/creatinina/,name:'Relação albumina/creatinina',unit:'mg/g'}
+  ,{code:'urineAlbumin',label:/^albumina urinaria/,name:'Albumina urinária',unit:'μg/mL'}
+  ,{code:'urineCreatinine',label:/^creatinina urinaria/,name:'Creatinina urinária',unit:'mg/dL'}
 ];
 
 const NOISE=/^(bioflow \||paciente ficticio|transcricao sem|interpretacao medica|dados declarados|material|metodo|valores de referencia|resultados|serie vermelha|serie branca|leucograma|relativo|absoluto|\(%\)|\(mm3\)|unidade|adultos|masculino|feminino|analise|analisador|contagem|metodo:|obs\.|fonte:|legenda)/i;

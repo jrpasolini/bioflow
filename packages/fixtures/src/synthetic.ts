@@ -1449,6 +1449,13 @@ export const demoReports: LabReport[] = [
         "value": 0,
         "unit": "/uL",
         "sourcePage": 8
+      },
+      {
+        "code": "undifferentiatedCells",
+        "name": "Células indiferenciadas",
+        "value": 0,
+        "unit": "%",
+        "sourcePage": 1
       }
     ]
   },
@@ -1658,6 +1665,13 @@ export const demoReports: LabReport[] = [
         "sourcePage": 1,
         "referenceLow": 140,
         "referenceHigh": 400
+      },
+      {
+        "code": "undifferentiatedCells",
+        "name": "Células indiferenciadas",
+        "value": 0,
+        "unit": "%",
+        "sourcePage": 1
       }
     ]
   },
@@ -2526,6 +2540,36 @@ export const demoReports: LabReport[] = [
         "value": 0,
         "unit": "/uL",
         "sourcePage": 17
+      },
+      {
+        "code": "undifferentiatedCells",
+        "name": "Células indiferenciadas",
+        "value": 0,
+        "unit": "%",
+        "sourcePage": 2
+      },
+      {
+        "code": "nlr",
+        "name": "Razão neutrófilos/linfócitos",
+        "value": 1.08,
+        "unit": "índice",
+        "sourcePage": 2,
+        "referenceLow": 1,
+        "referenceHigh": 3
+      },
+      {
+        "code": "egfr",
+        "name": "TFG estimada",
+        "value": 48.7,
+        "unit": "mL/min/1,73 m²",
+        "sourcePage": 4
+      },
+      {
+        "code": "psa",
+        "name": "PSA total",
+        "value": 0.45,
+        "unit": "ng/mL",
+        "sourcePage": 16
       }
     ]
   },
@@ -3503,6 +3547,29 @@ export const demoReports: LabReport[] = [
         "value": 0,
         "unit": "/uL",
         "sourcePage": 18
+      },
+      {
+        "code": "undifferentiatedCells",
+        "name": "Células indiferenciadas",
+        "value": 0,
+        "unit": "%",
+        "sourcePage": 1
+      },
+      {
+        "code": "nlr",
+        "name": "Razão neutrófilos/linfócitos",
+        "value": 2.33,
+        "unit": "índice",
+        "sourcePage": 1,
+        "referenceLow": 1,
+        "referenceHigh": 3
+      },
+      {
+        "code": "egfr",
+        "name": "TFG estimada",
+        "value": 42.6,
+        "unit": "mL/min/1,73 m²",
+        "sourcePage": 5
       }
     ]
   },
@@ -4223,6 +4290,36 @@ export const demoReports: LabReport[] = [
         "value": 0,
         "unit": "/uL",
         "sourcePage": 20
+      },
+      {
+        "code": "undifferentiatedCells",
+        "name": "Células indiferenciadas",
+        "value": 0,
+        "unit": "%",
+        "sourcePage": 1
+      },
+      {
+        "code": "nlr",
+        "name": "Razão neutrófilos/linfócitos",
+        "value": 1.48,
+        "unit": "índice",
+        "sourcePage": 1,
+        "referenceLow": 1,
+        "referenceHigh": 3
+      },
+      {
+        "code": "egfr",
+        "name": "TFG estimada",
+        "value": 46,
+        "unit": "mL/min/1,73 m²",
+        "sourcePage": 6
+      },
+      {
+        "code": "psa",
+        "name": "PSA total",
+        "value": 0.48,
+        "unit": "ng/mL",
+        "sourcePage": 19
       }
     ]
   },
@@ -4830,4 +4927,4 @@ export const demoReports: LabReport[] = [
     ]
   }
 ]
-export const indicatorCodes = ["albuminCreatinineRatio", "alkalinePhosphatase", "alt", "ast", "basophils", "blasts", "bun", "calciumTotal", "ck", "creatinine", "eosinophils", "ferritin", "folate", "gammaGt", "glucose", "glucosePostMeal", "hba1c", "hdl", "hematocrit", "hemoglobin", "ionizedCalcium", "iron", "ldl", "lymphocytesAtypical", "lymphocytesTypical", "magnesium", "mch", "mchc", "mcv", "metamyelocytes", "monocytes", "mpv", "myelocytes", "neutrophilBands", "neutrophilSegmented", "nonHdl", "phosphorus", "platelets", "potassium", "promyelocytes", "rbc", "rdwCv", "rdwSd", "sodium", "t4Free", "totalCholesterol", "triglycerides", "tsh", "urea", "uricAcid", "urineBilirubin", "urineBlood", "urineDensity", "urineEpithelialCells", "urineErythrocytes", "urineGlucose", "urineKetones", "urineLeukocytes", "urinePh", "urineProtein", "urineUrobilinogen", "vitaminB12", "vitaminD", "vldl", "wbc"] as const;
+export const indicatorCodes = ["albuminCreatinineRatio", "alkalinePhosphatase", "alt", "ast", "basophils", "blasts", "bun", "calciumTotal", "ck", "creatinine", "egfr", "eosinophils", "ferritin", "folate", "gammaGt", "glucose", "glucosePostMeal", "hba1c", "hdl", "hematocrit", "hemoglobin", "ionizedCalcium", "iron", "ldl", "lymphocytesAtypical", "lymphocytesTypical", "magnesium", "mch", "mchc", "mcv", "metamyelocytes", "monocytes", "mpv", "myelocytes", "neutrophilBands", "neutrophilSegmented", "nlr", "nonHdl", "phosphorus", "platelets", "potassium", "promyelocytes", "psa", "rbc", "rdwCv", "rdwSd", "sodium", "t4Free", "totalCholesterol", "triglycerides", "tsh", "undifferentiatedCells", "urea", "uricAcid", "urineBilirubin", "urineBlood", "urineDensity", "urineEpithelialCells", "urineErythrocytes", "urineGlucose", "urineKetones", "urineLeukocytes", "urinePh", "urineProtein", "urineUrobilinogen", "vitaminB12", "vitaminD", "vldl", "wbc"] as const;
