@@ -213,6 +213,49 @@ export function chunkDocument(text:string,maxChars=CHUNK_CHARS):string[]{
  return chunks;
 }
 
+/**
+ * A successful HTTP/model response is not a successful extraction until its
+ * JSON is parseable and its chunk schema is valid. Empty arrays are legitimate
+ * for pages containing headings or administrative text.
+ */
+export function parseGemmaChunk(answer:unknown,date:string):{laboratory:string;results:unknown[]} {
+ const response=isObject(answer)?answer as Record<string,any>:{};
+ const candidate=response.choices?.[0]?.message?.content??response.response??response.result;
+ if(typeof candidate!=='string')throw Error('missing_model_content');
+ const begin=candidate.indexOf('{'),end=candidate.lastIndexOf('}');
+ if(begin<0||end<=begin)throw Error('invalid_model_json');
+ let parsed:unknown;
+ try{parsed=JSON.parse(candidate.slice(begin,end+1));}
+ catch{throw Error('invalid_model_json');}
+ if(!isObject(parsed)||!Array.isArray(parsed.results)||
+    parsed.results.some(item=>!isObject(item)))throw Error('invalid_model_schema');
+ if(parsed.collectedAt!==undefined&&parsed.collectedAt!==date)throw Error('invalid_model_metadata');
+ if(parsed.laboratory!==undefined&&(typeof parsed.laboratory!=='string'||!parsed.laboratory.trim()))
+  throw Error('invalid_model_metadata');
+ if(parsed.results.length>300)throw Error('too_many_results');
+ return {laboratory:typeof parsed.laboratory==='string'?parsed.laboratory:'',results:parsed.results};
+}
+
+/**
+ * Validate *inside* the retry loop. If even one chunk remains malformed after
+ * two attempts, abort the entire document rather than returning a partial PDF.
+ */
+export async function runGemmaChunks(
+ chunks:readonly string[],date:string,run:(chunk:string)=>Promise<unknown>
+):Promise<{laboratory:string;results:unknown[]}>{
+ const parsed=await Promise.all(chunks.map(async chunk=>{
+  for(let attempt=0;attempt<2;attempt++){
+   try{return parseGemmaChunk(await run(chunk),date);}
+   catch{/* Retry both transport/model errors and malformed model responses. */}
+  }
+  return null;
+ }));
+ if(parsed.some(chunk=>chunk===null))throw Error('incomplete_extraction');
+ const complete=parsed as {laboratory:string;results:unknown[]}[];
+ return {laboratory:complete.map(chunk=>chunk.laboratory).find(Boolean)??'',
+  results:complete.flatMap(chunk=>chunk.results)};
+}
+
 async function extract(req:Request,env:GemmaEnv,id:string){
  if(!await limit(req,env,'gemma'))return fail('rate_limited',429);
  const length=Number(req.headers.get('Content-Length')||'0');
@@ -242,51 +285,19 @@ async function extract(req:Request,env:GemmaEnv,id:string){
   // than we are willing to pay for, say so plainly instead of reading part of it
   // and presenting the result as the whole report.
   if(chunks.length>MAX_CHUNKS)return json({error:'document_too_large',chunks:chunks.length,limit:MAX_CHUNKS},413);
-  const merged:unknown[]=[];
-  let laboratory='';
-  const diag={chunks:0,answered:0,candidates:0,parsed:0,items:0,maxLen:0,parseFailed:0,failed:0,keys:'',itemKeys:''};
-  diag.chunks=chunks.length;
-  // Chunks run concurrently: the page count must not multiply the visitor's wait.
-  // A chunk that fails is retried once. A chunk that still fails aborts the whole
-  // extraction, because a partial report presented as complete is the one failure a
-  // visitor cannot see: they would be told "45 readings found" while half the
-  // document was never read.
-  const answers=await Promise.all(chunks.map(async chunk=>{
-   for(let attempt=0;attempt<2;attempt++){
-    try{
-     const answer=await deadline(converter.run(MODEL,{messages:[
-       {role:'system',content:systemPrompt},
-       {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\n'+chunk}
-      ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model') as Record<string,any>;
-     return {answer};
-    }catch{/* retry once, then fail loudly below */}
-   }
-   return {answer:null};
-  }));
-  diag.failed=answers.filter(item=>!item.answer).length;
-  for(const raw of answers){
-   if(!raw.answer)continue;
-   const answer=raw.answer;
-   diag.answered++;
-   const candidate=answer?.choices?.[0]?.message?.content??answer?.response??answer?.result;
-   if(typeof candidate!=='string')continue;
-   diag.candidates++;
-   const begin=candidate.indexOf('{'),finish=candidate.lastIndexOf('}');
-   if(begin<0||finish<=begin)continue;
-   let parsed:any;
-   try{parsed=JSON.parse(candidate.slice(begin,finish+1));}
-   catch{diag.parseFailed++;diag.maxLen=Math.max(diag.maxLen,candidate.length);continue;}
-   diag.parsed++;
-   if(parsed&&typeof parsed==='object'&&!diag.keys)diag.keys=Object.keys(parsed).join(',').slice(0,120);
-   if(parsed&&Array.isArray(parsed.results)){diag.items+=parsed.results.length;
-    if(!diag.itemKeys&&parsed.results[0]&&typeof parsed.results[0]==='object')diag.itemKeys=Object.keys(parsed.results[0]).join(',').slice(0,120);}
-   if(parsed&&typeof parsed.laboratory==='string'&&!laboratory)laboratory=parsed.laboratory;
-   if(parsed&&Array.isArray(parsed.results))merged.push(...parsed.results);
+  let extracted:{laboratory:string;results:unknown[]};
+  try{
+   extracted=await runGemmaChunks(chunks,sample.date,chunk=>
+    deadline(converter.run(MODEL,{messages:[
+      {role:'system',content:systemPrompt},
+      {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\\n'+chunk}
+     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model'));
+  }catch{
+   // Never sign or offer a preview built from only the successful chunks.
+   return json({error:'incomplete_extraction',reason:'chunk_failed',chunks:chunks.length},502);
   }
-  if(diag.failed>0){
-   // Never return a report built from part of the document.
-   return json({error:'incomplete_extraction',reason:'chunk_failed',diag},502);
-  }
+  const {laboratory,results:merged}=extracted;
+  const diag={chunks:chunks.length,parsed:chunks.length,items:merged.length};
   const response={response:JSON.stringify({collectedAt:sample.date,laboratory,results:merged})};
   let report:ReviewedReport;
   try{report=extractGemmaJson(response,sample.date);}
