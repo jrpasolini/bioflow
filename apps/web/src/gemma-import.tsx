@@ -26,6 +26,8 @@ function errorMessage(code:string,p:boolean):string {
   sample_not_allowed:['Use somente um dos três PDFs fictícios oferecidos no artigo.','Only the three fictional PDFs linked in the article are accepted.'],
   pdf_conversion_failed:['Não foi possível ler o PDF.','The PDF could not be converted.'],
   gemma_extraction_failed:['A Gemma não conseguiu interpretar este documento. Tente novamente.','Gemma could not read this document. Please retry.'],
+  gemma_invalid_output:['A Gemma devolveu uma leitura incompleta. Tente novamente com outro PDF de teste.','Gemma returned an incomplete reading. Try again with another test PDF.'],
+  demo_limit_reached:['Esta sessão já importou os 3 exames de teste. Os dados temporários expiram em 60 minutos.','This session already imported all 3 test reports. Temporary data expires in 60 minutes.'],
   rate_limited:['Limite temporário de tentativas. Aguarde um minuto.','Temporary request limit. Please wait one minute.'],
   demo_persistence_failed:['Não foi possível gravar a simulação no MongoDB.','Could not save this simulation in MongoDB.'],
   demo_session_required:['Sua sessão expirou. Recarregue a página para recomeçar.','Your session expired. Refresh the page to start again.']
@@ -137,7 +139,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
     <button type="button" className="secondary" onClick={()=>{setDraft(null);setStage('idle');}} disabled={fetching}>{p?'Descartar':'Discard'}</button>
    </div>
   </div>}
-  {stage==='saved'&&<p role="status" className="gemma-saved">{p?'Exame salvo! Seus gráficos e a lista foram atualizados nesta sessão.':'Saved! The charts and report list were updated for your session.'}</p>}
+  {stage==='saved'&&<p role="status" className="gemma-saved">{p?'Exame salvo! Seus gráficos e a lista foram atualizados nesta sessão temporária. Este exame desaparece sozinho em 60 minutos.':'Saved! The charts and report list were updated for this temporary session. This report disappears on its own in 60 minutes.'}</p>}
   {saved.length>0&&<p className="gemma-session-total">{saved.length}/3 {p?'exames importados nesta sessão temporária. Os 26 laudos originais permanecem intactos.':'reports imported into this temporary session. All 26 original reports stay unchanged.'}</p>}
  </section>;
 }
