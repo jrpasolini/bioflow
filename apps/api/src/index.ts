@@ -1,6 +1,6 @@
 import {createRemoteJWKSet,jwtVerify} from 'jose';
 import {demoPatient} from '../../../packages/fixtures/src/synthetic';
-import {loadDemoFromAtlas,syntheticFallback} from './atlas';
+import {loadDemoFromAtlas,syntheticFallback,atlasFailureReason} from './atlas';
 import {handleGemmaDemo,demoReady} from './demo-gemma';
 
 interface Env {
@@ -142,9 +142,9 @@ export default {
    try{
     const content=await loadDemoFromAtlas(env);
     return json(req,env,{...content,source:'mongodb-atlas-synthetic'});
-   }catch{
+   }catch(error){
     // Fail loudly instead of hiding a database outage behind stale fixture data.
-    return err(req,env,503,'demo_database_unavailable');
+    return json(req,env,{error:'demo_database_unavailable',reason:atlasFailureReason(error)},503);
    }
   }
   if(['/api/demo/session','/api/demo/extract','/api/demo/commit','/api/demo/imports'].includes(path)){
