@@ -1,10 +1,10 @@
 # Public Worker rollout
 
-> Latest independent runtime evidence and pending release gates: [production validation](PRODUCTION_VALIDATION.md).
+> Latest independent production verification: [production validation](PRODUCTION_VALIDATION.md).
 
 ## Current deployment configuration and verification (reviewed 2026-10-21)
 
-> The tracked Worker configuration enables the **synthetic-only Gemma demo**, but keeps all private PDF routes disabled. The most recent audit report records a production Gemma import and deploy ID `94a8342e`. The independently checked corrected build is `session-v7-expiry-isolation`, version `4762b0ae-5f82-42d5-acbc-f82fbc1bf3fe`, source `c05d1b0`. See the validation record for passed session tests and the remaining overview credential gate.
+> The independently checked running source is `a52456c60e70fbbc65b9920d7d67b197219cfe2c`, build `session-v7-expiry-isolation`, Cloudflare version `93298a07-7862-488e-bfa1-940249f771de`. The production overview returns HTTP 200 with `source: mongodb-atlas-synthetic`, 26 reports and 604 readings. Private PDF routes remain disabled. See the validation record for session, TTL and model evidence.
 
 - Worker: `bioflow-api`, compatibility date `2026-10-19`, `nodejs_compat`.
 - Allowed browser origin in the tracked Worker config: `https://jrpasolini.tech` (the Render-hosted frontend is accessed through the `.tech` subpath). Review the runtime origin before changing it.
@@ -45,11 +45,11 @@ The build generates a versioned app-shell service worker, PNG icons and a web ma
 
 `Add report` explains the current protected-storage prerequisite; it does not upload or retain a file. Each chart point retains its collection/report ID and opens that collection. Original download remains unavailable until a canonical PDF actually exists with authenticated private R2 access. No generated PDF is substituted for the original.
 
-## Verified Atlas resources versus unverified public read path
+## Verified Atlas resources and production read path
 
-On 2026-10-21, an authenticated MongoDB Atlas connector inspection confirmed: `bioflow_demo.demo_reports` contains 26 reports; `bioflow_runtime` has `read` only on `bioflow_demo`; `bioflow_demo_writer` and `bioflow_sessions_rw` have `readWrite` only on `bioflow_sessions`; the session import collection has an `expiresAt` TTL index. The `bioflow_demo.demo_results` collection currently has 258 **documents**; this is not the same metric as the 604 numeric fields reported in project audit notes. Explain aggregation grain before equating these counts.
+On 2026-10-21, an authenticated MongoDB Atlas connector inspection confirmed 26 baseline reports, read-only access to `bioflow_demo` for `bioflow_runtime`, and session writers restricted to `bioflow_sessions`. The initial 258 result documents were an incomplete older seed: the approved repair added exactly 346 missing readings and preserved every existing result, yielding 604 documents with no duplicate report/code pairs. The fictional identity was synchronized with the published fixture. Actual TTL deletion of a disposable date-typed session canary was observed.
 
-These results validate the cluster configuration but do **not** prove the current Worker has the `MONGODB_URI` binding, the Atlas account password, or network reachability. A read-only secret and a live `source` response are the minimum acceptance criteria. Never copy the URL or password into a public log, the repository, a screenshot or an assistant conversation.
+After private credential entry by the owner, the production Worker independently returned HTTP 200 and `source: mongodb-atlas-synthetic`, with 26 reports/604 readings. This verifies the actual public read path, beyond cluster metadata and binding presence. Full source/version provenance and the remaining model reliability limits are recorded in [production validation](PRODUCTION_VALIDATION.md). Never copy a connection URI or password into public logs, the repository, screenshots or assistant output.
 
 ## Verification scope
 

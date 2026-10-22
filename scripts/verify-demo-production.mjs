@@ -1,5 +1,5 @@
 /** Synthetic production smoke test. Tokens/proofs stay in process memory only.
- * node scripts/verify-demo-production.mjs SAMPLE_DIRECTORY SAFE_REPORT.json
+ * node scripts/verify-demo-production.mjs SAMPLE_DIRECTORY SAFE_REPORT.json [COMMA_SEPARATED_SAMPLE_FILENAMES]
  * Explicitly commits reviewed fictional readings to a disposable one-hour session.
  */
 import assert from 'node:assert/strict';
@@ -8,9 +8,12 @@ import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 
 const base='https://bioflow-api.antonio-pasolini.workers.dev';
-const [directory,output]=process.argv.slice(2);
+const [directory,output,onlySample]=process.argv.slice(2);
 if(!directory||!output)throw Error('Provide a sample directory and a safe JSON report path');
 const audit=JSON.parse(await readFile(new URL('../docs/PDF_PUBLICATION_AUDIT.json',import.meta.url),'utf8'));
+const requested=onlySample?new Set(onlySample.split(',')):null;
+const samples=requested?audit.heldout.filter(sample=>requested.has(sample.file)):audit.heldout;
+if(!samples.length||(requested&&requested.size!==samples.length))throw Error('Unknown sample; only the three audited PDFs are accepted');
 const report={checkedAt:new Date().toISOString(),origin:base,checks:[],samples:[]};
 const check=(name,passed,details={})=>{report.checks.push({name,passed,...details});console.log(JSON.stringify(report.checks.at(-1)));};
 async function call(path,{token,headers,...options}={}){
@@ -36,7 +39,7 @@ try{
  check('tampered-session-denied',(await call('/api/demo/imports',{token:altered})).status===401);
  const initial=await call('/api/demo/imports',{token:a.body.token});
  check('fresh-session-empty',initial.status===200&&initial.body.imports.length===0);
- for(const sample of audit.heldout){
+ for(const sample of samples){
   const bytes=await readFile(resolve(directory,sample.file));
   assert.equal(createHash('sha256').update(bytes).digest('hex'),sample.sha256);
   const form=new FormData();form.set('file',new Blob([bytes],{type:'application/pdf'}),sample.file);

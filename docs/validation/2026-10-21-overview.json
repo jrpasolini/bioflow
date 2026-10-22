@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-22T02:38:34.965Z",
+  "status": 200,
+  "source": "mongodb-atlas-synthetic",
+  "reports": 26,
+  "readings": 604,
+  "build": "session-v7-expiry-isolation",
+  "sourceCommit": "a52456c60e70fbbc65b9920d7d67b197219cfe2c",
+  "privatePdfEndpointsEnabled": false
+}

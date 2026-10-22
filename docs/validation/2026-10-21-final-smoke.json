@@ -1,0 +1,116 @@
+{
+  "checkedAt": "2026-10-22T02:32:15.701Z",
+  "origin": "https://bioflow-api.antonio-pasolini.workers.dev",
+  "checks": [
+    {
+      "name": "atlas-overview",
+      "passed": true,
+      "status": 200,
+      "source": "mongodb-atlas-synthetic",
+      "reports": 26,
+      "readings": 604
+    },
+    {
+      "name": "private-routes-disabled",
+      "passed": true
+    },
+    {
+      "name": "demo-code-cannot-open-private-pdfs",
+      "passed": true
+    },
+    {
+      "name": "history-requires-session",
+      "passed": true
+    },
+    {
+      "name": "independent-one-hour-sessions",
+      "passed": true
+    },
+    {
+      "name": "tampered-session-denied",
+      "passed": true
+    },
+    {
+      "name": "fresh-session-empty",
+      "passed": true
+    },
+    {
+      "name": "extract-bioflow-teste-2026-05-15.pdf",
+      "passed": false,
+      "sample": "bioflow-teste-2026-05-15.pdf",
+      "extractStatus": 502,
+      "seconds": 38,
+      "error": "incomplete_extraction"
+    },
+    {
+      "name": "extract-bioflow-teste-2026-10-01.pdf",
+      "passed": false,
+      "sample": "bioflow-teste-2026-10-01.pdf",
+      "extractStatus": 502,
+      "seconds": 75,
+      "error": "incomplete_extraction"
+    },
+    {
+      "name": "no-write-before-confirmation-bioflow-teste-2026-10-02.pdf",
+      "passed": true
+    },
+    {
+      "name": "cross-session-proof-denied-bioflow-teste-2026-10-02.pdf",
+      "passed": true
+    },
+    {
+      "name": "extract-and-commit-bioflow-teste-2026-10-02.pdf",
+      "passed": true,
+      "sample": "bioflow-teste-2026-10-02.pdf",
+      "extractStatus": 200,
+      "seconds": 44,
+      "readings": 56,
+      "commitStatus": 201
+    },
+    {
+      "name": "session-isolation-bioflow-teste-2026-10-02.pdf",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "sample": "bioflow-teste-2026-05-15.pdf",
+      "extractStatus": 502,
+      "seconds": 38,
+      "error": "incomplete_extraction"
+    },
+    {
+      "sample": "bioflow-teste-2026-10-01.pdf",
+      "extractStatus": 502,
+      "seconds": 75,
+      "error": "incomplete_extraction"
+    },
+    {
+      "sample": "bioflow-teste-2026-10-02.pdf",
+      "extractStatus": 200,
+      "seconds": 44,
+      "readings": 56,
+      "commitStatus": 201
+    }
+  ],
+  "health": {
+    "ok": true,
+    "service": "bioflow-api",
+    "demoOnly": true,
+    "databaseConfigured": true,
+    "pdfEndpointsEnabled": false,
+    "storageReady": false,
+    "authReady": false,
+    "gemmaReady": true,
+    "build": "session-v7-expiry-isolation",
+    "commit": "a52456c60e70fbbc65b9920d7d67b197219cfe2c"
+  },
+  "overview": {
+    "status": 200,
+    "source": "mongodb-atlas-synthetic",
+    "reports": 26,
+    "readings": 604
+  },
+  "finishedAt": "2026-10-22T02:34:53.741Z",
+  "passed": false
+}

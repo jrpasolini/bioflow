@@ -1,0 +1,8 @@
+{
+  "deploymentId": "ec7ae37a-9f3b-4ebc-9efc-93c453821dc0",
+  "versionId": "93298a07-7862-488e-bfa1-940249f771de",
+  "trafficPercent": 100,
+  "deployedAtUtc": "2026-10-22T02:31:40.09454Z",
+  "sourceCommit": "a52456c60e70fbbc65b9920d7d67b197219cfe2c",
+  "build": "session-v7-expiry-isolation"
+}

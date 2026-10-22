@@ -3,7 +3,51 @@
 This is an independent verification record. Historical success and configuration
 flags are not substitutes for the HTTP and database checks below.
 
-## Corrected deployment independently checked
+## Final Atlas acceptance
+
+After the owner privately synchronized the saved database-user password and
+Worker secret, the production overview independently returned **HTTP 200** with
+`source: mongodb-atlas-synthetic`, **26 reports and 604 readings**.
+
+- Running source commit: `a52456c60e70fbbc65b9920d7d67b197219cfe2c`.
+- Active Cloudflare version: `93298a07-7862-488e-bfa1-940249f771de` (100% traffic).
+- Deployment ID: `ec7ae37a-9f3b-4ebc-9efc-93c453821dc0`, created at
+  `2026-10-22T02:31:40.094Z` (2026-10-21 23:31:40 America/Sao_Paulo).
+- Live health confirms the same source commit, `session-v7-expiry-isolation`,
+  `databaseConfigured: true`, `gemmaReady: true` and private PDF routes disabled.
+- [PR #5](https://github.com/jrpasolini/bioflow/pull/5) added fixed error
+  categories after its CI passed; a follow-up handles wrapped Atlas
+  authentication errors. Diagnostics never expose connection strings or driver
+  messages. 73 application tests, TypeScript and the Worker bundle passed.
+
+The original overview credential blocker is resolved. The deployment's secret
+values were entered by the owner; no credential was copied into repository
+files, assistant output or validation artifacts.
+
+### Final model smoke run and bounded retry
+
+The full final run independently passed the Atlas overview, one-hour session
+issuance, tampered-token refusal, private PDF denial and a successful October 2
+extraction/confirmation (56 readings, HTTP 200/201, 44 seconds). Its proof was
+refused in the second session, and that visitor's history stayed empty.
+
+May 15 and October 1 returned `502 incomplete_extraction` after 38 and 75
+seconds, respectively. One targeted retry per failed sample again returned 502
+after 43 and 48 seconds. No confirmation was attempted for these refused drafts;
+no partial report was offered or saved. No additional automatic retries were made.
+
+Therefore **Atlas connectivity, baseline integrity, session isolation and
+expiration protections pass their stated checks; the final AI smoke run is not
+all green**. Gemma reliability remains an explicit limitation, distinct from the
+resolved database and legacy-index defects. Earlier successful three-sample
+imports are retained below with their actual intermediate version, not presented
+as successes on the final version.
+
+The replay tool accepts optional comma-separated audited sample filenames so a
+failed sample can be retried without repeating every paid extraction. The full
+and retry reports contain only statuses, counts and public provenance.
+
+## Intermediate corrected deployment independently checked
 
 The owner explicitly approved the public PR, precise synthetic baseline repair
 and publication. [PR #4](https://github.com/jrpasolini/bioflow/pull/4) passed
@@ -32,11 +76,10 @@ GitHub Actions run `39708802478` and was merged.
   paths were visually checked in Portuguese and English. Demo entry worked;
   when the overview failed, the UI explicitly labeled its local fallback.
 
-**Remaining blocker:** `/api/demo/overview` returned HTTP 503 on this corrected
-deployment. The owner's secure credential entry is still in progress. The
-current overview read is **not certified** until it returns HTTP 200 with
-`source: mongodb-atlas-synthetic` and 26 reports/604 readings. No credential,
-password, bearer token or proof was read into this document or the public PR.
+At this intermediate deployment, `/api/demo/overview` still returned HTTP 503
+while private credential entry was in progress. This historical observation is
+superseded by the successful final Atlas acceptance above. No password, bearer
+token or proof was copied into this document or the public PR.
 
 Dates above are UTC for exact deployment matching; all events occurred on
 2026-10-21 in America/Sao_Paulo.
@@ -118,7 +161,7 @@ sanitized 503; the frontend labels its local fictional fallback.
 
 ## Local release checks
 
-72 application tests pass, including both Auth0 OTP actions, strict MFA claim
+73 application tests pass, including both Auth0 OTP actions, strict MFA claim
 handling, the separate public demo code, isolation, expiry, full baseline parity
 and TTL provisioning options. TypeScript, the `/bioflow/` build, 3 subpath tests,
 3 PWA tests and the Worker dry-run bundle are checked before publishing. PDF/ZIP
@@ -132,11 +175,9 @@ The corrected deployment and its verified scope are recorded above.
 provenance. Deployment, configuration and successful imports alone do not
 certify the overview's independent read-only Atlas connection.
 
-Remaining gates:
-
-1. Owner privately finishes the read-only `MONGODB_URI` credential on **bioflow-api**.
-2. Verify live `source: mongodb-atlas-synthetic` and 26 reports/604 readings,
-   and record the active version again if secret updates created a new version.
+The owner completed the read-only credential entry. The live overview now
+returns `mongodb-atlas-synthetic`, 26 reports and 604 readings, and the active
+version created by that secret update is recorded above.
 
 Auth0/TOTP and public demonstration remain separate entry paths. No Auth0
 policy changes, private R2 route activation or Atlas ingress expansion was applied.

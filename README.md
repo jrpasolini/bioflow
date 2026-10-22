@@ -1,6 +1,6 @@
 # BioFlow
 
-> Latest independent runtime evidence and pending release gates: [production validation](docs/PRODUCTION_VALIDATION.md).
+> Latest independent production verification: [production validation](docs/PRODUCTION_VALIDATION.md).
 
 **Your Health. Your History. Your Control.**
 
@@ -11,12 +11,12 @@ BioFlow is a new application started during Hacktoberfest 2026 Week 3. It was co
 ## Current milestone (updated 2026-10-21)
 
 - **Synthetic-only public demonstration:** the React + TypeScript application is hosted at [jrpasolini.tech/bioflow](https://jrpasolini.tech/bioflow/). The public code `110526` is a convenience entry to fictional content, **not** a password, MFA factor or grant to private data.
-- **Google Gemma 4:** a production execution of PDF-to-Markdown conversion, structured reading, human review and a confirmed MongoDB visitor-session import was recorded in [the audit briefing](docs/AUDIT_BRIEFING.md) on October 21. The project owner has also confirmed successful operation. `ENABLE_GEMMA_DEMO` is **true in the current versioned Worker configuration**. This does not establish that every historic or future deployment has the same configuration.
+- **Google Gemma 4:** independent production runs exercised fictional PDF conversion, human-reviewed temporary writes and cross-session proof refusal. The model can still return malformed chunks; the Worker responds with `incomplete_extraction` and refuses partial reports. The final smoke run was not all green, and the failed attempts plus bounded retries are retained in [production validation](docs/PRODUCTION_VALIDATION.md).
 - **Demo inputs:** three fictional allowlisted PDF reports, distributed together in [the synthetic sample ZIP](apps/web/public/demo/bioflow-3-exames.zip), with SHA-256 checks before inference. The 26 baseline PDFs are sanitized, synthetic demonstrations; **do not upload real patient reports**.
 - **MongoDB Atlas:** `bioflow_demo` contains 26 fictional reports. A separate `bioflow_sessions` database accepts only reviewed short-lived visitor imports. The Atlas runtime user has `read` on `bioflow_demo`, and the import writer has `readWrite` on `bioflow_sessions` only. TTL indexes exist; cleanup is asynchronous.
 - **Important difference:** the Worker reads baseline data from Atlas only if its secret `MONGODB_URI` is configured. Otherwise `GET /api/demo/overview` reports `source: "synthetic-fixtures"`. A verified running Atlas cluster, or a successfully stored import, alone does **not** prove the public overview is Atlas-backed. The runtime must return `source: "mongodb-atlas-synthetic"` to substantiate that claim.
 - **Auth0 and private documents:** Auth0 Universal Login + OTP/TOTP integration and guarded private R2 document routes exist in source, but `ENABLE_PDF_ENDPOINTS=false` keeps private clinical uploads unavailable. The owner reports Auth0 configured; current real-user MFA completion, private route enablement and delegated agent authorization are distinct checks. The public six-digit demo code never unlocks these routes.
-- **Verification record:** last audit reports a successful live 29-page Gemma extraction on 2026-10-21, alongside a prior Worker deployment identifier `94a8342e`. The corrected Worker was deployed from `c05d1b0` as version `4762b0ae-5f82-42d5-acbc-f82fbc1bf3fe`; all three temporary sample saves and cross-session isolation passed. The overview still returned 503 while secure credential entry was in progress. See [Gemma demo status](docs/GEMMA_DEMO.md) and [Worker deployment](docs/WORKER_DEPLOY.md).
+- **Verification record:** the live overview now returns HTTP 200, `source: mongodb-atlas-synthetic`, 26 reports and 604 readings. The running source is `a52456c60e70fbbc65b9920d7d67b197219cfe2c`, Cloudflare version `93298a07-7862-488e-bfa1-940249f771de`. Session isolation and actual Atlas TTL cleanup were independently checked; 73 application tests pass. See [the production validation record](docs/PRODUCTION_VALIDATION.md) for scope and model limitations.
 
 ## Local development
 

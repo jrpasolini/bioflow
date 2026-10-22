@@ -1,8 +1,8 @@
 # BioFlow / Google Gemma live synthetic PDF import
 
-> Latest independent runtime evidence and pending release gates: [production validation](PRODUCTION_VALIDATION.md).
+> Latest independent production verification: [production validation](PRODUCTION_VALIDATION.md).
 
-Status as of 2026-10-21: **implemented and enabled in the versioned Worker configuration; successful live synthetic extraction and MongoDB session write reported and documented**. Independent checks of the three samples and of the currently deployed Worker version remain distinct from the historical production test.
+Status as of 2026-10-21: **implemented and enabled for audited fictional PDFs only**. Independent production runs confirmed temporary writes, session isolation and real Atlas overview reads. Gemma also produced incomplete extractions in the final smoke run and its bounded retries; those were refused without saving partial reports. See the exact running version and evidence below.
 
 ## Public demo flow
 
@@ -58,15 +58,15 @@ https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
 
 | Check | Evidence | Status |
 | --- | --- | --- |
-| At least one real Gemma → review → MongoDB write | [Audit briefing](AUDIT_BRIEFING.md) and merged [PR #3](https://github.com/jrpasolini/bioflow/pull/3) | **Reported successful in production** |
-| Three demonstration PDFs | SHA-256 hashes and metadata in [publication audit](PDF_PUBLICATION_AUDIT.json); owner confirms download works | **Fictional and downloadable**; independent end-to-end Gemma success for each is a separate check |
-| Isolation and integrity | Test suite plus HMAC proof, session-based commits and limited writer | **Implemented/tested**; real-user cross-session test still useful |
-| Expiration | `expiresAt` TTL index confirmed in Atlas, with 60-minute session-bound expiry | **Configured**; deletion is eventually consistent |
-| Baseline dataset | Atlas contains 26 reports; read-only runtime account scoped to `bioflow_demo` | **Verified in Atlas**; public Worker read path must independently report `mongodb-atlas-synthetic` |
-| Deployment version | Audit briefing records a deployed Worker identifier `94a8342e` at 19:20 Brazil time on 2026-10-21; source `GET /api/health` reports `build: "gemma-v6-strict-chunks"` | **Historical deployment recorded**; cannot infer current running version from Git source |
+| Real Gemma → review → MongoDB write | Independent production smoke test after [PR #4](https://github.com/jrpasolini/bioflow/pull/4) | **All three samples saved in the same temporary session** on the intermediate corrected release; later model failures and retries are recorded separately |
+| Three demonstration PDFs | SHA-256 hashes in [publication audit](PDF_PUBLICATION_AUDIT.json), verified before each upload | **Fictional, allowlisted and exercised live**; schema success does not certify every numerical reading |
+| Isolation and integrity | Separate live signed sessions, proof replay refusals and scoped history reads | **Verified live**; another visitor cannot select the first visitor's history through a query parameter |
+| Expiration | Short-lived BSON-Date canary was observed and later disappeared without an explicit delete; clock-controlled session tests also pass | **TTL cleanup observed**; deletion is asynchronous, and natural one-hour token expiry was not waited out live |
+| Baseline dataset | Live `/api/demo/overview`: HTTP 200, `mongodb-atlas-synthetic`, 26 reports/604 readings | **Verified through the production Worker**, after preserving all 258 original readings and adding 346 missing readings |
+| Deployment version | Live health source `a52456c60e70fbbc65b9920d7d67b197219cfe2c`; Cloudflare version `93298a07-7862-488e-bfa1-940249f771de` | **Running source and active version independently checked**; build `session-v7-expiry-isolation` |
 | Private Auth0/R2 routes | `ENABLE_PDF_ENDPOINTS=false` | **Disabled by design** for synthetic demonstration |
 
 **Live runtime verification:** inspect `GET /api/health` for `gemmaReady`, `databaseConfigured`, and `build`. The flags report configuration, not an actual database ping. Then inspect `GET /api/demo/overview`: it must return `source: "mongodb-atlas-synthetic"` to prove the public read path uses Atlas. If it returns `"synthetic-fixtures"`, configure a **read-only** `MONGODB_URI` as a Cloudflare Worker secret using the dedicated `bioflow_runtime` account. Never place a URI in the frontend or repository. Verify permissions via Atlas user roles and test effective read/write boundaries separately; do not use an administrator connection string. See [Worker rollout](WORKER_DEPLOY.md).
 
-**Current limitations:** the public demo is strictly fictional; complete performance and error coverage for each of the three held-out PDFs, live Worker/source parity, visual accessibility, and global inference budget protection warrant further validation. No diagnosis or medical interpretation is provided.
+**Current limitations:** Gemma output varies across executions, and malformed chunks can still cause `incomplete_extraction`. The Worker refuses those attempts before offering a partial report for confirmation. Successful extraction remains subject to human review against the fictional source; schema validity is not numerical accuracy certification. Broader accessibility and global inference budget protection warrant further work. No diagnosis or medical interpretation is provided. See [production validation](PRODUCTION_VALIDATION.md) for actual successful and failed runs.
 
