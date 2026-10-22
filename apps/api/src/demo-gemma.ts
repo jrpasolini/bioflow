@@ -183,8 +183,8 @@ const CHUNK_CHARS=2500;
 /**
  * A ceiling that silently truncates is worse than a clear refusal: the visitor is
  * told "45 readings found" with no hint that the rest of the document was never
- * read. The published samples need 2, 11 and 13 chunks at CHUNK_CHARS, so the cap
- * sits above them; a document that still exceeds it is refused, never shortened.
+ * read. The reduced public samples fit in one chunk each. A document that still
+ * exceeds the cap is refused, never shortened.
  */
 const MAX_CHUNKS=16;
 /**

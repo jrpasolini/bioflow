@@ -24,7 +24,7 @@ function apiOrigin():string|null{
 function errorMessage(code:string,p:boolean):string {
  const translations:Record<string,[string,string]>={
   gemma_demo_disabled:['A leitura com Gemma ainda não foi habilitada no servidor.','Gemma parsing is not enabled on the server yet.'],
-  sample_not_allowed:['Use somente um dos três PDFs fictícios oferecidos no artigo.','Only the three fictional PDFs linked in the article are accepted.'],
+  sample_not_allowed:['Use um dos três PDFs fictícios do ZIP atualizado. Se baixou antes, baixe novamente abaixo.','Use one of the three fictional PDFs from the updated ZIP. If you downloaded it earlier, download it again below.'],
   pdf_conversion_failed:['Não foi possível ler o PDF.','The PDF could not be converted.'],
   gemma_extraction_failed:['A Gemma não conseguiu interpretar este documento. Tente novamente.','Gemma could not read this document. Please retry.'],
   incomplete_extraction:['Não foi possível validar todas as partes do PDF. Nenhum laudo parcial foi salvo. Tente novamente.','Not every section of the PDF could be validated. No partial report was saved. Please try again.'],
@@ -144,7 +144,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
     <h2 id="gemma-title">{p?'Analisar PDF com Google Gemma':'Analyze PDF with Google Gemma'}</h2></div></div>
   <p>{base?(p?'Escolha um dos três PDFs fictícios para testar. Confira os números extraídos pela Gemma antes de adicionar o laudo ao histórico desta sessão.':'Choose one of the three fictional PDFs to test. Review the readings extracted by Gemma before adding the report to the temporary history.'):(p?'Conheça os exemplos baixando os três PDFs fictícios abaixo.':'Explore the examples by downloading the three fictional PDFs below.')}</p>
   <p className="gemma-privacy"><ShieldCheck size={16}/>{p?'Apenas arquivos de teste previamente aprovados. Nenhum exame pessoal ou documento real.':'Approved test files only. Do not upload personal or actual medical documents.'}</p>
-  <a className="demo-samples-link" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip'} download><Download size={14} aria-hidden="true"/>{p?'Baixar os 3 PDFs fictícios de teste (ZIP)':'Download 3 fictional test PDFs (ZIP)'}</a>
+  <a className="demo-samples-link" href={import.meta.env.BASE_URL+'demo/bioflow-3-exames.zip?v=reduced-20261022'} download><Download size={14} aria-hidden="true"/>{p?'Baixar os 3 PDFs fictícios de teste (ZIP)':'Download 3 fictional test PDFs (ZIP)'}</a>
   <form onSubmit={analyze} className="gemma-import-form">
    <label htmlFor="bioflow-new-pdf">{p?'Escolher PDF fictício':'Choose fictional PDF'}</label>
    <input id="bioflow-new-pdf" type="file" accept=".pdf,application/pdf" required disabled={fetching||!base}

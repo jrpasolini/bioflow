@@ -2,40 +2,45 @@
   "authorization": "Owner explicitly confirmed all internal data invented and approved public demo use on 2026-10-20. Copies additionally remove administrative identifiers.",
   "repository": "jrpasolini/bioflow",
   "path": "apps/web/public/demo/bioflow-3-exames.zip",
-  "zipSha256": "fff1d5e1fc050fe723fb785cc48efc90325e3cbda92da1a13057883cbc3fe4ba",
-  "zipBytes": 65628,
+  "zipSha256": "e627e05509be25fbd12fd7875e5d0949f533b5d1d2ce11e585794f4a0e88281c",
+  "zipBytes": 6897,
   "pdfCountInZip": 3,
   "heldout": [
     {
       "file": "bioflow-teste-2026-05-15.pdf",
-      "bytes": 41944,
-      "sha256": "7a3234fc1d3e22595180a6b3e15718a3060b0730f7ea08b6271ffdc5a33d5dc0",
-      "pages": 24,
-      "directIdentifierScan": "passed",
-      "fictionalPersona": "Walter White",
-      "author": "BioFlow",
-      "embeddedAttachments": 0
-    },
-    {
-      "file": "bioflow-teste-2026-10-01.pdf",
-      "bytes": 6304,
-      "sha256": "c1e81086f4a118470b7e1313a2f3b8bbd4c5d3e5e30621a2e525e55f160744ee",
-      "pages": 8,
+      "bytes": 3053,
+      "sha256": "b9a85a34b40086b2b18794a183a01d7139c282605ea279bc3aea846c8d39a26b",
+      "pages": 1,
       "directIdentifierScan": "passed",
       "fictionalPersona": "Walter White",
       "author": "BioFlow",
       "embeddedAttachments": 0,
-      "note": "Fictional panel with readable readings; replaces a copy that held only cover pages."
+      "resultRows": 23,
+      "note": "Reduced on 2026-10-22 by owner request; original values, units and collection date retained. See DEMO_SAMPLE_REDUCTION.json."
     },
     {
-      "file": "bioflow-teste-2026-10-02.pdf",
-      "bytes": 49298,
-      "sha256": "901abea157ab2b14685545059a782d50a92cb7462855a2ee50970b84473ba0a2",
-      "pages": 29,
+      "file": "bioflow-teste-2026-10-01.pdf",
+      "bytes": 2900,
+      "sha256": "5632d1844a102141815efea83fb2e8926532f1c89550165cf4b13955d600027e",
+      "pages": 1,
       "directIdentifierScan": "passed",
       "fictionalPersona": "Walter White",
       "author": "BioFlow",
-      "embeddedAttachments": 0
+      "embeddedAttachments": 0,
+      "note": "Reduced on 2026-10-22 by owner request; original values, units and collection date retained. See DEMO_SAMPLE_REDUCTION.json.",
+      "resultRows": 21
+    },
+    {
+      "file": "bioflow-teste-2026-10-02.pdf",
+      "bytes": 3108,
+      "sha256": "aa9ea75764909e69828e275fbd3d7cf517cc2606739ace559a027c67590b58da",
+      "pages": 1,
+      "directIdentifierScan": "passed",
+      "fictionalPersona": "Walter White",
+      "author": "BioFlow",
+      "embeddedAttachments": 0,
+      "resultRows": 24,
+      "note": "Reduced on 2026-10-22 by owner request; original values, units and collection date retained. See DEMO_SAMPLE_REDUCTION.json."
     }
   ],
   "baseline": [
@@ -301,5 +306,6 @@
     }
   ],
   "noOriginalPdfBytesPublished": true,
-  "scan": "Every exact binary PDF decoded and scanned, not merely its filename."
+  "scan": "Every exact binary PDF decoded and scanned, not merely its filename.",
+  "sampleEdition": "reduced-60-percent-v1"
 }

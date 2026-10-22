@@ -1,0 +1,1578 @@
+{
+  "version": "reduced-60-percent-v1",
+  "authorization": "Owner requested 60% fewer results in each public fictional sample on 2026-10-22.",
+  "countDefinition": "Named numeric result rows, including explicitly printed estimates; differential percentage and absolute columns count as one analyte row. Excludes qualitative results, historical graphs and reference legends.",
+  "samples": [
+    {
+      "file": "bioflow-teste-2026-05-15.pdf",
+      "date": "2026-05-15",
+      "laboratory": "Labortel",
+      "previousSha256": "7a3234fc1d3e22595180a6b3e15718a3060b0730f7ea08b6271ffdc5a33d5dc0",
+      "previousPages": 24,
+      "previousBytes": 41944,
+      "previousResultRows": 58,
+      "resultRows": 23,
+      "reductionPercent": 60.34,
+      "bytes": 3053,
+      "sha256": "b9a85a34b40086b2b18794a183a01d7139c282605ea279bc3aea846c8d39a26b",
+      "pages": 1,
+      "textChars": 1019,
+      "originalInventory": [
+        {
+          "name": "Hemácias (RBC)",
+          "value": "5,170",
+          "unit": "milhões/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hemoglobina (Hb)",
+          "value": "15,30",
+          "unit": "g/dL",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hematócrito (Ht)",
+          "value": "46,70",
+          "unit": "%",
+          "sourcePage": 1
+        },
+        {
+          "name": "VCM",
+          "value": "90,32",
+          "unit": "fL",
+          "sourcePage": 1
+        },
+        {
+          "name": "HCM",
+          "value": "29,59",
+          "unit": "pg",
+          "sourcePage": 1
+        },
+        {
+          "name": "CHCM",
+          "value": "32,76",
+          "unit": "g/dL",
+          "sourcePage": 1
+        },
+        {
+          "name": "RDW (CV)",
+          "value": "13,60",
+          "unit": "%",
+          "sourcePage": 1
+        },
+        {
+          "name": "RDW (SD)",
+          "value": "45,50",
+          "unit": "fL",
+          "sourcePage": 1
+        },
+        {
+          "name": "Leucócitos (WBC)",
+          "value": "7,08",
+          "unit": "milhares/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "Blastos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 1
+        },
+        {
+          "name": "Pro-mielócitos",
+          "value": "0,00",
+          "unit": "BioFlow | Dados declarados fictícios | Cópia sem identificadores",
+          "sourcePage": 1
+        },
+        {
+          "name": "Mielócitos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Metamielócitos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Neutrófilos Bastonetes",
+          "value": "2,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Neutrófilos Segmentados",
+          "value": "47,20",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Eosinófilos",
+          "value": "2,30",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Basófilos",
+          "value": "0,80",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Linfócitos típicos",
+          "value": "38,10",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Linfócitos atípicos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Monócitos",
+          "value": "9,60",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Células Indiferenciadas",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Razão Neutrófilos/Linfócitos (NLR)",
+          "value": "1,29",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "PLAQUETAS",
+          "value": "181,0",
+          "unit": "milhares/mm3",
+          "sourcePage": 2
+        },
+        {
+          "name": "MPV",
+          "value": "11,90",
+          "unit": "fL",
+          "sourcePage": 2
+        },
+        {
+          "name": "Ferritina Sérica",
+          "value": "21,5",
+          "unit": "ng/mL",
+          "sourcePage": 4
+        },
+        {
+          "name": "Ácido Fólico (Vitamina B9)",
+          "value": "14,8",
+          "unit": "ng/mL",
+          "sourcePage": 5
+        },
+        {
+          "name": "Dosagem de Ferro",
+          "value": "63,3",
+          "unit": "ug/dL",
+          "sourcePage": 5
+        },
+        {
+          "name": "Glicemia de Jejum",
+          "value": "136",
+          "unit": "mg/dL",
+          "sourcePage": 6
+        },
+        {
+          "name": "Creatinina",
+          "value": "1,86",
+          "unit": "mg/dL",
+          "sourcePage": 7
+        },
+        {
+          "name": "eTFG",
+          "value": "39,9",
+          "unit": "mL/min",
+          "sourcePage": 7
+        },
+        {
+          "name": "Nitrogênio Ureico (BUN)",
+          "value": "28,0",
+          "unit": "mg/dL",
+          "sourcePage": 9
+        },
+        {
+          "name": "Ureia",
+          "value": "60,0",
+          "unit": "mg/dL",
+          "sourcePage": 9
+        },
+        {
+          "name": "Albumina urinária",
+          "value": "3,42",
+          "unit": "µg/mL",
+          "sourcePage": 11
+        },
+        {
+          "name": "Creatinina urinária",
+          "value": "143,5",
+          "unit": "mg/dL",
+          "sourcePage": 11
+        },
+        {
+          "name": "Relação Albumina/Creatinina (RAC)",
+          "value": "2,3",
+          "unit": "mg/g Creat",
+          "sourcePage": 11
+        },
+        {
+          "name": "Cálcio Sérico Total (CaT)",
+          "value": "9,3",
+          "unit": "mg/dL",
+          "sourcePage": 12
+        },
+        {
+          "name": "25-Hidroxi-Vitamina D",
+          "value": "28,3",
+          "unit": "ng/mL",
+          "sourcePage": 13
+        },
+        {
+          "name": "Vitamina B12 (Cobalamina)",
+          "value": "355,0",
+          "unit": "pg/mL",
+          "sourcePage": 14
+        },
+        {
+          "name": "Colesterol Total",
+          "value": "201",
+          "unit": "mg/dL",
+          "sourcePage": 15
+        },
+        {
+          "name": "Colesterol - HDL",
+          "value": "37",
+          "unit": "mg/dL",
+          "sourcePage": 16
+        },
+        {
+          "name": "Colesterol Não-HDL",
+          "value": "164",
+          "unit": "mg/dL",
+          "sourcePage": 16
+        },
+        {
+          "name": "Colesterol - LDL",
+          "value": "126",
+          "unit": "mg/dL",
+          "sourcePage": 19
+        },
+        {
+          "name": "Triglicerídeos",
+          "value": "237",
+          "unit": "mg/dL",
+          "sourcePage": 20
+        },
+        {
+          "name": "TSH Ultrassensível",
+          "value": "2,47",
+          "unit": "µUI/mL",
+          "sourcePage": 21
+        },
+        {
+          "name": "PSA Total",
+          "value": "0,45",
+          "unit": "ng/mL",
+          "sourcePage": 22
+        },
+        {
+          "name": "Densidade [EAS]",
+          "value": "1,023",
+          "unit": "",
+          "sourcePage": 23
+        },
+        {
+          "name": "pH [EAS]",
+          "value": "5,5",
+          "unit": "",
+          "sourcePage": 23
+        },
+        {
+          "name": "Relação Albumina/Creatinina (RAC) [EAS]",
+          "value": "0",
+          "unit": "mgAlb/gCr",
+          "sourcePage": 23
+        },
+        {
+          "name": "Proteínas [EAS]",
+          "value": "0",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Glicose [EAS]",
+          "value": "2.000",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Corpos Cetônicos [EAS]",
+          "value": "0",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Bilirrubinas [EAS]",
+          "value": "0",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Urobilinogênio [EAS]",
+          "value": "1,4",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Sangue (Hb) [EAS]",
+          "value": "0,00",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Hemácias [EAS]",
+          "value": "1",
+          "unit": "/uL",
+          "sourcePage": 24
+        },
+        {
+          "name": "Leucócitos [EAS]",
+          "value": "8",
+          "unit": "/uL",
+          "sourcePage": 24
+        },
+        {
+          "name": "Células Epiteliais Escamosas [EAS]",
+          "value": "0",
+          "unit": "/uL",
+          "sourcePage": 24
+        },
+        {
+          "name": "Células Epiteliais Não Escamosas [EAS]",
+          "value": "2",
+          "unit": "/uL",
+          "sourcePage": 24
+        }
+      ],
+      "retained": [
+        {
+          "name": "Hemácias (RBC)",
+          "value": "5,170",
+          "unit": "milhões/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hemoglobina (Hb)",
+          "value": "15,30",
+          "unit": "g/dL",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hematócrito (Ht)",
+          "value": "46,70",
+          "unit": "%",
+          "sourcePage": 1
+        },
+        {
+          "name": "Leucócitos (WBC)",
+          "value": "7,08",
+          "unit": "milhares/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "PLAQUETAS",
+          "value": "181,0",
+          "unit": "milhares/mm3",
+          "sourcePage": 2
+        },
+        {
+          "name": "MPV",
+          "value": "11,90",
+          "unit": "fL",
+          "sourcePage": 2
+        },
+        {
+          "name": "Ferritina Sérica",
+          "value": "21,5",
+          "unit": "ng/mL",
+          "sourcePage": 4
+        },
+        {
+          "name": "Ácido Fólico (Vitamina B9)",
+          "value": "14,8",
+          "unit": "ng/mL",
+          "sourcePage": 5
+        },
+        {
+          "name": "Dosagem de Ferro",
+          "value": "63,3",
+          "unit": "ug/dL",
+          "sourcePage": 5
+        },
+        {
+          "name": "Glicemia de Jejum",
+          "value": "136",
+          "unit": "mg/dL",
+          "sourcePage": 6
+        },
+        {
+          "name": "Creatinina",
+          "value": "1,86",
+          "unit": "mg/dL",
+          "sourcePage": 7
+        },
+        {
+          "name": "Nitrogênio Ureico (BUN)",
+          "value": "28,0",
+          "unit": "mg/dL",
+          "sourcePage": 9
+        },
+        {
+          "name": "Ureia",
+          "value": "60,0",
+          "unit": "mg/dL",
+          "sourcePage": 9
+        },
+        {
+          "name": "Cálcio Sérico Total (CaT)",
+          "value": "9,3",
+          "unit": "mg/dL",
+          "sourcePage": 12
+        },
+        {
+          "name": "25-Hidroxi-Vitamina D",
+          "value": "28,3",
+          "unit": "ng/mL",
+          "sourcePage": 13
+        },
+        {
+          "name": "Vitamina B12 (Cobalamina)",
+          "value": "355,0",
+          "unit": "pg/mL",
+          "sourcePage": 14
+        },
+        {
+          "name": "Colesterol Total",
+          "value": "201",
+          "unit": "mg/dL",
+          "sourcePage": 15
+        },
+        {
+          "name": "Colesterol - HDL",
+          "value": "37",
+          "unit": "mg/dL",
+          "sourcePage": 16
+        },
+        {
+          "name": "Colesterol Não-HDL",
+          "value": "164",
+          "unit": "mg/dL",
+          "sourcePage": 16
+        },
+        {
+          "name": "Colesterol - LDL",
+          "value": "126",
+          "unit": "mg/dL",
+          "sourcePage": 19
+        },
+        {
+          "name": "Triglicerídeos",
+          "value": "237",
+          "unit": "mg/dL",
+          "sourcePage": 20
+        },
+        {
+          "name": "TSH Ultrassensível",
+          "value": "2,47",
+          "unit": "µUI/mL",
+          "sourcePage": 21
+        },
+        {
+          "name": "PSA Total",
+          "value": "0,45",
+          "unit": "ng/mL",
+          "sourcePage": 22
+        }
+      ]
+    },
+    {
+      "file": "bioflow-teste-2026-10-01.pdf",
+      "date": "2026-10-01",
+      "laboratory": "Pretti",
+      "previousSha256": "c1e81086f4a118470b7e1313a2f3b8bbd4c5d3e5e30621a2e525e55f160744ee",
+      "previousPages": 8,
+      "previousBytes": 6304,
+      "previousResultRows": 53,
+      "resultRows": 21,
+      "reductionPercent": 60.38,
+      "bytes": 2900,
+      "sha256": "5632d1844a102141815efea83fb2e8926532f1c89550165cf4b13955d600027e",
+      "pages": 1,
+      "textChars": 915,
+      "originalInventory": [
+        {
+          "name": "Hemacias (RBC)",
+          "value": "4,890",
+          "unit": "milhoes/mm3",
+          "sourcePage": 1,
+          "reference": "4,5 a 5,9"
+        },
+        {
+          "name": "Hemoglobina (Hb)",
+          "value": "14,60",
+          "unit": "g/dL",
+          "sourcePage": 1,
+          "reference": "13,5 a 17,5"
+        },
+        {
+          "name": "Hematocrito (Ht)",
+          "value": "43,80",
+          "unit": "%",
+          "sourcePage": 1,
+          "reference": "41,0 a 53,0"
+        },
+        {
+          "name": "VCM",
+          "value": "89,57",
+          "unit": "fL",
+          "sourcePage": 1,
+          "reference": "80,0 a 98,0"
+        },
+        {
+          "name": "HCM",
+          "value": "29,86",
+          "unit": "pg",
+          "sourcePage": 1,
+          "reference": "27,0 a 32,0"
+        },
+        {
+          "name": "CHCM",
+          "value": "33,33",
+          "unit": "g/dL",
+          "sourcePage": 1,
+          "reference": "31,0 a 35,0"
+        },
+        {
+          "name": "RDW (CV)",
+          "value": "13,20",
+          "unit": "%",
+          "sourcePage": 1,
+          "reference": "11,5 a 14,5"
+        },
+        {
+          "name": "RDW (SD)",
+          "value": "44,10",
+          "unit": "fL",
+          "sourcePage": 1,
+          "reference": "38,6 a 49,1"
+        },
+        {
+          "name": "Leucocitos (WBC)",
+          "value": "6,420",
+          "unit": "milhares/mm3",
+          "sourcePage": 2,
+          "reference": "5,0 a 10,0"
+        },
+        {
+          "name": "Neutrofilos Bastonetes",
+          "value": "1,80",
+          "unit": "%",
+          "sourcePage": 2,
+          "reference": "0 a 3"
+        },
+        {
+          "name": "Neutrofilos Segmentados",
+          "value": "52,40",
+          "unit": "%",
+          "sourcePage": 2,
+          "reference": "35 a 75"
+        },
+        {
+          "name": "Eosinofilos",
+          "value": "2,10",
+          "unit": "%",
+          "sourcePage": 2,
+          "reference": "0 a 3"
+        },
+        {
+          "name": "Basofilos",
+          "value": "0,60",
+          "unit": "%",
+          "sourcePage": 2,
+          "reference": "0 a 1"
+        },
+        {
+          "name": "Linfocitos tipicos",
+          "value": "35,70",
+          "unit": "%",
+          "sourcePage": 2,
+          "reference": "20 a 50"
+        },
+        {
+          "name": "Monocitos",
+          "value": "7,40",
+          "unit": "%",
+          "sourcePage": 2,
+          "reference": "2 a 10"
+        },
+        {
+          "name": "Plaquetas",
+          "value": "228000",
+          "unit": "milhares/mm3",
+          "sourcePage": 3,
+          "reference": "140 a 400"
+        },
+        {
+          "name": "MPV",
+          "value": "10,40",
+          "unit": "fL",
+          "sourcePage": 3,
+          "reference": "7,5 a 11,5"
+        },
+        {
+          "name": "Tempo de Protrombina (TP)",
+          "value": "12,30",
+          "unit": "segundos",
+          "sourcePage": 3,
+          "reference": "10,0 a 14,0"
+        },
+        {
+          "name": "INR",
+          "value": "1,06",
+          "unit": "indice",
+          "sourcePage": 3,
+          "reference": "0,8 a 1,2"
+        },
+        {
+          "name": "TTPa",
+          "value": "29,80",
+          "unit": "segundos",
+          "sourcePage": 3,
+          "reference": "25,0 a 35,0"
+        },
+        {
+          "name": "Glicemia de Jejum",
+          "value": "92,00",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "70 a 99"
+        },
+        {
+          "name": "Hemoglobina Glicada (HbA1c)",
+          "value": "5,30",
+          "unit": "%",
+          "sourcePage": 4,
+          "reference": "4,0 a 5,6"
+        },
+        {
+          "name": "Ureia",
+          "value": "31,00",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "19 a 50"
+        },
+        {
+          "name": "Creatinina",
+          "value": "0,98",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "0,7 a 1,3"
+        },
+        {
+          "name": "Acido Urico",
+          "value": "5,10",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "3,5 a 7,2"
+        },
+        {
+          "name": "Sodio",
+          "value": "139,00",
+          "unit": "mEq/L",
+          "sourcePage": 4,
+          "reference": "135 a 145"
+        },
+        {
+          "name": "Potassio",
+          "value": "4,20",
+          "unit": "mEq/L",
+          "sourcePage": 4,
+          "reference": "3,5 a 5,1"
+        },
+        {
+          "name": "Calcio Serico Total",
+          "value": "9,40",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "8,4 a 10,2"
+        },
+        {
+          "name": "Magnesio",
+          "value": "2,10",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "1,7 a 2,4"
+        },
+        {
+          "name": "TGO (AST)",
+          "value": "24,00",
+          "unit": "U/L",
+          "sourcePage": 5,
+          "reference": "ate 40"
+        },
+        {
+          "name": "TGP (ALT)",
+          "value": "31,00",
+          "unit": "U/L",
+          "sourcePage": 5,
+          "reference": "ate 41"
+        },
+        {
+          "name": "Gama GT",
+          "value": "38,00",
+          "unit": "U/L",
+          "sourcePage": 5,
+          "reference": "ate 60"
+        },
+        {
+          "name": "Fosfatase Alcalina",
+          "value": "86,00",
+          "unit": "U/L",
+          "sourcePage": 5,
+          "reference": "40 a 129"
+        },
+        {
+          "name": "Bilirrubina Total",
+          "value": "0,72",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "0,2 a 1,2"
+        },
+        {
+          "name": "Bilirrubina Direta",
+          "value": "0,18",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 0,4"
+        },
+        {
+          "name": "Colesterol Total",
+          "value": "178,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 190"
+        },
+        {
+          "name": "Colesterol - HDL",
+          "value": "52,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "acima de 40"
+        },
+        {
+          "name": "Colesterol - LDL",
+          "value": "104,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 130"
+        },
+        {
+          "name": "Triglicerideos",
+          "value": "112,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 150"
+        },
+        {
+          "name": "TSH Ultra Sensivel",
+          "value": "2,140",
+          "unit": "uUI/mL",
+          "sourcePage": 6,
+          "reference": "0,4 a 4,5"
+        },
+        {
+          "name": "T4 Livre",
+          "value": "1,180",
+          "unit": "ng/dL",
+          "sourcePage": 6,
+          "reference": "0,8 a 1,8"
+        },
+        {
+          "name": "Vitamina B12 (Cobalamina)",
+          "value": "412,00",
+          "unit": "pg/mL",
+          "sourcePage": 6,
+          "reference": "200 a 900"
+        },
+        {
+          "name": "Acido Folico",
+          "value": "11,60",
+          "unit": "ng/mL",
+          "sourcePage": 6,
+          "reference": "3,4 a 19,6"
+        },
+        {
+          "name": "25-Hidroxi-Vitamina D",
+          "value": "34,20",
+          "unit": "ng/mL",
+          "sourcePage": 6,
+          "reference": "30 a 60"
+        },
+        {
+          "name": "Ferritina Serica",
+          "value": "148,00",
+          "unit": "ng/mL",
+          "sourcePage": 6,
+          "reference": "30 a 400"
+        },
+        {
+          "name": "Ferro Serico",
+          "value": "96,00",
+          "unit": "ug/dL",
+          "sourcePage": 6,
+          "reference": "49 a 181"
+        },
+        {
+          "name": "Proteina C Reativa (PCR)",
+          "value": "1,20",
+          "unit": "mg/L",
+          "sourcePage": 6,
+          "reference": "ate 5,0"
+        },
+        {
+          "name": "Densidade",
+          "value": "1,018",
+          "unit": "g/mL",
+          "sourcePage": 7,
+          "reference": "1,005 a 1,030"
+        },
+        {
+          "name": "pH Urinario",
+          "value": "6,00",
+          "unit": "pH",
+          "sourcePage": 7,
+          "reference": "4,5 a 8,0"
+        },
+        {
+          "name": "Leucocitos Urinarios",
+          "value": "3,00",
+          "unit": "/campo",
+          "sourcePage": 7,
+          "reference": "ate 5"
+        },
+        {
+          "name": "Hemacias Urinarias",
+          "value": "1,00",
+          "unit": "/campo",
+          "sourcePage": 7,
+          "reference": "ate 3"
+        },
+        {
+          "name": "Celulas Epiteliais",
+          "value": "2,00",
+          "unit": "/campo",
+          "sourcePage": 7,
+          "reference": "ate 10"
+        },
+        {
+          "name": "Cristais",
+          "value": "0,00",
+          "unit": "/campo",
+          "sourcePage": 7,
+          "reference": "ausentes"
+        }
+      ],
+      "retained": [
+        {
+          "name": "Hemacias (RBC)",
+          "value": "4,890",
+          "unit": "milhoes/mm3",
+          "sourcePage": 1,
+          "reference": "4,5 a 5,9"
+        },
+        {
+          "name": "Hemoglobina (Hb)",
+          "value": "14,60",
+          "unit": "g/dL",
+          "sourcePage": 1,
+          "reference": "13,5 a 17,5"
+        },
+        {
+          "name": "Hematocrito (Ht)",
+          "value": "43,80",
+          "unit": "%",
+          "sourcePage": 1,
+          "reference": "41,0 a 53,0"
+        },
+        {
+          "name": "Leucocitos (WBC)",
+          "value": "6,420",
+          "unit": "milhares/mm3",
+          "sourcePage": 2,
+          "reference": "5,0 a 10,0"
+        },
+        {
+          "name": "Glicemia de Jejum",
+          "value": "92,00",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "70 a 99"
+        },
+        {
+          "name": "Hemoglobina Glicada (HbA1c)",
+          "value": "5,30",
+          "unit": "%",
+          "sourcePage": 4,
+          "reference": "4,0 a 5,6"
+        },
+        {
+          "name": "Ureia",
+          "value": "31,00",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "19 a 50"
+        },
+        {
+          "name": "Creatinina",
+          "value": "0,98",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "0,7 a 1,3"
+        },
+        {
+          "name": "Acido Urico",
+          "value": "5,10",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "3,5 a 7,2"
+        },
+        {
+          "name": "Sodio",
+          "value": "139,00",
+          "unit": "mEq/L",
+          "sourcePage": 4,
+          "reference": "135 a 145"
+        },
+        {
+          "name": "Potassio",
+          "value": "4,20",
+          "unit": "mEq/L",
+          "sourcePage": 4,
+          "reference": "3,5 a 5,1"
+        },
+        {
+          "name": "Calcio Serico Total",
+          "value": "9,40",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "8,4 a 10,2"
+        },
+        {
+          "name": "Magnesio",
+          "value": "2,10",
+          "unit": "mg/dL",
+          "sourcePage": 4,
+          "reference": "1,7 a 2,4"
+        },
+        {
+          "name": "TGO (AST)",
+          "value": "24,00",
+          "unit": "U/L",
+          "sourcePage": 5,
+          "reference": "ate 40"
+        },
+        {
+          "name": "TGP (ALT)",
+          "value": "31,00",
+          "unit": "U/L",
+          "sourcePage": 5,
+          "reference": "ate 41"
+        },
+        {
+          "name": "Colesterol Total",
+          "value": "178,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 190"
+        },
+        {
+          "name": "Colesterol - HDL",
+          "value": "52,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "acima de 40"
+        },
+        {
+          "name": "Colesterol - LDL",
+          "value": "104,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 130"
+        },
+        {
+          "name": "Triglicerideos",
+          "value": "112,00",
+          "unit": "mg/dL",
+          "sourcePage": 5,
+          "reference": "ate 150"
+        },
+        {
+          "name": "TSH Ultra Sensivel",
+          "value": "2,140",
+          "unit": "uUI/mL",
+          "sourcePage": 6,
+          "reference": "0,4 a 4,5"
+        },
+        {
+          "name": "T4 Livre",
+          "value": "1,180",
+          "unit": "ng/dL",
+          "sourcePage": 6,
+          "reference": "0,8 a 1,8"
+        }
+      ]
+    },
+    {
+      "file": "bioflow-teste-2026-10-02.pdf",
+      "date": "2026-10-02",
+      "laboratory": "Labortel",
+      "previousSha256": "901abea157ab2b14685545059a782d50a92cb7462855a2ee50970b84473ba0a2",
+      "previousPages": 29,
+      "previousBytes": 49298,
+      "previousResultRows": 61,
+      "resultRows": 24,
+      "reductionPercent": 60.66,
+      "bytes": 3108,
+      "sha256": "aa9ea75764909e69828e275fbd3d7cf517cc2606739ace559a027c67590b58da",
+      "pages": 1,
+      "textChars": 1051,
+      "originalInventory": [
+        {
+          "name": "Hemácias (RBC)",
+          "value": "4,970",
+          "unit": "milhões/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hemoglobina (Hb)",
+          "value": "15,40",
+          "unit": "g/dL",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hematócrito (Ht)",
+          "value": "44,20",
+          "unit": "%",
+          "sourcePage": 1
+        },
+        {
+          "name": "VCM",
+          "value": "88,93",
+          "unit": "fL",
+          "sourcePage": 1
+        },
+        {
+          "name": "HCM",
+          "value": "30,98",
+          "unit": "pg",
+          "sourcePage": 1
+        },
+        {
+          "name": "CHCM",
+          "value": "34,84",
+          "unit": "g/dL",
+          "sourcePage": 1
+        },
+        {
+          "name": "RDW (CV)",
+          "value": "12,50",
+          "unit": "%",
+          "sourcePage": 1
+        },
+        {
+          "name": "RDW (SD)",
+          "value": "41,00",
+          "unit": "fL",
+          "sourcePage": 1
+        },
+        {
+          "name": "Leucócitos (WBC)",
+          "value": "6,76",
+          "unit": "milhares/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "Blastos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 1
+        },
+        {
+          "name": "Pro-mielócitos",
+          "value": "0,00",
+          "unit": "BioFlow | Dados declarados fictícios | Cópia sem identificadores",
+          "sourcePage": 1
+        },
+        {
+          "name": "Mielócitos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Metamielócitos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Neutrófilos Bastonetes",
+          "value": "3,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Neutrófilos Segmentados",
+          "value": "35,60",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Eosinófilos",
+          "value": "2,50",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Basófilos",
+          "value": "1,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Linfócitos típicos",
+          "value": "45,30",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Linfócitos atípicos",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Monócitos",
+          "value": "12,60",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Células Indiferenciadas",
+          "value": "0,00",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "Razão Neutrófilos/Linfócitos (NLR)",
+          "value": "0,85",
+          "unit": "",
+          "sourcePage": 2
+        },
+        {
+          "name": "PLAQUETAS",
+          "value": "191,0",
+          "unit": "milhares/mm3",
+          "sourcePage": 2
+        },
+        {
+          "name": "MPV",
+          "value": "11,60",
+          "unit": "fL",
+          "sourcePage": 2
+        },
+        {
+          "name": "Ferritina Sérica",
+          "value": "32,4",
+          "unit": "ng/mL",
+          "sourcePage": 4
+        },
+        {
+          "name": "Dosagem de Ferro",
+          "value": "78",
+          "unit": "ug/dL",
+          "sourcePage": 4
+        },
+        {
+          "name": "Glicemia de Jejum",
+          "value": "104",
+          "unit": "mg/dL",
+          "sourcePage": 6
+        },
+        {
+          "name": "Creatinina",
+          "value": "1,87",
+          "unit": "mg/dL",
+          "sourcePage": 9
+        },
+        {
+          "name": "eTFG",
+          "value": "39,6",
+          "unit": "mL/min",
+          "sourcePage": 9
+        },
+        {
+          "name": "Nitrogênio Ureico (BUN)",
+          "value": "33,6",
+          "unit": "mg/dL",
+          "sourcePage": 12
+        },
+        {
+          "name": "Ureia",
+          "value": "72,0",
+          "unit": "mg/dL",
+          "sourcePage": 12
+        },
+        {
+          "name": "Albumina urinária",
+          "value": "25,90",
+          "unit": "µg/mL",
+          "sourcePage": 14
+        },
+        {
+          "name": "Creatinina urinária",
+          "value": "97,0",
+          "unit": "mg/dL",
+          "sourcePage": 14
+        },
+        {
+          "name": "Relação Albumina/Creatinina (RAC)",
+          "value": "26,6",
+          "unit": "mg/g Creat",
+          "sourcePage": 14
+        },
+        {
+          "name": "Cálcio Sérico Total (CaT)",
+          "value": "8,9",
+          "unit": "mg/dL",
+          "sourcePage": 15
+        },
+        {
+          "name": "25-Hidroxi-Vitamina D",
+          "value": "38,6",
+          "unit": "ng/mL",
+          "sourcePage": 16
+        },
+        {
+          "name": "Vitamina B12 (Cobalamina)",
+          "value": "507,0",
+          "unit": "pg/mL",
+          "sourcePage": 17
+        },
+        {
+          "name": "Colesterol Total",
+          "value": "133",
+          "unit": "mg/dL",
+          "sourcePage": 19
+        },
+        {
+          "name": "Colesterol - HDL",
+          "value": "34",
+          "unit": "mg/dL",
+          "sourcePage": 20
+        },
+        {
+          "name": "Colesterol Não-HDL",
+          "value": "99",
+          "unit": "mg/dL",
+          "sourcePage": 20
+        },
+        {
+          "name": "Colesterol - LDL",
+          "value": "67",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Triglicerídeos",
+          "value": "276",
+          "unit": "mg/dL",
+          "sourcePage": 24
+        },
+        {
+          "name": "TSH Ultrassensível",
+          "value": "2,28",
+          "unit": "µUI/mL",
+          "sourcePage": 25
+        },
+        {
+          "name": "PSA Total",
+          "value": "0,44",
+          "unit": "ng/mL",
+          "sourcePage": 27
+        },
+        {
+          "name": "Hemoglobina Glicada (HbA1c)",
+          "value": "8,8",
+          "unit": "%",
+          "sourcePage": 7
+        },
+        {
+          "name": "Glicemia Média Estimada (GME)",
+          "value": "205",
+          "unit": "mg/dL",
+          "sourcePage": 7
+        },
+        {
+          "name": "Ácido Úrico",
+          "value": "8,5",
+          "unit": "mg/dL",
+          "sourcePage": 17
+        },
+        {
+          "name": "T4 (Tiroxina) Livre",
+          "value": "0,86",
+          "unit": "ng/dL",
+          "sourcePage": 26
+        },
+        {
+          "name": "Densidade [EAS]",
+          "value": "1,022",
+          "unit": "",
+          "sourcePage": 28
+        },
+        {
+          "name": "pH [EAS]",
+          "value": "5,5",
+          "unit": "",
+          "sourcePage": 28
+        },
+        {
+          "name": "Relação Albumina/Creatinina (RAC) [EAS]",
+          "value": "0",
+          "unit": "mgAlb/gCr",
+          "sourcePage": 28
+        },
+        {
+          "name": "Proteínas [EAS]",
+          "value": "0",
+          "unit": "mg/dL",
+          "sourcePage": 28
+        },
+        {
+          "name": "Glicose [EAS]",
+          "value": "2.000",
+          "unit": "mg/dL",
+          "sourcePage": 28
+        },
+        {
+          "name": "Corpos Cetônicos [EAS]",
+          "value": "0",
+          "unit": "mg/dL",
+          "sourcePage": 28
+        },
+        {
+          "name": "Bilirrubinas [EAS]",
+          "value": "0",
+          "unit": "mg/dL",
+          "sourcePage": 28
+        },
+        {
+          "name": "Urobilinogênio [EAS]",
+          "value": "1,4",
+          "unit": "mg/dL",
+          "sourcePage": 28
+        },
+        {
+          "name": "Sangue (Hb) [EAS]",
+          "value": "0,00",
+          "unit": "mg/dL",
+          "sourcePage": 28
+        },
+        {
+          "name": "Hemácias [EAS]",
+          "value": "1",
+          "unit": "/uL",
+          "sourcePage": 29
+        },
+        {
+          "name": "Leucócitos [EAS]",
+          "value": "2",
+          "unit": "/uL",
+          "sourcePage": 29
+        },
+        {
+          "name": "Células Epiteliais Escamosas [EAS]",
+          "value": "0",
+          "unit": "/uL",
+          "sourcePage": 29
+        },
+        {
+          "name": "Células Epiteliais Não Escamosas [EAS]",
+          "value": "1",
+          "unit": "/uL",
+          "sourcePage": 29
+        }
+      ],
+      "retained": [
+        {
+          "name": "Hemácias (RBC)",
+          "value": "4,970",
+          "unit": "milhões/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hemoglobina (Hb)",
+          "value": "15,40",
+          "unit": "g/dL",
+          "sourcePage": 1
+        },
+        {
+          "name": "Hematócrito (Ht)",
+          "value": "44,20",
+          "unit": "%",
+          "sourcePage": 1
+        },
+        {
+          "name": "Leucócitos (WBC)",
+          "value": "6,76",
+          "unit": "milhares/mm3",
+          "sourcePage": 1
+        },
+        {
+          "name": "PLAQUETAS",
+          "value": "191,0",
+          "unit": "milhares/mm3",
+          "sourcePage": 2
+        },
+        {
+          "name": "Ferritina Sérica",
+          "value": "32,4",
+          "unit": "ng/mL",
+          "sourcePage": 4
+        },
+        {
+          "name": "Dosagem de Ferro",
+          "value": "78",
+          "unit": "ug/dL",
+          "sourcePage": 4
+        },
+        {
+          "name": "Glicemia de Jejum",
+          "value": "104",
+          "unit": "mg/dL",
+          "sourcePage": 6
+        },
+        {
+          "name": "Creatinina",
+          "value": "1,87",
+          "unit": "mg/dL",
+          "sourcePage": 9
+        },
+        {
+          "name": "Nitrogênio Ureico (BUN)",
+          "value": "33,6",
+          "unit": "mg/dL",
+          "sourcePage": 12
+        },
+        {
+          "name": "Ureia",
+          "value": "72,0",
+          "unit": "mg/dL",
+          "sourcePage": 12
+        },
+        {
+          "name": "Cálcio Sérico Total (CaT)",
+          "value": "8,9",
+          "unit": "mg/dL",
+          "sourcePage": 15
+        },
+        {
+          "name": "25-Hidroxi-Vitamina D",
+          "value": "38,6",
+          "unit": "ng/mL",
+          "sourcePage": 16
+        },
+        {
+          "name": "Vitamina B12 (Cobalamina)",
+          "value": "507,0",
+          "unit": "pg/mL",
+          "sourcePage": 17
+        },
+        {
+          "name": "Colesterol Total",
+          "value": "133",
+          "unit": "mg/dL",
+          "sourcePage": 19
+        },
+        {
+          "name": "Colesterol - HDL",
+          "value": "34",
+          "unit": "mg/dL",
+          "sourcePage": 20
+        },
+        {
+          "name": "Colesterol Não-HDL",
+          "value": "99",
+          "unit": "mg/dL",
+          "sourcePage": 20
+        },
+        {
+          "name": "Colesterol - LDL",
+          "value": "67",
+          "unit": "mg/dL",
+          "sourcePage": 23
+        },
+        {
+          "name": "Triglicerídeos",
+          "value": "276",
+          "unit": "mg/dL",
+          "sourcePage": 24
+        },
+        {
+          "name": "TSH Ultrassensível",
+          "value": "2,28",
+          "unit": "µUI/mL",
+          "sourcePage": 25
+        },
+        {
+          "name": "PSA Total",
+          "value": "0,44",
+          "unit": "ng/mL",
+          "sourcePage": 27
+        },
+        {
+          "name": "Hemoglobina Glicada (HbA1c)",
+          "value": "8,8",
+          "unit": "%",
+          "sourcePage": 7
+        },
+        {
+          "name": "Ácido Úrico",
+          "value": "8,5",
+          "unit": "mg/dL",
+          "sourcePage": 17
+        },
+        {
+          "name": "T4 (Tiroxina) Livre",
+          "value": "0,86",
+          "unit": "ng/dL",
+          "sourcePage": 26
+        }
+      ]
+    }
+  ]
+}

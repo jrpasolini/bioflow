@@ -34,7 +34,7 @@ Pontos de atenção, todos em `apps/api/src/demo-gemma.ts`:
 | Decimal ambíguo | `toNumber()` aceita vírgula brasileira (`5,170`) e nunca adivinha forma ambígua. |
 | Unidade relabelada | `canonicalUnit()` só normaliza grafias conhecidas. **`g/L` não pode virar `g/dL`** — isso inventaria valor 10× menor. |
 
-**Teste sugerido:** subir o PDF de 2026-10-02 (29 páginas) e conferir que a resposta tem **~56 leituras**. Se vier 45, o truncamento voltou.
+**Amostras atuais (22/10/2026):** baixe novamente o ZIP reduzido. Os PDFs têm uma página cada e 23, 21 e 24 resultados, respectivamente (15/05, 01/10 e 02/10). Os números de extração do restante deste registro são históricos, da edição maior. Aguarde a recuperação da cota antes de chamar a Gemma; respeite o rate limit. A correspondência da extração deve ser conferida contra o PDF enviado, não contra contagens históricas.
 
 ### 🔴 Prioridade 2 — Caminho de erro (o que ninguém clica)
 
