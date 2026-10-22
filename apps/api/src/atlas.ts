@@ -78,6 +78,17 @@ export async function loadDemoFromAtlas(env:AtlasEnv):Promise<{patient:DemoPatie
 
 export const syntheticFallback = {patient:demoPatient,reports:demoReports};
 
+/** Public diagnostics are a fixed allowlist, never a driver message or URI. */
+export function atlasFailureReason(error:unknown):string{
+ const e=error&&typeof error==='object'?error as {name?:unknown;code?:unknown;message?:unknown}:{};
+ if(e.name==='MongoParseError'||e.name==='MongoInvalidArgumentError')return 'invalid_database_configuration';
+ if(e.code===18)return 'database_authentication_failed';
+ if(e.code===13)return 'database_permission_denied';
+ if(['demo_baseline_outdated','invalid_demo_identity','invalid_demo','invalid_reports','invalid_report','invalid_result','invalid_source_page','Demo data not seeded','Demo reports not seeded'].includes(String(e.message)))return 'demo_baseline_invalid';
+ if(['MongoServerSelectionError','MongoNetworkError','MongoNetworkTimeoutError'].includes(String(e.name)))return 'database_unreachable';
+ return 'database_read_failed';
+}
+
 /** An old/partial seed must not replace the published 26-report baseline. */
 export function validateDemoBaseline(value:unknown){
  const actual=parseDemoOverview(value),expected=parseDemoOverview(syntheticFallback);

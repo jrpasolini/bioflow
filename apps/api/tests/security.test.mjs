@@ -32,7 +32,7 @@ test('fixture-only response is labeled and has 26 reports / 604 numeric observat
 });
 test('configured but unavailable Atlas returns a sanitized error, never silent fixtures',async()=>{
  const r=await call('/api/demo/overview',{}, {...env,MONGODB_URI:'invalid-test-uri'});
- assert.equal(r.status,503);assert.deepEqual(await r.json(),{error:'demo_database_unavailable'});
+ assert.equal(r.status,503);assert.deepEqual(await r.json(),{error:'demo_database_unavailable',reason:'invalid_database_configuration'});
 });
 test('PDF list/upload/download stay disabled even if bindings accidentally exist',async()=>{
  const bindings={...env,REPORTS_BUCKET:{},AUTH0_ISSUER_BASE_URL:'https://example.test',AUTH0_AUDIENCE:'a',BIOFLOW_OWNER_SUB:'owner'};
