@@ -4,7 +4,7 @@
 
 ## Current deployment configuration and verification (reviewed 2026-10-21)
 
-> The tracked Worker configuration enables the **synthetic-only Gemma demo**, but keeps all private PDF routes disabled. The most recent audit report records a production Gemma import and deploy ID `94a8342e`. A later source build introduces `gemma-v6-strict-chunks`, so live deployment parity must be checked rather than assumed.
+> The tracked Worker configuration enables the **synthetic-only Gemma demo**, but keeps all private PDF routes disabled. The most recent audit report records a production Gemma import and deploy ID `94a8342e`. The independently checked corrected build is `session-v7-expiry-isolation`, version `4762b0ae-5f82-42d5-acbc-f82fbc1bf3fe`, source `c05d1b0`. See the validation record for passed session tests and the remaining overview credential gate.
 
 - Worker: `bioflow-api`, compatibility date `2026-10-19`, `nodejs_compat`.
 - Allowed browser origin in the tracked Worker config: `https://jrpasolini.tech` (the Render-hosted frontend is accessed through the `.tech` subpath). Review the runtime origin before changing it.
@@ -28,7 +28,7 @@ After approval, run `npm run deploy -w @bioflow/api`. Record the actual Worker U
 
 Check against the deployed URL:
 
-- `/api/health`: HTTP 200; inspect `databaseConfigured`, `gemmaReady`, `pdfEndpointsEnabled:false` and `build`. Tracked source reports `build:"gemma-v6-strict-chunks"`; the value from a **live response** is needed to establish the running version. This is liveness/configuration, not a database ping. Auth0 status must be tested separately, not assumed.
+- `/api/health`: HTTP 200; inspect `databaseConfigured`, `gemmaReady`, `pdfEndpointsEnabled:false` and `build`. Tracked source reports `build:"session-v7-expiry-isolation"`; the value from a **live response** is needed to establish the running version. This is liveness/configuration, not a database ping. Auth0 status must be tested separately, not assumed.
 - `/api/demo/overview`: HTTP 200 and **`source:mongodb-atlas-synthetic`**. The Atlas seed currently contains 26 synthetic reports. A 200 with `source:synthetic-fixtures` does **not** verify the live read path, even when confirmed guest imports are being written to `bioflow_sessions`.
 - CORS: exact Render origin gets `Access-Control-Allow-Origin`; another origin gets no permission and its preflight returns 403. CORS is not authentication: this is intentionally a public synthetic endpoint.
 - PDF list, upload and download: HTTP 503 `pdf_endpoints_disabled`; never upload a real report to test them.
