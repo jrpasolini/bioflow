@@ -26,8 +26,8 @@ if(!uri || !/^mongodb(\+srv)?:\/\//.test(uri)){
     isSynthetic:true
   };
   const reports=demoReports.map(({results,...r})=>r);
-  const results=demoReports.flatMap(r=>r.results.map((item,i)=>({
-    ...item,id:r.id+':'+item.code+':'+i,reportId:r.id,patientId:r.patientId,
+  const results=demoReports.flatMap(r=>r.results.map(item=>({
+    ...item,id:r.id+':'+item.code,reportId:r.id,patientId:r.patientId,
     collectedAt:r.collectedAt,isSynthetic:true
   })));
   const client=new MongoClient(uri,{maxPoolSize:1,minPoolSize:0,serverSelectionTimeoutMS:10000});
@@ -47,7 +47,11 @@ if(!uri || !/^mongodb(\+srv)?:\/\//.test(uri)){
     ]);
     await patients.updateOne({id:patient.id},{$set:patient},{upsert:true});
     for(const item of reports)await collections.updateOne({id:item.id},{$set:item},{upsert:true});
-    for(const item of results)await observations.updateOne({id:item.id},{$set:item},{upsert:true});
+    // Match the natural reading identity. Old seeds used a different id suffix;
+    // matching only id would duplicate every existing observation on reseeding.
+    for(const {id,...item} of results)await observations.updateOne(
+      {reportId:item.reportId,code:item.code,isSynthetic:true},
+      {$set:item,$setOnInsert:{id}},{upsert:true});
     console.log('BioFlow synthetic demo seeded:',reports.length,'lab reports and',results.length,'observations.');
     console.log('No PDF or real patient information was uploaded. Database:',dbName);
   }finally{

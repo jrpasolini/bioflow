@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState,type FormEvent} from 'react';
 import {Download,FilePlus2,LoaderCircle,ShieldCheck} from 'lucide-react';
 import type {LabReport} from '../../../packages/fixtures/src/synthetic';
+import {demoSessionExpiry} from './demo-session';
 
 type Reading={code:string;name:string;value:number;unit:string;sourcePage?:number;referenceLow?:number;referenceHigh?:number};
 type Preview={sha256:string;filename:string;model:string;proof:string;proofExpires:number;report:{
@@ -27,7 +28,7 @@ function errorMessage(code:string,p:boolean):string {
   pdf_conversion_failed:['Não foi possível ler o PDF.','The PDF could not be converted.'],
   gemma_extraction_failed:['A Gemma não conseguiu interpretar este documento. Tente novamente.','Gemma could not read this document. Please retry.'],
   incomplete_extraction:['Não foi possível validar todas as partes do PDF. Nenhum laudo parcial foi salvo. Tente novamente.','Not every section of the PDF could be validated. No partial report was saved. Please try again.'],
-  demo_limit_reached:['Esta sessão já importou os 3 exames de teste. Os dados temporários expiram em 60 minutos.','This session already imported all 3 test reports. Temporary data expires in 60 minutes.'],
+  demo_limit_reached:['Esta sessão já importou os 3 exames de teste. Os dados temporários expiram ao fim da sessão.','This session already imported all 3 test reports. Temporary data expires when the session ends.'],
   rate_limited:['Limite temporário de tentativas. Aguarde um minuto.','Temporary request limit. Please wait one minute.'],
   demo_persistence_failed:['Não foi possível gravar a simulação no MongoDB.','Could not save this simulation in MongoDB.'],
   demo_session_required:['Sua sessão expirou. Recarregue a página para recomeçar.','Your session expired. Refresh the page to start again.'],
@@ -57,18 +58,23 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
  const [saved,setSaved]=useState<Imported[]>([]);
  const [error,setError]=useState('');
  const session=useRef<string|null>(null);
+ const [sessionDeadline,setSessionDeadline]=useState<number|null>(null);
  const p=portuguese;
  const fetching=stage==='uploading'||stage==='saving';
 
  async function sessionToken():Promise<string>{
-  if(session.current)return session.current;
+  if(session.current&&demoSessionExpiry(session.current))return session.current;
   const current=sessionStorage.getItem(STORE);
-  if(current){session.current=current;return current;}
+  if(current&&demoSessionExpiry(current)){
+   session.current=current;setSessionDeadline(demoSessionExpiry(current));return current;
+  }
+  session.current=null;sessionStorage.removeItem(STORE);
   if(!base)throw Error('gemma_demo_disabled');
   const response=await fetch(base+'/api/demo/session',{method:'POST',credentials:'omit',redirect:'error'});
   const data=await readResponse(response) as {token:string};
-  if(typeof data.token!=='string')throw Error('invalid_session');
+  if(typeof data.token!=='string'||!demoSessionExpiry(data.token))throw Error('invalid_session');
   session.current=data.token;sessionStorage.setItem(STORE,data.token);
+  setSessionDeadline(demoSessionExpiry(data.token));
   return data.token;
  }
  async function loadHistory(token:string){
@@ -76,6 +82,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
   const response=await fetch(base+'/api/demo/imports',{credentials:'omit',redirect:'error',
    headers:{Authorization:'Bearer '+token}});
   const data=await readResponse(response) as {imports:Imported[]};
+  if(session.current!==token||!demoSessionExpiry(token))return;
   const imports=Array.isArray(data.imports)?data.imports.filter(x=>x&&x.report&&Array.isArray(x.report.results)):[];
   setSaved(imports);
   onReportsChanged(imports.map(x=>x.report));
@@ -83,9 +90,23 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
  useEffect(()=>{
   if(!base)return;
   const token=sessionStorage.getItem(STORE);
-  if(token){session.current=token;loadHistory(token).catch(()=>{sessionStorage.removeItem(STORE);session.current=null;});}
+  if(token&&demoSessionExpiry(token)){
+   session.current=token;setSessionDeadline(demoSessionExpiry(token));
+   loadHistory(token).catch(()=>{sessionStorage.removeItem(STORE);session.current=null;setSessionDeadline(null);});
+  }else{sessionStorage.removeItem(STORE);}
   // Load once for this mounted component; onReportsChanged is the stable state setter from App.
  },[base]);
+ useEffect(()=>{
+  if(sessionDeadline===null)return;
+  const expire=()=>{
+   if(Date.now()<sessionDeadline)return;
+   session.current=null;sessionStorage.removeItem(STORE);setSessionDeadline(null);
+   setSaved([]);setDraft(null);setStage('idle');onReportsChanged([]);
+  };
+  const timer=window.setTimeout(expire,Math.max(0,sessionDeadline-Date.now()));
+  document.addEventListener('visibilitychange',expire);
+  return ()=>{window.clearTimeout(timer);document.removeEventListener('visibilitychange',expire);};
+ },[sessionDeadline,onReportsChanged]);
 
  async function analyze(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -98,6 +119,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
    const response=await fetch(base+'/api/demo/extract',{method:'POST',credentials:'omit',redirect:'error',
     headers:{Authorization:'Bearer '+token},body:form});
    const data=await readResponse(response) as Preview;
+   if(session.current!==token||!demoSessionExpiry(token))throw Error('demo_session_required');
    if(!data.report||!Array.isArray(data.report.results)||typeof data.proof!=='string')throw Error('invalid_model_json');
    setDraft(data);setStage('review');
   }catch(e){setStage('idle');setError(errorMessage(e instanceof Error?e.message:'error',p));}
@@ -110,6 +132,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
     headers:{Authorization:'Bearer '+session.current,'Content-Type':'application/json'},
     body:JSON.stringify({sha256:draft.sha256,proof:draft.proof,proofExpires:draft.proofExpires,report:draft.report,reviewed:true})});
    await readResponse(response);
+   if(!session.current||!demoSessionExpiry(session.current))throw Error('demo_session_required');
    await loadHistory(session.current);
    setDraft(null);setFile(null);setStage('saved');
   }catch(e){setStage('review');setError(errorMessage(e instanceof Error?e.message:'error',p));}
@@ -146,7 +169,7 @@ export function GemmaImport({portuguese,onReportsChanged}:{portuguese:boolean;on
     <button type="button" className="secondary" onClick={()=>{setDraft(null);setStage('idle');}} disabled={fetching}>{p?'Descartar':'Discard'}</button>
    </div>
   </div>}
-  {stage==='saved'&&<p role="status" className="gemma-saved">{p?'Exame salvo! Seus gráficos e a lista foram atualizados nesta sessão temporária. Este exame desaparece sozinho em 60 minutos.':'Saved! The charts and report list were updated for this temporary session. This report disappears on its own in 60 minutes.'}</p>}
+  {stage==='saved'&&<p role="status" className="gemma-saved">{p?'Exame salvo! Seus gráficos e a lista foram atualizados. Este exame desaparece ao fim desta sessão temporária, que dura até 60 minutos.':'Saved! The charts and report list were updated. This report disappears when this temporary session ends, within 60 minutes.'}</p>}
   {saved.length>0&&<p className="gemma-session-total">{saved.length}/3 {p?'exames importados nesta sessão temporária. Os 26 laudos originais permanecem intactos.':'reports imported into this temporary session. All 26 original reports stay unchanged.'}</p>}
  </section>;
 }

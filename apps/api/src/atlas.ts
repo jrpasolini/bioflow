@@ -70,11 +70,20 @@ export async function loadDemoFromAtlas(env:AtlasEnv):Promise<{patient:DemoPatie
   });
   try {
     await client.connect();
-    return parseDemoOverview(await readDemo(client.db(databaseName)));
+    return validateDemoBaseline(await readDemo(client.db(databaseName)));
   } finally {
     await client.close();
   }
 }
 
 export const syntheticFallback = {patient:demoPatient,reports:demoReports};
+
+/** An old/partial seed must not replace the published 26-report baseline. */
+export function validateDemoBaseline(value:unknown){
+ const actual=parseDemoOverview(value),expected=parseDemoOverview(syntheticFallback);
+ const stable=(data:typeof actual)=>JSON.stringify({...data,reports:data.reports.map(r=>({...r,
+  results:[...r.results].sort((a,b)=>a.code.localeCompare(b.code))}))});
+ if(stable(actual)!==stable(expected))throw Error('demo_baseline_outdated');
+ return actual;
+}
 
