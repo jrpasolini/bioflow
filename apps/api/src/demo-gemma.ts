@@ -220,6 +220,7 @@ export function chunkDocument(text:string,maxChars=CHUNK_CHARS):string[]{
  */
 export function parseGemmaChunk(answer:unknown,date:string):{laboratory:string;results:unknown[]} {
  const response=isObject(answer)?answer as Record<string,any>:{};
+ if(response.choices?.[0]?.finish_reason==='length')throw Error('model_output_truncated');
  const candidate=response.choices?.[0]?.message?.content??response.response??response.result;
  if(typeof candidate!=='string')throw Error('missing_model_content');
  const begin=candidate.indexOf('{'),end=candidate.lastIndexOf('}');
@@ -240,13 +241,23 @@ export function parseGemmaChunk(answer:unknown,date:string):{laboratory:string;r
  * Validate *inside* the retry loop. If even one chunk remains malformed after
  * two attempts, abort the entire document rather than returning a partial PDF.
  */
+export type ChunkDiagnostic={chunk:number;attempt:number;chars:number;elapsedMs:number;reason:string;providerCode?:number};
+export function chunkFailure(error:unknown):{reason:string;providerCode?:number}{
+ const message=error instanceof Error?error.message:'';
+ const known=['missing_model_content','invalid_model_json','invalid_model_schema','invalid_model_metadata','too_many_results','model_output_truncated','model_timeout'];
+ if(known.includes(message))return {reason:message};
+ // Only a numeric provider code may cross this boundary, never exception text.
+ const match=/\b(?:error|code)\s*[:=]?\s*(\d{4,5})\b/i.exec(message);
+ return {reason:'provider_failure',...(match?{providerCode:Number(match[1])}:{})};
+}
 export async function runGemmaChunks(
- chunks:readonly string[],date:string,run:(chunk:string)=>Promise<unknown>
+ chunks:readonly string[],date:string,run:(chunk:string)=>Promise<unknown>,diagnose:(entry:ChunkDiagnostic)=>void=()=>{}
 ):Promise<{laboratory:string;results:unknown[]}>{
- const parsed=await Promise.all(chunks.map(async chunk=>{
+ const parsed=await Promise.all(chunks.map(async (chunk,index)=>{
   for(let attempt=0;attempt<2;attempt++){
+   const started=Date.now();
    try{return parseGemmaChunk(await run(chunk),date);}
-   catch{/* Retry both transport/model errors and malformed model responses. */}
+   catch(error){diagnose({chunk:index+1,attempt:attempt+1,chars:chunk.length,elapsedMs:Date.now()-started,...chunkFailure(error)});}
   }
   return null;
  }));
@@ -286,15 +297,16 @@ async function extract(req:Request,env:GemmaEnv,id:string){
   // and presenting the result as the whole report.
   if(chunks.length>MAX_CHUNKS)return json({error:'document_too_large',chunks:chunks.length,limit:MAX_CHUNKS},413);
   let extracted:{laboratory:string;results:unknown[]};
+  const diagnostics:ChunkDiagnostic[]=[];
   try{
    extracted=await runGemmaChunks(chunks,sample.date,chunk=>
     deadline(converter.run(MODEL,{messages:[
       {role:'system',content:systemPrompt},
       {role:'user',content:'This is a known fictional Walter White report, dated '+sample.date+'. Extract every explicitly numeric reading in this excerpt. The collection date MUST be '+sample.date+'. Excerpt content:\n'+chunk}
-     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model'));
+     ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model'),entry=>diagnostics.push(entry));
   }catch{
    // Never sign or offer a preview built from only the successful chunks.
-   return json({error:'incomplete_extraction',reason:'chunk_failed',chunks:chunks.length},502);
+   return json({error:'incomplete_extraction',reason:'chunk_failed',chunks:chunks.length,diagnostics},502);
   }
   const {laboratory,results:merged}=extracted;
   const diag={chunks:chunks.length,parsed:chunks.length,items:merged.length};
