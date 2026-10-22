@@ -29,8 +29,10 @@ const clean=(v:unknown,n=100)=>typeof v==='string'?v.trim().slice(0,n):'';
  * A document pipeline must always answer. Without a deadline a single slow stage
  * leaves the visitor staring at a spinner with no way to know what happened.
  */
-function deadline<T>(work:Promise<T>,ms:number,stage:string):Promise<T>{
- return Promise.race([work,new Promise<T>((_,reject)=>setTimeout(()=>reject(Error(stage+'_timeout')),ms))]);
+async function deadline<T>(work:Promise<T>,ms:number,stage:string):Promise<T>{
+ let timer:ReturnType<typeof setTimeout>|undefined;
+ try{return await Promise.race([work,new Promise<T>((_,reject)=>{timer=setTimeout(()=>reject(Error(stage+'_timeout')),ms);})]);}
+ finally{clearTimeout(timer);}
 }
 const finite=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v);
 const num=(v:unknown)=>finite(v)?v:undefined;
@@ -254,11 +256,25 @@ export function chunkFailure(error:unknown):{reason:string;providerCode?:number}
 export async function runGemmaChunks(
  chunks:readonly string[],date:string,run:(chunk:string)=>Promise<unknown>,diagnose:(entry:ChunkDiagnostic)=>void=()=>{}
 ):Promise<{laboratory:string;results:unknown[]}>{
+ let unavailable=false;
  const parsed=await Promise.all(chunks.map(async (chunk,index)=>{
   for(let attempt=0;attempt<2;attempt++){
+   if(unavailable)return null;
    const started=Date.now();
-   try{return parseGemmaChunk(await run(chunk),date);}
-   catch(error){diagnose({chunk:index+1,attempt:attempt+1,chars:chunk.length,elapsedMs:Date.now()-started,...chunkFailure(error)});}
+   try{
+    const result=parseGemmaChunk(await run(chunk),date);
+    diagnose({chunk:index+1,attempt:attempt+1,chars:chunk.length,elapsedMs:Date.now()-started,reason:'ok'});
+    return result;
+   }catch(error){
+    const failure=chunkFailure(error);
+    diagnose({chunk:index+1,attempt:attempt+1,chars:chunk.length,elapsedMs:Date.now()-started,...failure});
+    // Retrying a quota/access/input rejection cannot repair it. Stop immediately;
+    // calls already in flight are bounded by MAX_CHUNKS and are never merged.
+    if(['provider_quota','provider_access_denied','provider_invalid_request'].includes(failure.reason)||
+       [3023,3036,3041,3042,5004,5007,5016,5018,5019,5035].includes(failure.providerCode??0)){
+     unavailable=true;return null;
+    }
+   }
   }
   return null;
  }));
@@ -307,7 +323,8 @@ async function extract(req:Request,env:GemmaEnv,id:string){
      ],chat_template_kwargs:{enable_thinking:false},max_completion_tokens:4096}),85000,'model'),entry=>diagnostics.push(entry));
   }catch{
    // Never sign or offer a preview built from only the successful chunks.
-   return json({error:'incomplete_extraction',reason:'chunk_failed',chunks:chunks.length,diagnostics},502);
+   const quota=diagnostics.some(entry=>entry.reason==='provider_quota'||entry.providerCode===3036);
+   return json({error:'incomplete_extraction',reason:quota?'provider_quota':'chunk_failed',chunks:chunks.length,diagnostics},quota?503:502);
   }
   const {laboratory,results:merged}=extracted;
   const diag={chunks:chunks.length,parsed:chunks.length,items:merged.length};
@@ -323,7 +340,7 @@ async function extract(req:Request,env:GemmaEnv,id:string){
   }
   const proofExpires=Date.now()+proofLifetime;
   const proof=await mac(env.DEMO_SESSION_SECRET!,id+'|'+hash+'|'+proofExpires+'|'+canonical(report));
-  return json({sha256:hash,filename:sample.filename,model:MODEL,report,proof,proofExpires});
+  return json({sha256:hash,filename:sample.filename,model:MODEL,report,proof,proofExpires,diagnostics});
  }catch{return fail('gemma_extraction_failed',502);}
 }
 async function commit(req:Request,env:GemmaEnv,session:Session){
