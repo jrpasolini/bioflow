@@ -8,7 +8,9 @@ import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 
 const base='https://bioflow-api.antonio-pasolini.workers.dev';
-const [directory,output,onlySample]=process.argv.slice(2);
+const [directory,output,onlySample,repetitionsArg='1']=process.argv.slice(2);
+const repetitions=Number(repetitionsArg);
+assert.ok(Number.isInteger(repetitions)&&repetitions>=1&&repetitions<=3,'Use 1 to 3 consecutive runs');
 if(!directory||!output)throw Error('Provide a sample directory and a safe JSON report path');
 const audit=JSON.parse(await readFile(new URL('../docs/PDF_PUBLICATION_AUDIT.json',import.meta.url),'utf8'));
 const requested=onlySample?new Set(onlySample.split(',')):null;
@@ -16,6 +18,13 @@ const samples=requested?audit.heldout.filter(sample=>requested.has(sample.file))
 if(!samples.length||(requested&&requested.size!==samples.length))throw Error('Unknown sample; only the three audited PDFs are accepted');
 const report={checkedAt:new Date().toISOString(),origin:base,checks:[],samples:[]};
 const check=(name,passed,details={})=>{report.checks.push({name,passed,...details});console.log(JSON.stringify(report.checks.at(-1)));};
+const issued=[];
+async function newSession(){
+ // Respect the public three-per-minute limiter without retrying extractions.
+ while(issued.length>=3&&Date.now()-issued.at(-3)<61000)
+  await new Promise(resolve=>setTimeout(resolve,Math.min(30000,61000-(Date.now()-issued.at(-3)))));
+ const result=await call('/api/demo/session',{method:'POST'});issued.push(Date.now());return result;
+}
 async function call(path,{token,headers,...options}={}){
  const response=await fetch(base+path,{...options,redirect:'error',signal:AbortSignal.timeout(210000),
   headers:{Origin:'https://jrpasolini.tech',...headers,...(token?{Authorization:'Bearer '+token}:{})}});
@@ -31,7 +40,7 @@ try{
  const denied=await call('/api/patients/demo-walter-white/reports',{token:'110526'});
  check('demo-code-cannot-open-private-pdfs',denied.status===503&&denied.body.error==='pdf_endpoints_disabled');
  const unauthorized=await call('/api/demo/imports');check('history-requires-session',unauthorized.status===401);
- const a=await call('/api/demo/session',{method:'POST'}),b=await call('/api/demo/session',{method:'POST'});
+ let a=await newSession();const b=await newSession();
  assert.equal(a.status,200);assert.equal(b.status,200);
  check('independent-one-hour-sessions',a.body.token!==b.body.token&&
   Math.abs(Date.parse(a.body.expiresAt)-Date.now()-3600000)<15000);
@@ -39,14 +48,22 @@ try{
  check('tampered-session-denied',(await call('/api/demo/imports',{token:altered})).status===401);
  const initial=await call('/api/demo/imports',{token:a.body.token});
  check('fresh-session-empty',initial.status===200&&initial.body.imports.length===0);
- for(const sample of samples){
+ let iteration=0;
+ for(let run=1;run<=repetitions;run++)for(const sample of samples){
+  if(iteration++>0){a=await newSession();assert.equal(a.status,200);}
   const bytes=await readFile(resolve(directory,sample.file));
   assert.equal(createHash('sha256').update(bytes).digest('hex'),sample.sha256);
   const form=new FormData();form.set('file',new Blob([bytes],{type:'application/pdf'}),sample.file);
   const started=Date.now();
   const preview=await call('/api/demo/extract',{method:'POST',token:a.body.token,body:form});
-  const result={sample:sample.file,extractStatus:preview.status,seconds:Math.round((Date.now()-started)/1000)};
-  if(preview.status!==200){result.error=preview.body.error;report.samples.push(result);check('extract-'+sample.file,false,result);continue;}
+  const result={run,sample:sample.file,extractStatus:preview.status,seconds:Math.round((Date.now()-started)/1000),diagnostics:preview.body.diagnostics};
+  if(preview.status!==200){
+   result.error=preview.body.error;result.reason=preview.body.reason;
+   const history=await call('/api/demo/imports',{token:a.body.token});
+   check('failed-extraction-writes-nothing-'+sample.file,history.status===200&&history.body.imports.length===0,{run});
+   check('failed-extraction-has-no-proof-'+sample.file,!preview.body.proof&&!preview.body.report,{run});
+   report.samples.push(result);check('extract-'+sample.file,false,result);continue;
+  }
   result.readings=preview.body.report.results.length;
   const payload={sha256:preview.body.sha256,proof:preview.body.proof,proofExpires:preview.body.proofExpires,
    report:preview.body.report,reviewed:true};

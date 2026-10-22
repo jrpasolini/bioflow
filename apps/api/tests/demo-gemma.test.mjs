@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {testModule} from '../../../scripts/test-module.mjs';
 
-const {handleGemmaDemo,demoReady,extractGemmaJson,chunkDocument,parseGemmaChunk,runGemmaChunks}=await testModule(new URL('../src/demo-gemma.ts',import.meta.url),'demo-gemma');
+const {handleGemmaDemo,demoReady,extractGemmaJson,chunkDocument,parseGemmaChunk,runGemmaChunks,chunkFailure}=await testModule(new URL('../src/demo-gemma.ts',import.meta.url),'demo-gemma');
 const {SAMPLES,isSampleHash}=await testModule(new URL('../src/demo-samples.ts',import.meta.url),'demo-samples');
 const audit=JSON.parse(await readFile(new URL('../../../docs/PDF_PUBLICATION_AUDIT.json',import.meta.url),'utf8'));
 const base='https://bioflow.example/api/demo/';
@@ -198,5 +198,31 @@ test('malformed chunk schema or transport errors get one retry; a second failure
   return {response:JSON.stringify({results:null})};
  }),/incomplete_extraction/);
  assert.equal(failures,2);
+});
+
+test('provider quota 4006 aborts all results without retrying a non-recoverable rejection',async()=>{
+ const calls=new Map(),diagnostics=[];
+ await assert.rejects(runGemmaChunks(['good','quota'],'2026-10-01',async chunk=>{
+  calls.set(chunk,(calls.get(chunk)||0)+1);
+  if(chunk==='quota')throw {message:'4006: daily neuron allocation quota exhausted; PRIVATE_SENTINEL'};
+  return {response:JSON.stringify({results:[{name:'Test',code:'test',value:1,unit:'mg/dL'}]})};
+ },entry=>diagnostics.push(entry)),/incomplete_extraction/);
+ assert.equal(calls.get('quota'),1);
+ assert.equal(calls.get('good'),1);
+ assert.equal(diagnostics.find(x=>x.chunk===2).providerCode,4006);
+ assert.equal(diagnostics.find(x=>x.chunk===2).reason,'provider_quota');
+ assert.ok(!JSON.stringify(diagnostics).includes('PRIVATE_SENTINEL'));
+});
+
+test('sanitized provider categories preserve neither arbitrary messages nor content',()=>{
+ assert.deepEqual(chunkFailure(new Error('PRIVATE_SENTINEL')),{reason:'provider_failure'});
+ assert.deepEqual(chunkFailure({message:'AiError: 3040 capacity temporarily exceeded PRIVATE_SENTINEL'}),{reason:'provider_capacity',providerCode:3040});
+ assert.deepEqual(chunkFailure({message:'3036: neuron allocation exhausted'}),{reason:'provider_quota',providerCode:3036});
+ assert.deepEqual(chunkFailure(new Error('model_timeout')),{reason:'model_timeout'});
+ assert.deepEqual(chunkFailure(new Error('invalid_model_json')),{reason:'invalid_model_json'});
+});
+
+test('explicit truncation cannot pass as valid JSON, even with a complete-looking results object',()=>{
+ assert.throws(()=>parseGemmaChunk({choices:[{finish_reason:'length',message:{content:'{"results":[]}'}}]},'2026-10-01'),/model_output_truncated/);
 });
 

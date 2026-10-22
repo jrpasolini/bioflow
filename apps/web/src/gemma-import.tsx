@@ -28,6 +28,7 @@ function errorMessage(code:string,p:boolean):string {
   pdf_conversion_failed:['Não foi possível ler o PDF.','The PDF could not be converted.'],
   gemma_extraction_failed:['A Gemma não conseguiu interpretar este documento. Tente novamente.','Gemma could not read this document. Please retry.'],
   incomplete_extraction:['Não foi possível validar todas as partes do PDF. Nenhum laudo parcial foi salvo. Tente novamente.','Not every section of the PDF could be validated. No partial report was saved. Please try again.'],
+  'incomplete_extraction|provider_quota':['A cota de processamento do provedor foi esgotada. A extração está temporariamente indisponível; nenhum laudo foi salvo.','The provider processing quota is exhausted. Extraction is temporarily unavailable; no report was saved.'],
   demo_limit_reached:['Esta sessão já importou os 3 exames de teste. Os dados temporários expiram ao fim da sessão.','This session already imported all 3 test reports. Temporary data expires when the session ends.'],
   rate_limited:['Limite temporário de tentativas. Aguarde um minuto.','Temporary request limit. Please wait one minute.'],
   demo_persistence_failed:['Não foi possível gravar a simulação no MongoDB.','Could not save this simulation in MongoDB.'],
