@@ -124,7 +124,7 @@ Sendo honesta, para você não gastar tempo descobrindo:
 
 - **Latência:** 30–70 s por extração. Chunks rodam em paralelo, mas o Gemma é o gargalo. Se a banca tiver pressa, isso aparece.
 - **Custo:** ~US$ 0,003 por extração, sem teto global configurado em Workers AI.
-- **Atlas ingress:** `0.0.0.0/0` até 04/11. Precisa fechar.
+- **Atlas ingress:** `0.0.0.0/0` até 29/10 (limite de 7 dias do Atlas). Decisão de 22/10: tornar permanente.
 - **Usuário redundante:** `bioflow_demo_writer` tem o mesmo papel do `bioflow_sessions_rw`. Pode ser removido.
 - **`MONGODB_URI` ausente no Worker:** sem ela, `/api/demo/overview` cai nos fixtures sintéticos em vez do Atlas. Hoje o site serve fixtures — funciona, mas o Atlas não está sendo exercitado na vitrine.
 - **Sem teste visual automatizado:** validei tudo por API e por código. O print da tela com o laudo importado é o único elo sem prova.
