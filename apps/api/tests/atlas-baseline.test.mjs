@@ -13,6 +13,9 @@ test('Atlas diagnostics expose fixed categories and never echo connection detail
  for(const [error,expected] of [
   [{name:'MongoParseError',message:privateMessage},'invalid_database_configuration'],
   [{code:18,message:privateMessage},'database_authentication_failed'],
+  [{name:'MongoServerError',code:8000,message:'bad auth : authentication failed '+privateMessage},'database_authentication_failed'],
+  [{name:'MongoServerError',code:8000,message:privateMessage},'database_server_failed'],
+  [new TypeError(privateMessage),'database_runtime_failed'],
   [{code:13,message:privateMessage},'database_permission_denied'],
   [{name:'MongoServerSelectionError',message:privateMessage},'database_unreachable'],
   [Error('demo_baseline_outdated'),'demo_baseline_invalid'],

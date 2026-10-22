@@ -83,9 +83,14 @@ export function atlasFailureReason(error:unknown):string{
  const e=error&&typeof error==='object'?error as {name?:unknown;code?:unknown;message?:unknown}:{};
  if(e.name==='MongoParseError'||e.name==='MongoInvalidArgumentError')return 'invalid_database_configuration';
  if(e.code===18)return 'database_authentication_failed';
+ // Atlas can wrap authentication failures in a server error rather than code
+ // 18. Match only fixed authentication phrases; never expose its message.
+ if(e.name==='MongoServerError'&&typeof e.message==='string'&&/bad auth|authentication failed/i.test(e.message))return 'database_authentication_failed';
  if(e.code===13)return 'database_permission_denied';
  if(['demo_baseline_outdated','invalid_demo_identity','invalid_demo','invalid_reports','invalid_report','invalid_result','invalid_source_page','Demo data not seeded','Demo reports not seeded'].includes(String(e.message)))return 'demo_baseline_invalid';
  if(['MongoServerSelectionError','MongoNetworkError','MongoNetworkTimeoutError'].includes(String(e.name)))return 'database_unreachable';
+ if(e.name==='MongoServerError')return 'database_server_failed';
+ if(['TypeError','ReferenceError','NotSupportedError'].includes(String(e.name)))return 'database_runtime_failed';
  return 'database_read_failed';
 }
 
