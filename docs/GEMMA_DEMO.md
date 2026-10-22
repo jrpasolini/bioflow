@@ -18,6 +18,14 @@ Status as of 2026-10-21: **implemented and enabled for audited fictional PDFs on
 
 Only exact known fictional files are accepted. Their SHA-256s are in apps/api/src/demo-samples.ts and docs/PDF_PUBLICATION_AUDIT.json. The public access code is NOT Auth0 or MFA. Do not remove the allowlist for a publicly available site. IP-based Cloudflare rate limiting (3 calls/minute per location/IP/endpoint class) is not a hard global cost ceiling: set account-level Workers AI budget alerts and additional safeguards before publication.
 
+### Reduced sample edition — 2026-10-22
+
+At the owner's request, each PDF now contains at least 60% fewer named numeric result rows: May 15, 58 → 23; October 1, 53 → 21; October 2, 61 → 24. Each rebuilt PDF is a single page with approximately 1,000 extracted characters, fitting the existing 2,500-character chunk budget. The ZIP is about 6.9 KB instead of 65.6 KB. Dates, retained values and units are preserved; unrelated baseline data is unchanged.
+
+Download the updated ZIP again before uploading: older large PDFs are intentionally no longer allowlisted. This change does not reset the provider's daily quota, change rate limits or guarantee a number of free inferences. No paid model calls were made to validate this sample replacement, in accordance with the owner's instruction to wait for quota recovery. Offline checks cover hashes, row reduction, source fidelity, PDF text and rendering; inference remains a separate later acceptance step.
+
+`scripts/reduce-demo-samples.py ORIGINAL_ZIP OUTPUT_DIRECTORY` reproduces the authoring operation from the prior audited public ZIP using pypdf/reportlab. `docs/DEMO_SAMPLE_REDUCTION.json` records source provenance and selection; runtime extraction does not read it. Historical extraction counts below refer to the old larger edition.
+
 ### Deployment prerequisites
 
 - Keep existing MONGODB_URI **read-only** for bioflow_demo.
