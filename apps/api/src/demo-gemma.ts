@@ -243,12 +243,13 @@ export function parseGemmaChunk(answer:unknown,date:string):{laboratory:string;r
  */
 export type ChunkDiagnostic={chunk:number;attempt:number;chars:number;elapsedMs:number;reason:string;providerCode?:number};
 export function chunkFailure(error:unknown):{reason:string;providerCode?:number}{
- const message=error instanceof Error?error.message:'';
+ const message=error&&typeof error==='object'&&'message' in error&&typeof error.message==='string'?error.message:String(error??'');
  const known=['missing_model_content','invalid_model_json','invalid_model_schema','invalid_model_metadata','too_many_results','model_output_truncated','model_timeout'];
  if(known.includes(message))return {reason:message};
  // Only a numeric provider code may cross this boundary, never exception text.
- const match=/\b(?:error|code)\s*[:=]?\s*(\d{4,5})\b/i.exec(message);
- return {reason:'provider_failure',...(match?{providerCode:Number(match[1])}:{})};
+ const match=/\b(3003|3006|3007|3008|3023|3036|3040|3041|3042|4006|5004|5007|5016|5018|5019|5035)\b/.exec(message);
+ const reason=/capacity|busy/i.test(message)?'provider_capacity':/allocation|quota|neurons/i.test(message)?'provider_quota':/invalid|validation|schema/i.test(message)?'provider_invalid_request':/not allowed|unauthorized|permission/i.test(message)?'provider_access_denied':'provider_failure';
+ return {reason,...(match?{providerCode:Number(match[1])}:{})};
 }
 export async function runGemmaChunks(
  chunks:readonly string[],date:string,run:(chunk:string)=>Promise<unknown>,diagnose:(entry:ChunkDiagnostic)=>void=()=>{}
