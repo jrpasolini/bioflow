@@ -187,3 +187,123 @@ new end-to-end login is claimed merely from the action unit tests. Existing
 Atlas user-role metadata confirms `bioflow_runtime: read` on `bioflow_demo` and
 session writers' `readWrite` only on `bioflow_sessions`; this is not an effective
 credential-level negative permissions test.
+
+## Handoff items 2.1–2.7 — 2026-10-22 (America/Sao_Paulo)
+
+Read-only evidence, gathered 17:47–18:00 BRT (UTC-3). No Atlas, Cloudflare,
+secret, deploy or index change was made. Owner decisions in this section were
+recorded by Antonio Pasolini on 2026-10-22. No password, URI or token is copied
+here.
+
+### 2.1 Production verification
+
+`scripts/verify-demo-production.mjs` ran against
+`https://bioflow-api.antonio-pasolini.workers.dev`. **19/19 checks passed**,
+from 2026-10-22 17:43 to 17:45 BRT (`2026-10-22T20:43:19Z` through
+`2026-10-22T20:45:02Z`). The report is
+`docs/validation/verify-report-2026-10-22.json`. It contains statuses and
+counts only.
+
+### 2.2 Atlas network access list
+
+This pass did not read the live Atlas network access list. No Atlas Admin API
+access was available; the MongoDB connector exposes data tools only.
+
+The Worker reaches Atlas with TCP `connect()`. Cloudflare documents that these
+connections come from an undocumented prefix, and that Dedicated CDN Egress IPs
+(Enterprise) are not used for `connect()`. The Atlas Data API reached end of
+life in September 2025. Hyperdrive supports Postgres and MySQL only, not
+MongoDB.
+
+Antonio Pasolini signed the following justification on 2026-10-22 to keep
+`0.0.0.0/0`. Cloudflare Workers TCP egress has no fixed IPs. This is a
+non-commercial challenge demo with entirely fictitious, synthetic data, so a
+paid fixed-IP relay or extra paid security layers are not justified. Protection
+relies on strong rotated credentials held only in Worker secrets, least-privilege
+database users scoped to `bioflow_demo`, and no real data ever. If the project
+became commercial, the cost of security layers and of data growth would be
+re-evaluated. The entry was created as temporary and expires on 2026-11-04. The
+owner must make it permanent or extend it in Atlas before that date. Signed:
+Antonio Pasolini, 2026-10-22.
+
+Role metadata already recorded in this document remains `bioflow_runtime: read`
+on `bioflow_demo` and session writers' `readWrite` only on `bioflow_sessions`.
+The signature above does not itself change the Atlas access list.
+
+### 2.3 Secret scan of full git history
+
+Clone of `jrpasolini/bioflow` at `2785659`, all refs (145 commits, 6 remote
+branches). `gitleaks detect --log-opts="--all" --redact` (v8.21.2) scanned 136
+commits and **found no leaks**.
+
+A search of every patch for `mongodb://` and `mongodb+srv://` found only
+placeholder or fixture URIs. Examples: `DEMO_USER` / `YOUR_DEMO_USER` in
+`.env.example` and docs (commit `19fe63b`); a test fixture with user `fictional`
+on a `.invalid` host (commit `9a8251e`). No `mongodb.net` hostname appears in
+history. No `.env`, `.dev.vars`, key or credential file was ever committed.
+The only env examples are `.env.example` and `apps/web/.env.example`.
+
+Antonio Pasolini confirmed on 2026-10-22 that the Atlas administrator password
+was rotated on 2026-10-21. The new value is stored only in the Worker secret.
+The full-history gitleaks scan above (`--all`, redacted) found no leaks. An
+exact-value search for the previous password remains an owner check and is
+**not done**. It could not be run here without the value. The owner still has
+to run `git log --all -p | grep -cF '<old value>'` locally and confirm the
+count is 0. That value stays out of this repository.
+
+PDFs in history are exactly the 26 `apps/web/public/demo/laudo-*.pdf` files,
+added in `bbc7ece` and never modified or deleted. All 26 SHA-256 digests match
+`docs/PDF_PUBLICATION_AUDIT.json`. The `bioflow-3-exames.zip` hash matches
+`zipSha256`.
+
+### 2.4 Repository visibility
+
+`jrpasolini/bioflow` is already public as of 2026-10-22, verified by an
+anonymous clone. At about 17:50 BRT the same day, the GitHub API also reported
+the repository as public. Recorded by Antonio Pasolini, 2026-10-22.
+
+### 2.5 Deploy parity
+
+`/api/health` reports commit `d0b9eedb9d1ae008ce69ebdd58d5c47bd5ef6f18` and
+build `gemma-v8-provider-diagnostics`.
+
+Active deployment `33bdc8fe-3679-4366-9d46-9ff58cc26809` (version
+`f3c1b1ee-59e3-41bc-a5cf-1627c56c9d82`, #43, 100% traffic) was created on
+2026-10-22 at 10:37 BRT via wrangler and annotated with source `d0b9eed`.
+The `BUILD_COMMIT` variable is `d0b9eed`.
+
+`main` was `2785659`. The range `d0b9eed..2785659` is one commit (#8). It
+changes only `scripts/verify-demo-production.mjs` (+7/−2), which is not part
+of the Worker. Runtime code is at parity with the deployed source. No redeploy
+is required for that commit.
+
+### 2.6 Worker configuration (names and flags only)
+
+Bindings: `AI` (Workers AI) and `DEMO_RATE_LIMITER` (3 requests / 60 seconds).
+Secret names: `DEMO_SESSION_SECRET`, `MONGODB_URI`, `MONGODB_DEMO_WRITE_URI`.
+Variables: `APP_ORIGIN`, `BUILD_COMMIT`, `MONGODB_DB=bioflow_demo`,
+`ENABLE_GEMMA_DEMO=true`, `ENABLE_PDF_ENDPOINTS=false`.
+
+No R2 bucket binding and no Auth0 bindings are deployed. Health reports
+`storageReady: false`, `authReady: false` and `pdfEndpointsEnabled: false`.
+This matches `wrangler.jsonc`.
+
+The rate limit of 3 requests per 60 seconds per IP is verified from this
+binding and from the client-IP key described in 2.7. A billing or budget alert
+has not been created. That remains pending the owner.
+
+### 2.7 Abuse and cost controls
+
+The Workers Rate Limiting binding `DEMO_RATE_LIMITER` (namespace 8701,
+`limit 3`, `period 60`) is declared in `wrangler.jsonc`.
+`apps/api/src/demo-gemma.ts` keys it by `kind:CF-Connecting-IP`, with separate
+`session` and `gemma` buckets, and returns 429 `rate_limited`. It fails closed
+when the binding or the IP is missing, and `demoReady()` requires the binding.
+**3 requests per 60 seconds per IP is verified** as this configuration. The
+Cloudflare rate limiter is per location and eventually consistent, so it is
+abuse control, not an exact quota.
+
+No billing or budget alert is configured. The notification policy list was
+empty when read on 2026-10-22. Available types include `billing_usage_alert`
+and `billing_budget_alert`. Creating one remains pending the owner. No policy
+id, threshold or creation date is recorded.

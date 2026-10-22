@@ -1,0 +1,204 @@
+{
+  "checkedAt": "2026-10-22T20:43:19.910Z",
+  "origin": "https://bioflow-api.antonio-pasolini.workers.dev",
+  "checks": [
+    {
+      "name": "atlas-overview",
+      "passed": true,
+      "status": 200,
+      "source": "mongodb-atlas-synthetic",
+      "reports": 26,
+      "readings": 604
+    },
+    {
+      "name": "private-routes-disabled",
+      "passed": true
+    },
+    {
+      "name": "demo-code-cannot-open-private-pdfs",
+      "passed": true
+    },
+    {
+      "name": "history-requires-session",
+      "passed": true
+    },
+    {
+      "name": "independent-one-hour-sessions",
+      "passed": true
+    },
+    {
+      "name": "tampered-session-denied",
+      "passed": true
+    },
+    {
+      "name": "fresh-session-empty",
+      "passed": true
+    },
+    {
+      "name": "no-write-before-confirmation-bioflow-teste-2026-05-15.pdf",
+      "passed": true
+    },
+    {
+      "name": "cross-session-proof-denied-bioflow-teste-2026-05-15.pdf",
+      "passed": true
+    },
+    {
+      "name": "extract-and-commit-bioflow-teste-2026-05-15.pdf",
+      "passed": true,
+      "run": 1,
+      "sample": "bioflow-teste-2026-05-15.pdf",
+      "extractStatus": 200,
+      "seconds": 28,
+      "diagnostics": [
+        {
+          "chunk": 1,
+          "attempt": 1,
+          "chars": 1069,
+          "elapsedMs": 27765,
+          "reason": "ok"
+        }
+      ],
+      "readings": 23,
+      "commitStatus": 201
+    },
+    {
+      "name": "session-isolation-bioflow-teste-2026-05-15.pdf",
+      "passed": true
+    },
+    {
+      "name": "no-write-before-confirmation-bioflow-teste-2026-10-01.pdf",
+      "passed": true
+    },
+    {
+      "name": "cross-session-proof-denied-bioflow-teste-2026-10-01.pdf",
+      "passed": true
+    },
+    {
+      "name": "extract-and-commit-bioflow-teste-2026-10-01.pdf",
+      "passed": true,
+      "run": 1,
+      "sample": "bioflow-teste-2026-10-01.pdf",
+      "extractStatus": 200,
+      "seconds": 24,
+      "diagnostics": [
+        {
+          "chunk": 1,
+          "attempt": 1,
+          "chars": 965,
+          "elapsedMs": 23803,
+          "reason": "ok"
+        }
+      ],
+      "readings": 21,
+      "commitStatus": 201
+    },
+    {
+      "name": "session-isolation-bioflow-teste-2026-10-01.pdf",
+      "passed": true
+    },
+    {
+      "name": "no-write-before-confirmation-bioflow-teste-2026-10-02.pdf",
+      "passed": true
+    },
+    {
+      "name": "cross-session-proof-denied-bioflow-teste-2026-10-02.pdf",
+      "passed": true
+    },
+    {
+      "name": "extract-and-commit-bioflow-teste-2026-10-02.pdf",
+      "passed": true,
+      "run": 1,
+      "sample": "bioflow-teste-2026-10-02.pdf",
+      "extractStatus": 200,
+      "seconds": 27,
+      "diagnostics": [
+        {
+          "chunk": 1,
+          "attempt": 1,
+          "chars": 1101,
+          "elapsedMs": 26750,
+          "reason": "ok"
+        }
+      ],
+      "readings": 24,
+      "commitStatus": 201
+    },
+    {
+      "name": "session-isolation-bioflow-teste-2026-10-02.pdf",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "run": 1,
+      "sample": "bioflow-teste-2026-05-15.pdf",
+      "extractStatus": 200,
+      "seconds": 28,
+      "diagnostics": [
+        {
+          "chunk": 1,
+          "attempt": 1,
+          "chars": 1069,
+          "elapsedMs": 27765,
+          "reason": "ok"
+        }
+      ],
+      "readings": 23,
+      "commitStatus": 201
+    },
+    {
+      "run": 1,
+      "sample": "bioflow-teste-2026-10-01.pdf",
+      "extractStatus": 200,
+      "seconds": 24,
+      "diagnostics": [
+        {
+          "chunk": 1,
+          "attempt": 1,
+          "chars": 965,
+          "elapsedMs": 23803,
+          "reason": "ok"
+        }
+      ],
+      "readings": 21,
+      "commitStatus": 201
+    },
+    {
+      "run": 1,
+      "sample": "bioflow-teste-2026-10-02.pdf",
+      "extractStatus": 200,
+      "seconds": 27,
+      "diagnostics": [
+        {
+          "chunk": 1,
+          "attempt": 1,
+          "chars": 1101,
+          "elapsedMs": 26750,
+          "reason": "ok"
+        }
+      ],
+      "readings": 24,
+      "commitStatus": 201
+    }
+  ],
+  "health": {
+    "ok": true,
+    "service": "bioflow-api",
+    "demoOnly": true,
+    "databaseConfigured": true,
+    "pdfEndpointsEnabled": false,
+    "storageReady": false,
+    "authReady": false,
+    "gemmaReady": true,
+    "build": "gemma-v8-provider-diagnostics",
+    "commit": "d0b9eedb9d1ae008ce69ebdd58d5c47bd5ef6f18"
+  },
+  "overview": {
+    "status": 200,
+    "source": "mongodb-atlas-synthetic",
+    "reports": 26,
+    "readings": 604
+  },
+  "finishedAt": "2026-10-22T20:45:02.398Z",
+  "passed": true
+}
