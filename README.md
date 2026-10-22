@@ -1,5 +1,7 @@
 # BioFlow
 
+> Latest independent runtime evidence and pending release gates: [production validation](docs/PRODUCTION_VALIDATION.md).
+
 **Your Health. Your History. Your Control.**
 
 BioFlow is a new application started during Hacktoberfest 2026 Week 3. It was conceived from a personal need: helping a family member keep track of laboratory results over time.

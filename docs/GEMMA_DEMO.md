@@ -1,5 +1,7 @@
 # BioFlow / Google Gemma live synthetic PDF import
 
+> Latest independent runtime evidence and pending release gates: [production validation](PRODUCTION_VALIDATION.md).
+
 Status as of 2026-10-21: **implemented and enabled in the versioned Worker configuration; successful live synthetic extraction and MongoDB session write reported and documented**. Independent checks of the three samples and of the currently deployed Worker version remain distinct from the historical production test.
 
 ## Public demo flow

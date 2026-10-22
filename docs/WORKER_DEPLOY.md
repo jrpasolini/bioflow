@@ -1,5 +1,7 @@
 # Public Worker rollout
 
+> Latest independent runtime evidence and pending release gates: [production validation](PRODUCTION_VALIDATION.md).
+
 ## Current deployment configuration and verification (reviewed 2026-10-21)
 
 > The tracked Worker configuration enables the **synthetic-only Gemma demo**, but keeps all private PDF routes disabled. The most recent audit report records a production Gemma import and deploy ID `94a8342e`. A later source build introduces `gemma-v6-strict-chunks`, so live deployment parity must be checked rather than assumed.

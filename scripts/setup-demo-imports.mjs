@@ -4,6 +4,7 @@
  * Run intentionally with a credential from a local, ignored environment file.
  */
 import {MongoClient} from 'mongodb';
+import {ensureDemoImportIndexes} from './demo-import-indexes.mjs';
 
 const uri=process.env.MONGODB_DEMO_WRITE_URI;
 if(!uri||!/^mongodb(\+srv)?:\/\//.test(uri)){
@@ -15,16 +16,7 @@ if(!uri||!/^mongodb(\+srv)?:\/\//.test(uri)){
  try{
   await client.connect();
   const coll=client.db('bioflow_sessions').collection('demo_imports');
-  const unique=await coll.createIndex({sessionId:1,sha256:1},{name:'unique_session_sample',unique:true});
-  // A TTL index on the same key may already exist under a different name; MongoDB
-  // allows only one, so adopt the existing one instead of failing the whole setup.
-  const existing=await coll.indexes();
-  const ttlIndex=existing.find(index=>{
-   const keys=Object.keys(index.key);
-   return keys.length===1&&keys[0]==='expiresAt'&&index.expireAfterSeconds!==undefined;
-  });
-  const ttl=ttlIndex?ttlIndex.name
-   :await coll.createIndex({expiresAt:1},{name:'delete_expired_imports',expireAfterSeconds:0});
+  const {unique,ttl}=await ensureDemoImportIndexes(coll);
   console.log('Isolated demo indexes ready:',unique,ttl);
  }catch{
   console.error('Could not configure the isolated session indexes. Check access and existing index options.');

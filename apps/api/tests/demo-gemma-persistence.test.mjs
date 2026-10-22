@@ -84,7 +84,8 @@ async function commit(id,sessionExpires,body,overrides={}){
   body:JSON.stringify(payload)}),env(overrides),'/api/demo/commit');
 }
 
-test.afterEach(()=>setDbRunnerForTests(null));
+const realNow=Date.now;
+test.afterEach(()=>{setDbRunnerForTests(null);Date.now=realNow;});
 
 test('a confirmed import is written only to the temporary session store',async()=>{
  const {db,coll}=fakeDb();
@@ -97,6 +98,7 @@ test('a confirmed import is written only to the temporary session store',async()
  const stored=coll.rows[0];
  assert.equal(stored.sessionId,id);
  assert.equal(stored.sha256,HASH);
+ assert.equal(stored.sourceSha256,HASH);
  assert.equal(stored.report.isSynthetic,true);
  assert.equal(stored.source,'gemma-4-reviewed-demo');
 });
@@ -191,4 +193,86 @@ test('the demo stays disabled without every safety binding',()=>{
   AI:{},DEMO_RATE_LIMITER:{limit:async()=>({success:true})}}),false);
  assert.equal(demoReady({ENABLE_GEMMA_DEMO:'true',DEMO_SESSION_SECRET:SECRET,
   AI:{},DEMO_RATE_LIMITER:{limit:async()=>({success:true})}}),false);
+});
+
+test('two sessions keep the same sample isolated and cannot select the other session via query',async()=>{
+ const {db,coll}=fakeDb();
+ setDbRunnerForTests(async(_env,fn)=>fn(db));
+ const a=crypto.randomUUID(),b=crypto.randomUUID(),expires=Date.now()+SESSION_LIFETIME;
+ const body={report:report(SAMPLES[HASH].date),proofExpires:Date.now()+300000};
+ assert.equal((await commit(a,expires,body)).status,201);
+ const get=async id=>{
+  const r=await handleGemmaDemo(new Request(base+'imports?sessionId='+a,{headers:{
+   Authorization:'Bearer '+token(id,expires)}}),env(),'/api/demo/imports');
+  return (await r.json()).imports;
+ };
+ assert.equal((await get(a)).length,1);
+ assert.deepEqual(await get(b),[]);
+ assert.equal((await commit(b,expires,body)).status,201);
+ assert.equal(coll.rows.length,2);
+ assert.equal((await get(b)).length,1);
+});
+
+test('a proof from one session cannot be replayed in another, including a supplied sessionId',async()=>{
+ const {db,coll}=fakeDb();let opened=0;
+ setDbRunnerForTests(async(_env,fn)=>{opened++;return fn(db);});
+ const a=crypto.randomUUID(),b=crypto.randomUUID(),expires=Date.now()+SESSION_LIFETIME;
+ const value=report(SAMPLES[HASH].date),proofExpires=Date.now()+300000;
+ const r=await handleGemmaDemo(new Request(base+'commit',{method:'POST',headers:{
+  Authorization:'Bearer '+token(b,expires),'Content-Type':'application/json'},
+  body:JSON.stringify({sessionId:a,sha256:HASH,report:value,reviewed:true,proofExpires,
+   proof:proof(a,HASH,proofExpires,value)})}),env(),'/api/demo/commit');
+ assert.equal(r.status,403);assert.equal(opened,0);assert.equal(coll.writes.length,0);
+});
+
+test('expired, boundary-expired and tampered sessions never reach the database',async()=>{
+ const now=realNow();Date.now=()=>now;
+ let opened=0;setDbRunnerForTests(async()=>{opened++;throw Error('must not connect');});
+ const id=crypto.randomUUID(),valid=token(id,now+60000);
+ const forged=valid.slice(0,-1)+(valid.endsWith('0')?'1':'0');
+ for(const bearer of [token(id,now-1),token(id,now),forged,'110526']){
+  for(const route of ['imports','commit','extract']){
+   const r=await handleGemmaDemo(new Request(base+route,{method:route==='imports'?'GET':'POST',
+    headers:{Authorization:'Bearer '+bearer}}),env(),'/api/demo/'+route);
+   assert.equal(r.status,401);
+  }
+ }
+ assert.equal(opened,0);
+});
+
+test('session expiry during a database read hides its result even before TTL cleanup',async()=>{
+ const now=realNow(),id=crypto.randomUUID(),expires=now+1000;Date.now=()=>now;
+ const {db}=fakeDb([{sessionId:id,sha256:HASH,expiresAt:new Date(expires),report:report(SAMPLES[HASH].date)}]);
+ setDbRunnerForTests(async(_env,fn)=>{const result=await fn(db);Date.now=()=>expires;return result;});
+ const r=await handleGemmaDemo(new Request(base+'imports',{headers:{Authorization:'Bearer '+token(id,expires)}}),env(),'/api/demo/imports');
+ assert.equal(r.status,401);assert.deepEqual(await r.json(),{error:'demo_session_required'});
+});
+
+test('session expiry while connecting cannot write a reviewed import',async()=>{
+ const now=realNow(),id=crypto.randomUUID(),expires=now+1000;Date.now=()=>now;
+ const {db,coll}=fakeDb();
+ setDbRunnerForTests(async(_env,fn)=>{Date.now=()=>expires;return fn(db);});
+ const r=await commit(id,expires,{report:report(SAMPLES[HASH].date),proofExpires:now+300000});
+ assert.equal(r.status,401);assert.equal(coll.writes.length,0);
+});
+
+test('a legacy unique digest index permits all three allowlisted imports',async()=>{
+ const {db,coll}=fakeDb();
+ const update=coll.updateOne;
+ coll.updateOne=async(filter,changes,options)=>{
+  const next=changes.$setOnInsert;
+  if(coll.rows.some(r=>r.sessionId===next.sessionId&&r.sourceSha256===next.sourceSha256&&r.sha256!==next.sha256))
+   throw Object.assign(Error('duplicate legacy digest'),{code:11000});
+  return update(filter,changes,options);
+ };
+ setDbRunnerForTests(async(_env,fn)=>fn(db));
+ const id=crypto.randomUUID(),expires=Date.now()+SESSION_LIFETIME;
+ for(const [hash,sample] of Object.entries(SAMPLES)){
+  const value=report(sample.date),proofExpires=Date.now()+300000;
+  const r=await handleGemmaDemo(new Request(base+'commit',{method:'POST',headers:{
+   Authorization:'Bearer '+token(id,expires),'Content-Type':'application/json'},
+   body:JSON.stringify({sha256:hash,report:value,reviewed:true,proofExpires,proof:proof(id,hash,proofExpires,value)})}),env(),'/api/demo/commit');
+  assert.equal(r.status,201);
+ }
+ assert.equal(coll.rows.length,3);
 });

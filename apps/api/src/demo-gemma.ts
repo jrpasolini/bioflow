@@ -142,7 +142,7 @@ async function session(req:Request,env:GemmaEnv):Promise<Session|null>{
  const match=/^([0-9a-f-]{36})\.(\d{13})\.([0-9a-f]{64})$/.exec(token);
  if(!match||!secretOk(env))return null;
  const expires=Number(match[2]);
- if(expires<Date.now()||expires>Date.now()+sessionLifetime)return null;
+ if(expires<=Date.now()||expires>Date.now()+sessionLifetime)return null;
  return await verifyMac(env.DEMO_SESSION_SECRET!,match[1]+'.'+match[2],match[3])?{id:match[1],expires}:null;
 }
 function json(data:unknown,status=200){return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
@@ -321,7 +321,7 @@ async function commit(req:Request,env:GemmaEnv,session:Session){
  let body:unknown;
  try{body=await req.json();}catch{return fail('invalid_json');}
  if(!isObject(body)||body.reviewed!==true||!isObject(body.report)||!isSampleHash(String(body.sha256))||
- !validHex(body.proof)||!finite(body.proofExpires)||body.proofExpires<Date.now()||body.proofExpires>Date.now()+proofLifetime)
+ !validHex(body.proof)||!finite(body.proofExpires)||body.proofExpires<=Date.now()||body.proofExpires>Date.now()+proofLifetime)
  return fail('invalid_confirmation');
  const hash=body.sha256 as keyof typeof SAMPLES,report=body.report;
  let validated:ReviewedReport;
@@ -334,7 +334,9 @@ async function commit(req:Request,env:GemmaEnv,session:Session){
  if(!await verifyMac(env.DEMO_SESSION_SECRET!,message,body.proof))return fail('invalid_proof',403);
  // Expiry is anchored to the session, never to the commit moment: a reviewer who
  // takes 59 minutes to confirm still gets a report that dies with the session.
- const document={sessionId:id,sha256:hash,filename:SAMPLES[hash].filename,
+ // Older deployments also enforce unique(sessionId, sourceSha256). Keep the
+ // digest alias populated so a second sample never collides on a missing field.
+ const document={sessionId:id,sha256:hash,sourceSha256:hash,filename:SAMPLES[hash].filename,
   report:{id:'bf-session-'+hash.slice(0,12),patientId:'demo-walter-white',...validated,isSynthetic:true},
   source:'gemma-4-reviewed-demo',reviewedAt:new Date(),expiresAt:new Date(session.expires)};
  let saved:unknown;
@@ -344,12 +346,14 @@ async function commit(req:Request,env:GemmaEnv,session:Session){
    const already=await coll.findOne({sessionId:id,sha256:hash},{projection:{_id:1},maxTimeMS:3000});
    if(!already&&await coll.countDocuments({sessionId:id,expiresAt:{$gt:new Date()}},{maxTimeMS:3000})>=3)
     throw Error('demo_limit_reached');
+   if(session.expires<=Date.now())throw Error('demo_session_required');
    await coll.updateOne({sessionId:id,sha256:hash},{$setOnInsert:document},{upsert:true});
    return await coll.findOne({sessionId:id,sha256:hash},{projection:{_id:0,report:1,sha256:1}});
   });
  }catch(error){
   // A reached import cap is a user-facing limit, not a database outage.
   if(error instanceof Error&&error.message==='demo_limit_reached')return fail('demo_limit_reached',429);
+  if(error instanceof Error&&error.message==='demo_session_required')return fail('demo_session_required',401);
   return fail('demo_persistence_failed',503);
  }
  return json({saved:true,import:saved},201);
@@ -369,8 +373,12 @@ export async function handleGemmaDemo(req:Request,env:GemmaEnv,path:string):Prom
  if(req.method==='POST'&&path==='/api/demo/session')return begin(req,env);
  const current=await session(req,env);
  if(!current)return fail('demo_session_required',401);
- if(req.method==='POST'&&path==='/api/demo/extract')return extract(req,env,current.id);
- if(req.method==='POST'&&path==='/api/demo/commit')return commit(req,env,current);
- if(req.method==='GET'&&path==='/api/demo/imports')return history(env,current.id);
- return fail('method_not_allowed',405);
+ let result:Response;
+ if(req.method==='POST'&&path==='/api/demo/extract')result=await extract(req,env,current.id);
+ else if(req.method==='POST'&&path==='/api/demo/commit')result=await commit(req,env,current);
+ else if(req.method==='GET'&&path==='/api/demo/imports')result=await history(env,current.id);
+ else return fail('method_not_allowed',405);
+ // A slow model/database operation must not return data or a usable proof after
+ // its authenticated session expired. TTL cleanup can happen later.
+ return current.expires<=Date.now()?fail('demo_session_required',401):result;
 }
