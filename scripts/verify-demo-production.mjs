@@ -28,7 +28,11 @@ async function newSession(){
 async function call(path,{token,headers,...options}={}){
  const response=await fetch(base+path,{...options,redirect:'error',signal:AbortSignal.timeout(210000),
   headers:{Origin:'https://jrpasolini.tech',...headers,...(token?{Authorization:'Bearer '+token}:{})}});
- return {status:response.status,body:await response.json(),cors:response.headers.get('Access-Control-Allow-Origin'),cache:response.headers.get('Cache-Control')};
+ // The origin's own Date header is the only trustworthy clock here: this script may
+ // run on a host whose clock drifts by seconds, and comparing the Worker's expiry
+ // against a skewed local clock reports a healthy session as broken.
+ const date=response.headers.get('date');
+ return {status:response.status,body:await response.json(),cors:response.headers.get('Access-Control-Allow-Origin'),cache:response.headers.get('Cache-Control'),serverNow:date?Date.parse(date):Date.now()};
 }
 try{
  const health=await call('/api/health');report.health=health.body;
@@ -42,8 +46,9 @@ try{
  const unauthorized=await call('/api/demo/imports');check('history-requires-session',unauthorized.status===401);
  let a=await newSession();const b=await newSession();
  assert.equal(a.status,200);assert.equal(b.status,200);
+ // Measured against the origin's clock, never this host's.
  check('independent-one-hour-sessions',a.body.token!==b.body.token&&
-  Math.abs(Date.parse(a.body.expiresAt)-Date.now()-3600000)<15000);
+  Math.abs(Date.parse(a.body.expiresAt)-a.serverNow-3600000)<15000);
  const altered=a.body.token.slice(0,-1)+(a.body.token.endsWith('0')?'1':'0');
  check('tampered-session-denied',(await call('/api/demo/imports',{token:altered})).status===401);
  const initial=await call('/api/demo/imports',{token:a.body.token});
