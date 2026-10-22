@@ -1,11 +1,11 @@
 # BioFlow / Google Gemma live synthetic PDF import
 
-Status: **feature implemented behind disabled gate; not deployed or live-certified**.
+Status as of 2026-10-21: **implemented and enabled in the versioned Worker configuration; successful live synthetic extraction and MongoDB session write reported and documented**. Independent checks of the three samples and of the currently deployed Worker version remain distinct from the historical production test.
 
 ## Public demo flow
 
 1. Visitor enters the **public synthetic-only** demonstration.
-2. Visitor downloads one of three independently hosted fictional PDFs from the DEV article (links will be added later).
+2. Visitor downloads the [synthetic three-PDF ZIP](../apps/web/public/demo/bioflow-3-exames.zip) or its public mirror. The test PDFs are fictional and independently hashed. The DEV post should include the stable public URL.
 3. Visitor uploads that PDF to BioFlow. The Worker verifies its SHA-256 fingerprint against ONLY the three audited samples. Every other PDF is rejected **before AI inference**.
 4. Cloudflare AI toMarkdown converts PDF pages to text; Google Gemma 4 26B A4B extracts dates, numerical values, units, test names and page provenance.
 5. Visitor compares the AI draft with the source and explicitly confirms. Before confirmation **nothing is written**.
@@ -29,9 +29,9 @@ Only exact known fictional files are accepted. Their SHA-256s are in apps/api/sr
 - Alternatively, with MONGODB_DEMO_WRITE_URI available securely in the ignored local .env.local, run npm run db:setup:demo-imports to create both indexes. This provisioning script touches only bioflow_sessions.
 - Indexes are REQUIRED: unique prevents concurrent duplicate writes and TTL ensures the import expires. TTL deletion is eventually consistent.
 - Set DEMO_SESSION_SECRET with a cryptographically random secret of at least 32 bytes via Cloudflare's secure secret input.
-- The wrangler.jsonc AI and rate limiting bindings are now declared. ENABLE_GEMMA_DEMO is deliberately FALSE by default.
+- The wrangler.jsonc AI and rate-limiting bindings are declared. **The current tracked configuration sets ENABLE_GEMMA_DEMO=true.** Keep the sample allowlist, rate limits, approval proof and isolated write credential in place.
 - Test the complete workflow, rate controls, auth/expiring session, both database privileges, CORS allowlist, and Gemma output from the exact three sample PDFs. Verify one visitor cannot see another visitor's temporary data. Confirm Mongo baseline counts remain 26 reports/604 numeric readings after uploads.
-- Only after those tests, explicitly enable ENABLE_GEMMA_DEMO=true and deploy the Worker; rebuild the web app with VITE_API_BASE_URL set to the verified HTTPS Worker origin. Do not enable private R2 PDF endpoints or Auth0 until separately configured.
+- For a new Worker deployment, verify the correct ENABLE_GEMMA_DEMO value and secrets, run safe smoke tests on the deployed HTTPS origin, and confirm the frontend VITE_API_BASE_URL. Do not enable private R2 PDF endpoints merely to enable the public fictional Gemma demo.
 - No real medical data may be processed by the public demo.
 
 ### HTTP endpoints
@@ -52,4 +52,19 @@ https://developers.cloudflare.com/workers-ai/features/markdown-conversion/usage/
 https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/
 https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
 
-**Current limitations:** Still needs live Gemma inference tests and Mongo session-writer provisioning, budget protection, deploy, and UI verification. This is a fictional demonstration, not an analysis or diagnosis tool.
+## Verification status and remaining checks (2026-10-21)
+
+| Check | Evidence | Status |
+| --- | --- | --- |
+| At least one real Gemma → review → MongoDB write | [Audit briefing](AUDIT_BRIEFING.md) and merged [PR #3](https://github.com/jrpasolini/bioflow/pull/3) | **Reported successful in production** |
+| Three demonstration PDFs | SHA-256 hashes and metadata in [publication audit](PDF_PUBLICATION_AUDIT.json); owner confirms download works | **Fictional and downloadable**; independent end-to-end Gemma success for each is a separate check |
+| Isolation and integrity | Test suite plus HMAC proof, session-based commits and limited writer | **Implemented/tested**; real-user cross-session test still useful |
+| Expiration | `expiresAt` TTL index confirmed in Atlas, with 60-minute session-bound expiry | **Configured**; deletion is eventually consistent |
+| Baseline dataset | Atlas contains 26 reports; read-only runtime account scoped to `bioflow_demo` | **Verified in Atlas**; public Worker read path must independently report `mongodb-atlas-synthetic` |
+| Deployment version | Audit briefing records a deployed Worker identifier `94a8342e` at 19:20 Brazil time on 2026-10-21; source `GET /api/health` reports `build: "gemma-v6-strict-chunks"` | **Historical deployment recorded**; cannot infer current running version from Git source |
+| Private Auth0/R2 routes | `ENABLE_PDF_ENDPOINTS=false` | **Disabled by design** for synthetic demonstration |
+
+**Live runtime verification:** inspect `GET /api/health` for `gemmaReady`, `databaseConfigured`, and `build`. The flags report configuration, not an actual database ping. Then inspect `GET /api/demo/overview`: it must return `source: "mongodb-atlas-synthetic"` to prove the public read path uses Atlas. If it returns `"synthetic-fixtures"`, configure a **read-only** `MONGODB_URI` as a Cloudflare Worker secret using the dedicated `bioflow_runtime` account. Never place a URI in the frontend or repository. Verify permissions via Atlas user roles and test effective read/write boundaries separately; do not use an administrator connection string. See [Worker rollout](WORKER_DEPLOY.md).
+
+**Current limitations:** the public demo is strictly fictional; complete performance and error coverage for each of the three held-out PDFs, live Worker/source parity, visual accessibility, and global inference budget protection warrant further validation. No diagnosis or medical interpretation is provided.
+
