@@ -33,3 +33,10 @@
 - Worker `/api/demo/overview` uses Atlas once configured or synthetic fixtures when URI is absent;
   if configured Atlas becomes unavailable it explicitly responds 503 instead of serving stale data.
 - No DB credentials, real records, Worker deployment or Atlas cloud resources created in this commit.
+
+## 2026-10-22 — Publication hardening
+- Added the root MIT license for original BioFlow code and documentation; third-party assets retain their separate notices.
+- Changed Gemma post-extraction validation to reject numeric-looking values that cannot be parsed, rather than silently dropping a measurement while keeping valid rows. Genuinely qualitative rows remain nonnumeric and are excluded from the chart.
+- Reject conflicting duplicate normalized analytes (different value or unit), while allowing harmless identical repeats. Added unit regressions for mixed valid/malformed readings and ambiguous duplicates.
+- Made GitHub Actions gates individually named and auditable (full tests, safety regressions, TypeScript, production build, /bioflow/ subpath, PWA, Worker bundle), with read-only workflow permissions and a bounded job timeout.
+- This change does not establish perfect recall of every reading omitted by a model; the review step and original PDF remain mandatory. The 19/19 production report predates these changes and must not be presented as a post-hardening live test.
