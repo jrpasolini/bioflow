@@ -52,3 +52,7 @@ The private-document implementation is designed to keep the original PDF bytes u
 ## Development and competition
 
 Track real Copilot-assisted changes and resulting tests in the development log. Do not claim category eligibility until its actual use is documented. Publish only synthetic data after a separate privacy and license review.
+
+## License
+
+BioFlow's original application code and documentation are licensed under the [MIT License](LICENSE) (Copyright 2026 Antonio Pasolini). Third-party fonts, icons, SDKs, dependencies and model weights retain their respective licenses; see the included attribution files and upstream notices.

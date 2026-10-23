@@ -29,9 +29,9 @@ test('Gemma output needs an explicit, verifiable date and numeric values',()=>{
  // A quoted but unambiguous number is accepted on purpose: Brazilian reports print
  // "5,170" and the model echoes it as text. Anything non-numeric still throws.
  assert.equal(extractGemmaJson({response:'{"collectedAt":"2026-05-15","laboratory":"X","results":[{"code":"glucose","name":"Glicose","value":"98","unit":"mg"}]}'},'2026-05-15').results[0].value,98);
- // A value carrying its own unit is ambiguous, so the row is dropped; with nothing
- // left the report fails as unreadable rather than inventing a number.
- assert.throws(()=>extractGemmaJson({response:'{"collectedAt":"2026-05-15","laboratory":"X","results":[{"code":"glucose","name":"Glicose","value":"98 mg/dL","unit":"mg"}]}'},'2026-05-15'),/no_results_extracted/);
+ // A value carrying its own unit is ambiguous, so the numeric row now fails
+ // validation explicitly rather than silently vanishing from a larger report.
+ assert.throws(()=>extractGemmaJson({response:'{"collectedAt":"2026-05-15","laboratory":"X","results":[{"code":"glucose","name":"Glicose","value":"98 mg/dL","unit":"mg"}]}'},'2026-05-15'),/invalid_numeric_reading/);
  assert.throws(()=>extractGemmaJson({response:'nothing'},'2026-05-15'),/invalid_model_json/);
 });
 
@@ -100,6 +100,37 @@ test('one malformed row does not discard an otherwise readable report',()=>{
  // The readable rows are kept and resolved to the shared vocabulary, so they join
  // the series the history already plots instead of starting orphan lines.
  assert.deepEqual(parsed.results.map(r=>r.code),['hemoglobin','wbc']);
+});
+
+test('a malformed numeric measurement cannot silently disappear from an otherwise valid report',()=>{
+ const data={collectedAt:'2026-05-15',laboratory:'Fictional Lab',results:[
+  {code:'glucose',name:'Glucose',value:93,unit:'mg/dL'},
+  {code:'hemoglobin',name:'Hemoglobin',value:'15 mg/dL',unit:'g/dL'}
+ ]};
+ assert.throws(()=>extractGemmaJson({response:JSON.stringify(data)},'2026-05-15'),/invalid_numeric_reading/);
+ data.results[1].value='12-14';
+ assert.throws(()=>extractGemmaJson({response:JSON.stringify(data)},'2026-05-15'),/invalid_numeric_reading/);
+});
+
+test('qualitative findings are skipped without rejecting valid numeric readings',()=>{
+ const data={collectedAt:'2026-05-15',laboratory:'Fictional Lab',results:[
+  {code:'glucose',name:'Glicose',value:93,unit:'mg/dL'},
+  {code:'urine_nitrite',name:'Nitrito',value:'Negativo',unit:''}
+ ]};
+ const actual=extractGemmaJson({response:JSON.stringify(data)},'2026-05-15');
+ assert.deepEqual(actual.results.map(item=>item.code),['glucose']);
+});
+
+test('conflicting duplicated analyte is an explicit error, not a hidden data loss',()=>{
+ const data={collectedAt:'2026-05-15',laboratory:'Fictional Lab',results:[
+  {code:'glucose',name:'Glicose',value:98,unit:'mg/dL'},
+  {code:'glucose',name:'Glicose',value:106,unit:'mg/dL'}
+ ]};
+ assert.throws(()=>extractGemmaJson({response:JSON.stringify(data)},'2026-05-15'),/conflicting_duplicate_reading/);
+ data.results[1].value=98;
+ assert.equal(extractGemmaJson({response:JSON.stringify(data)},'2026-05-15').results.length,1);
+ data.results[1].unit='g/dL';
+ assert.throws(()=>extractGemmaJson({response:JSON.stringify(data)},'2026-05-15'),/conflicting_duplicate_reading/);
 });
 
 test('long documents are split on page breaks, never in one oversized call',()=>{

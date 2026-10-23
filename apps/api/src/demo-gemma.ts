@@ -90,12 +90,11 @@ export function extractGemmaJson(raw:unknown,date:string):ReviewedReport {
  if(!lab||!validDate(parsed.collectedAt)||parsed.collectedAt!==date)throw Error('invalid_model_metadata');
  if(parsed.results.length>300)throw Error('too_many_results');
  const readings:PdfResult[]=[];
- const seen=new Set<string>();
+ const seen=new Map<string,PdfResult>();
  for(const item of parsed.results){
-  // One malformed row must not discard an otherwise readable report: a haematology
-  // panel mixes numeric readings with qualitative lines ("Ausentes"). Skip the row,
-  // keep the report, and fail only when nothing usable survived.
-  if(!isObject(item))continue;
+  // A malformed object is not a qualitative lab observation. It cannot be
+  // discarded while the remaining numeric rows are presented as complete.
+  if(!isObject(item))throw Error('invalid_model_schema');
   const rawName=clean(item.name,120),rawCode=clean(item.code,72),rawUnit=clean(item.unit,36);
   // Resolve the reading against the shared vocabulary before anything else, so a
   // new extraction lands on the same series the history already plots instead of
@@ -105,8 +104,18 @@ export function extractGemmaJson(raw:unknown,date:string):ReviewedReport {
   const unit=canonicalUnit(code,rawUnit);
   // The model answers with whatever key it prefers ("numeric_value" is the common
   // one). The reading is the same reading; only the label differs.
-  const value=toNumber(item.value??item.numeric_value??item.numericValue??item.result);
-  if(!code||value===undefined)continue;
+  const rawValue=item.value??item.numeric_value??item.numericValue??item.result;
+  const value=toNumber(rawValue);
+  if(value===undefined){
+   // Qualitative findings ("Ausentes", "Negativo") are not numeric readings.
+   // A numeric-looking value that failed parsing ("98 mg/dL", "12-14",
+   // Infinity, etc.) is different: rejecting it is safer than silently
+   // losing a measurement while approving the rest of the report.
+   if(typeof rawValue==='number'||
+      (typeof rawValue==='string'&&/\d/.test(rawValue)))throw Error('invalid_numeric_reading');
+   continue;
+  }
+  if(!code)throw Error('invalid_numeric_reading');
   // A report prints grading legends under its results ("Bacteriúria ausente: < 58/uL;
   // Raras: 59 a 1500/uL"). Those numbers parse as valid readings but are thresholds,
   // not measurements; recording one would put a reference boundary in the history as
@@ -115,12 +124,19 @@ export function extractGemmaJson(raw:unknown,date:string):ReviewedReport {
   const page=num(item.sourcePage),low=toNumber(item.referenceLow),high=toNumber(item.referenceHigh);
   if(page!==undefined&&(!Number.isInteger(page)||page<1||page>40))throw Error('invalid_page');
   if(low!==undefined&&high!==undefined&&low>high)throw Error('invalid_reference_interval');
-  if(seen.has(code))continue;
-  seen.add(code);
-  readings.push({name,code,value,unit,
+  const previous=seen.get(code);
+  if(previous){
+   // An identical repeated label may be deduplicated; conflicting values
+   // or units would quietly erase a legitimate observation.
+   if(previous.value!==value||previous.unit!==unit)throw Error('conflicting_duplicate_reading');
+   continue;
+  }
+  const reading={name,code,value,unit,
    ...(page===undefined?{}:{sourcePage:page}),
    ...(low===undefined?{}:{referenceLow:low}),
-   ...(high===undefined?{}:{referenceHigh:high})});
+   ...(high===undefined?{}:{referenceHigh:high})};
+  seen.set(code,reading);
+  readings.push(reading);
  }
  if(readings.length===0)throw Error('no_results_extracted');
  return {collectedAt:date,laboratory:lab,results:readings};

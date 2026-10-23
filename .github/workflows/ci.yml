@@ -1,21 +1,38 @@
 name: BioFlow CI
+
 on:
   push:
   pull_request:
+
+# CI validates untrusted contributions without obtaining write access.
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
+    name: Regression tests, types, builds and deploy paths
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm ci --no-audit --no-fund
-      - run: npm run test
-      - run: npm run typecheck
-      - run: npm run build
-      - run: npm run build:subpath
-      - run: npm run test:subpath
-
-      - run: npm run test:pwa
-      - run: npm run build:check -w @bioflow/api
+      - name: Install lockfile-pinned dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Run application and Gemma safety regressions
+        run: npm run test
+      - name: Check TypeScript contracts
+        run: npm run typecheck
+      - name: Build production application
+        run: npm run build
+      - name: Verify /bioflow/ deployment build
+        run: npm run build:subpath
+      - name: Test subpath routing
+        run: npm run test:subpath
+      - name: Test PWA behavior
+        run: npm run test:pwa
+      - name: Bundle Cloudflare Worker API
+        run: npm run build:check -w @bioflow/api
